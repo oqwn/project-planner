@@ -8,7 +8,7 @@ import type {
   TeamMember,
 } from '../types/dashboard';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://localhost:20005/api';
 
 // Create axios instance with default config
 export const api = axios.create({
