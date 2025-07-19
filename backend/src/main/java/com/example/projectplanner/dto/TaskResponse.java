@@ -1,85 +1,32 @@
-package com.example.projectplanner.entity;
+package com.example.projectplanner.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public class Task {
+public class TaskResponse {
     private UUID id;
     private String title;
     private String description;
-    private TaskStatus status;
-    private TaskPriority priority;
+    private String status;
+    private String priority;
     private UUID assigneeId;
-    private String assigneeName; // Joined from users table
+    private String assigneeName;
     private UUID projectId;
     private UUID createdBy;
-    private String createdByName; // Joined from users table
+    private String createdByName;
     private LocalDate dueDate;
-    private BigDecimal estimatedHours;
-    private BigDecimal actualHours;
+    private double estimatedHours;
+    private Double actualHours;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
-    // Related entities
-    private List<Subtask> subtasks;
-    private List<TaskComment> comments;
-    private List<TaskAttachment> attachments;
-    private List<TaskReminder> reminders;
+    private List<SubtaskResponse> subtasks;
+    private List<CommentResponse> comments;
+    private List<AttachmentResponse> attachments;
+    private List<ReminderResponse> reminders;
     private List<String> tags;
-    
-    public enum TaskStatus {
-        TODO("todo"),
-        IN_PROGRESS("in-progress"),
-        COMPLETED("completed"),
-        PARKED("parked");
-        
-        private final String value;
-        
-        TaskStatus(String value) {
-            this.value = value;
-        }
-        
-        public String getValue() {
-            return value;
-        }
-        
-        public static TaskStatus fromValue(String value) {
-            for (TaskStatus status : TaskStatus.values()) {
-                if (status.value.equals(value)) {
-                    return status;
-                }
-            }
-            throw new IllegalArgumentException("Unknown task status: " + value);
-        }
-    }
-    
-    public enum TaskPriority {
-        LOW("low"),
-        MEDIUM("medium"),
-        HIGH("high");
-        
-        private final String value;
-        
-        TaskPriority(String value) {
-            this.value = value;
-        }
-        
-        public String getValue() {
-            return value;
-        }
-        
-        public static TaskPriority fromValue(String value) {
-            for (TaskPriority priority : TaskPriority.values()) {
-                if (priority.value.equals(value)) {
-                    return priority;
-                }
-            }
-            throw new IllegalArgumentException("Unknown task priority: " + value);
-        }
-    }
     
     // Getters and Setters
     public UUID getId() {
@@ -106,19 +53,19 @@ public class Task {
         this.description = description;
     }
     
-    public TaskStatus getStatus() {
+    public String getStatus() {
         return status;
     }
     
-    public void setStatus(TaskStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
     
-    public TaskPriority getPriority() {
+    public String getPriority() {
         return priority;
     }
     
-    public void setPriority(TaskPriority priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
     
@@ -170,19 +117,19 @@ public class Task {
         this.dueDate = dueDate;
     }
     
-    public BigDecimal getEstimatedHours() {
+    public double getEstimatedHours() {
         return estimatedHours;
     }
     
-    public void setEstimatedHours(BigDecimal estimatedHours) {
+    public void setEstimatedHours(double estimatedHours) {
         this.estimatedHours = estimatedHours;
     }
     
-    public BigDecimal getActualHours() {
+    public Double getActualHours() {
         return actualHours;
     }
     
-    public void setActualHours(BigDecimal actualHours) {
+    public void setActualHours(Double actualHours) {
         this.actualHours = actualHours;
     }
     
@@ -202,35 +149,35 @@ public class Task {
         this.updatedAt = updatedAt;
     }
     
-    public List<Subtask> getSubtasks() {
+    public List<SubtaskResponse> getSubtasks() {
         return subtasks;
     }
     
-    public void setSubtasks(List<Subtask> subtasks) {
+    public void setSubtasks(List<SubtaskResponse> subtasks) {
         this.subtasks = subtasks;
     }
     
-    public List<TaskComment> getComments() {
+    public List<CommentResponse> getComments() {
         return comments;
     }
     
-    public void setComments(List<TaskComment> comments) {
+    public void setComments(List<CommentResponse> comments) {
         this.comments = comments;
     }
     
-    public List<TaskAttachment> getAttachments() {
+    public List<AttachmentResponse> getAttachments() {
         return attachments;
     }
     
-    public void setAttachments(List<TaskAttachment> attachments) {
+    public void setAttachments(List<AttachmentResponse> attachments) {
         this.attachments = attachments;
     }
     
-    public List<TaskReminder> getReminders() {
+    public List<ReminderResponse> getReminders() {
         return reminders;
     }
     
-    public void setReminders(List<TaskReminder> reminders) {
+    public void setReminders(List<ReminderResponse> reminders) {
         this.reminders = reminders;
     }
     
