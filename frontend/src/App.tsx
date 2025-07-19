@@ -1,51 +1,61 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Layout } from './components/Layout/Layout';
+import { Dashboard } from './components/Dashboard/Dashboard';
 import { UserList } from './components/UserList';
 import './App.css';
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <nav>
-          <h1>Project Planner</h1>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/users">Users</Link>
-            </li>
-          </ul>
-        </nav>
-
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/users" element={<UserList />} />
-          </Routes>
-        </main>
-      </div>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/users" element={<UserList />} />
+          <Route path="/tasks" element={<TasksPlaceholder />} />
+          <Route path="/timesheets" element={<TimesheetsPlaceholder />} />
+          <Route path="/collaboration" element={<CollaborationPlaceholder />} />
+          <Route path="/reports" element={<ReportsPlaceholder />} />
+          <Route path="/settings" element={<SettingsPlaceholder />} />
+        </Routes>
+      </Layout>
     </Router>
   );
 }
 
-const Home: React.FC = () => (
-  <div>
-    <h2>Welcome to Project Planner</h2>
-    <p>
-      A comprehensive project management application built with React and Spring
-      Boot.
-    </p>
-    <ul>
-      <li>✅ React 19.2.0-canary with TypeScript</li>
-      <li>✅ Spring Boot 3.4.5 with Java 21</li>
-      <li>✅ PostgreSQL database with MyBatis</li>
-      <li>✅ React Router v6 for navigation</li>
-      <li>✅ Zustand for state management</li>
-      <li>✅ Axios for API communication</li>
-      <li>✅ OpenAPI/Swagger documentation</li>
-    </ul>
+// Placeholder components for future implementation
+const TasksPlaceholder: React.FC = () => (
+  <div className="placeholder-page">
+    <h1>Tasks</h1>
+    <p>Task management interface coming soon...</p>
+  </div>
+);
+
+const TimesheetsPlaceholder: React.FC = () => (
+  <div className="placeholder-page">
+    <h1>Timesheets</h1>
+    <p>Time tracking interface coming soon...</p>
+  </div>
+);
+
+const CollaborationPlaceholder: React.FC = () => (
+  <div className="placeholder-page">
+    <h1>Collaboration</h1>
+    <p>Team collaboration tools coming soon...</p>
+  </div>
+);
+
+const ReportsPlaceholder: React.FC = () => (
+  <div className="placeholder-page">
+    <h1>Reports</h1>
+    <p>Project reporting and analytics coming soon...</p>
+  </div>
+);
+
+const SettingsPlaceholder: React.FC = () => (
+  <div className="placeholder-page">
+    <h1>Settings</h1>
+    <p>Project settings and configuration coming soon...</p>
   </div>
 );
 
