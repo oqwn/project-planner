@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 @RestController
@@ -78,23 +78,20 @@ public class TaskController {
         task.setCreatedBy(request.getCreatedBy());
         task.setDueDate(request.getDueDate());
         task.setEstimatedHours(BigDecimal.valueOf(request.getEstimatedHours()));
-        task.setCreatedAt(LocalDateTime.now());
-        task.setUpdatedAt(LocalDateTime.now());
+        task.setCreatedAt(OffsetDateTime.now());
+        task.setUpdatedAt(OffsetDateTime.now());
         
         taskMapper.insert(task);
         
         // Insert subtasks if provided
         if (request.getSubtasks() != null) {
-            int position = 0;
             for (CreateSubtaskRequest subtaskRequest : request.getSubtasks()) {
                 Subtask subtask = new Subtask();
                 subtask.setId(UUID.randomUUID());
                 subtask.setTaskId(task.getId());
                 subtask.setTitle(subtaskRequest.getTitle());
                 subtask.setCompleted(false);
-                subtask.setPosition(position++);
-                subtask.setCreatedAt(LocalDateTime.now());
-                subtask.setUpdatedAt(LocalDateTime.now());
+                subtask.setCreatedAt(OffsetDateTime.now());
                 
                 subtaskMapper.insert(subtask);
             }
@@ -205,8 +202,8 @@ public class TaskController {
         response.setDueDate(task.getDueDate());
         response.setEstimatedHours(task.getEstimatedHours().doubleValue());
         response.setActualHours(task.getActualHours() != null ? task.getActualHours().doubleValue() : null);
-        response.setCreatedAt(task.getCreatedAt());
-        response.setUpdatedAt(task.getUpdatedAt());
+        response.setCreatedAt(task.getCreatedAt().toLocalDateTime());
+        response.setUpdatedAt(task.getUpdatedAt().toLocalDateTime());
         
         // Load subtasks
         List<Subtask> subtasks = subtaskMapper.findByTaskId(task.getId());

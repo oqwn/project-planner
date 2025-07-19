@@ -1,6 +1,6 @@
 package com.example.projectplanner.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,10 +9,9 @@ public class Subtask {
     private UUID taskId;
     private String title;
     private boolean completed;
-    private int position;
     private List<UUID> dependsOn;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
     
     // Getters and Setters
     public UUID getId() {
@@ -47,13 +46,6 @@ public class Subtask {
         this.completed = completed;
     }
     
-    public int getPosition() {
-        return position;
-    }
-    
-    public void setPosition(int position) {
-        this.position = position;
-    }
     
     public List<UUID> getDependsOn() {
         return dependsOn;
@@ -63,19 +55,19 @@ public class Subtask {
         this.dependsOn = dependsOn;
     }
     
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
     
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
     
-    public LocalDateTime getUpdatedAt() {
+    public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
     
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }
