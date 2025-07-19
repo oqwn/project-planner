@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: pnpm dev --host
+    networks:
+      - project-planner-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "20003:20003"
+    volumes:
+      - ./backend:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - project-planner-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=projectplanner
+      - POSTGRES_USER=projectplanner
+      - POSTGRES_PASSWORD=projectplanner123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - project-planner-network
+
+volumes:
+  postgres_data:
+
+networks:
+  project-planner-network:
+    driver: bridge

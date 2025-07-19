@@ -1,0 +1,7 @@
+# Development Dockerfile for Backend with hot reload
+FROM maven:3.9-openjdk-21
+
+WORKDIR /app
+
+# Keep container running and start Spring Boot with hot reload
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005"]

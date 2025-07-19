@@ -1,0 +1,10 @@
+# Development Dockerfile for Frontend with hot reload
+FROM node:20-alpine
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# Keep container running and install dependencies on start
+CMD ["sh", "-c", "pnpm install && pnpm dev --host"]

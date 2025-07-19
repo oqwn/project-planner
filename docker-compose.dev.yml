@@ -1,0 +1,30 @@
+version: '3.8'
+
+# Development overrides
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      - VITE_API_URL=http://localhost:20003
+    stdin_open: true
+    tty: true
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/projectplanner
+      - SPRING_DATASOURCE_USERNAME=projectplanner
+      - SPRING_DATASOURCE_PASSWORD=projectplanner123
+    ports:
+      - "5005:5005" # Debug port
+
+  postgres:
+    ports:
+      - "5432:5432"

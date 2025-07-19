@@ -2,7 +2,7 @@
 
 ## Project Setup and Infrastructure
 - [ ] Initialize frontend with Vite and React using pnpm
-- [ ] Initialize backend with Spring Boot 3.4.5 (Java 17+)
+- [ ] Initialize backend with Spring Boot 3.4.5 (Java 21+)
 - [ ] Configure backend to run on port 20003
 - [ ] Set up TypeScript configuration for frontend
 - [ ] Configure ESLint and Prettier for frontend
