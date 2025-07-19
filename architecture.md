@@ -6,7 +6,7 @@ This document outlines the technical architecture for a comprehensive project ma
 ## Technology Stack
 
 ### Frontend
-- **Framework**: React.js 18
+- **Framework**: React.js 21
 - **Package Manager**: pnpm
 - **Build Tool**: Vite
 - **Language**: TypeScript
