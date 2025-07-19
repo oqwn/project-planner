@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { User, CreateUserRequest, UpdateUserRequest } from '../types/user';
 
 const API_BASE_URL = 'http://localhost:20005/api';
 
@@ -10,25 +11,12 @@ export const api = axios.create({
   },
 });
 
-// User API interface
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'ADMIN' | 'PROJECT_MANAGER' | 'TEAM_LEAD' | 'MEMBER' | 'VIEWER';
-  interests?: string[];
-  associations?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
 // User API functions
 export const userApi = {
   getAll: () => api.get<User[]>('/users'),
   getById: (id: string) => api.get<User>(`/users/${id}`),
-  create: (user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) =>
-    api.post<User>('/users', user),
-  update: (id: string, user: Partial<User>) =>
+  create: (user: CreateUserRequest) => api.post<User>('/users', user),
+  update: (id: string, user: UpdateUserRequest) =>
     api.put<User>(`/users/${id}`, user),
   delete: (id: string) => api.delete(`/users/${id}`),
 };

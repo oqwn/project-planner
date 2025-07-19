@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { userApi, User } from '../services/api';
+import { userApi } from '../services/api';
+import type { User, CreateUserRequest, UpdateUserRequest } from '../types/user';
 
 interface UserState {
   users: User[];
@@ -10,10 +11,8 @@ interface UserState {
 
 interface UserActions {
   fetchUsers: () => Promise<void>;
-  createUser: (
-    user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>
-  ) => Promise<void>;
-  updateUser: (id: string, user: Partial<User>) => Promise<void>;
+  createUser: (user: CreateUserRequest) => Promise<void>;
+  updateUser: (id: string, user: UpdateUserRequest) => Promise<void>;
   deleteUser: (id: string) => Promise<void>;
   setCurrentUser: (user: User | null) => void;
   clearError: () => void;
