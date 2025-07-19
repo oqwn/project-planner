@@ -1,5 +1,5 @@
 # Development Dockerfile for Frontend
-FROM node:20-alpine
+FROM node:21-alpine
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate

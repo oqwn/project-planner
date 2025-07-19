@@ -21,7 +21,7 @@ A full-stack project planning application built with React (Vite) frontend and S
 ## Getting Started
 
 ### Prerequisites
-- Node.js 20+
+- Node.js 21+
 - pnpm
 - Java 21+
 - Docker and Docker Compose (for containerized development)
