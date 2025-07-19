@@ -7,7 +7,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     environment:
-      - VITE_API_URL=http://localhost:20003
+      - VITE_API_URL=http://localhost:20005
     stdin_open: true
     tty: true
 

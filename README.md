@@ -16,7 +16,7 @@ A full-stack project planning application built with React (Vite) frontend and S
 - Java 21
 - Maven for build management
 - PostgreSQL database
-- Port: 20003
+- Port: 20005
 
 ## Getting Started
 

@@ -21,7 +21,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "20003:20003"
+      - "20005:20005"
     volumes:
       - ./backend:/app
       - ~/.m2:/root/.m2
