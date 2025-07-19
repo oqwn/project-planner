@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './components/Dashboard/Dashboard';
+import { Tasks } from './components/Tasks/Tasks';
 import { UserList } from './components/UserList';
 import './App.css';
 
@@ -12,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<UserList />} />
-          <Route path="/tasks" element={<TasksPlaceholder />} />
+          <Route path="/tasks" element={<Tasks />} />
           <Route path="/timesheets" element={<TimesheetsPlaceholder />} />
           <Route path="/collaboration" element={<CollaborationPlaceholder />} />
           <Route path="/reports" element={<ReportsPlaceholder />} />
@@ -24,13 +25,6 @@ function App() {
 }
 
 // Placeholder components for future implementation
-const TasksPlaceholder: React.FC = () => (
-  <div className="placeholder-page">
-    <h1>Tasks</h1>
-    <p>Task management interface coming soon...</p>
-  </div>
-);
-
 const TimesheetsPlaceholder: React.FC = () => (
   <div className="placeholder-page">
     <h1>Timesheets</h1>

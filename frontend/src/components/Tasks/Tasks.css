@@ -1,0 +1,10 @@
+.tasks-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure full height for the kanban board */
+.tasks-page > * {
+  flex: 1;
+}
