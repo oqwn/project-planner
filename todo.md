@@ -20,18 +20,31 @@
 - ✅ ESLint and Prettier configuration
 - ✅ Comprehensive project documentation
 
-## Core Architecture
-- [ ] Design Mybatis entities and database schema
-- [ ] Set up PostgreSQL database with Spring Mybatis
-- [ ] Configure Flyway/Liquibase for database migrations
-- [ ] Create REST API with Spring Web MVC
-- [ ] Set up OpenAPI/Swagger documentation
+## Core Architecture ✅ COMPLETED
+- [x] Design Mybatis entities and database schema
+- [x] Set up PostgreSQL database with Spring Mybatis
+- [x] Configure Flyway for database migrations
+- [x] Create REST API with Spring Web MVC
+- [x] Set up OpenAPI/Swagger documentation
 - [ ] Implement Spring Security with JWT authentication
-- [ ] Configure CORS for frontend-backend communication
-- [ ] Create base React component library
-- [ ] Set up React Router v6 for frontend routing
-- [ ] Configure Redux Toolkit or Zustand for state management
-- [ ] Set up Axios for API communication
+- [x] Configure CORS for frontend-backend communication
+- [x] Create base React component library
+- [x] Set up React Router v6 for frontend routing
+- [x] Configure Zustand for state management
+- [x] Set up Axios for API communication
+
+### Core Architecture Status:
+- ✅ MyBatis entities: User, Project, Task, TimeEntry with proper enums
+- ✅ PostgreSQL database: Installed via brew, configured with Spring
+- ✅ Flyway migrations: V1 schema with tables, indexes, and constraints
+- ✅ REST API: UserController with full CRUD operations
+- ✅ OpenAPI/Swagger: Available at http://localhost:20005/swagger-ui.html
+- ✅ CORS: Configured for localhost:5173 frontend communication
+- ✅ React components: UserList component with full-stack integration
+- ✅ React Router v6: Navigation structure with Home and Users pages
+- ✅ Zustand: UserStore for state management with API integration
+- ✅ Axios: HTTP client with interceptors and type-safe API calls
+- 🔄 Spring Security: JWT authentication (pending implementation)
 
 ## Epic 1: Dashboard & Navigation
 - [ ] Create main layout with sidebar navigation
