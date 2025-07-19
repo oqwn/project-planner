@@ -6,31 +6,40 @@ This document outlines the technical architecture for a comprehensive project ma
 ## Technology Stack
 
 ### Frontend
-- **Framework**: React.js or Vue.js 3
-- **UI Library**: Material-UI or Ant Design
-- **State Management**: Redux Toolkit or Pinia
-- **Routing**: React Router or Vue Router
+- **Framework**: React.js 18
+- **Package Manager**: pnpm
 - **Build Tool**: Vite
 - **Language**: TypeScript
+- **UI Library**: Material-UI or Ant Design
+- **State Management**: Redux Toolkit or Zustand
+- **Routing**: React Router v6
 - **Styling**: CSS Modules / Styled Components / Tailwind CSS
 - **Charts**: Chart.js or D3.js for Gantt charts
-- **Drag & Drop**: react-beautiful-dnd or Vue Draggable
+- **Drag & Drop**: react-beautiful-dnd or @dnd-kit
 - **Real-time**: Socket.io-client or WebSockets
+- **HTTP Client**: Axios or Fetch API
+- **Form Handling**: React Hook Form
+- **Date Handling**: date-fns or dayjs
 
 ### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js or NestJS
-- **Language**: TypeScript
+- **Runtime**: Java 17+
+- **Framework**: Spring Boot 3.4.5
+- **Build Tool**: Maven or Gradle
+- **Port**: 20003
 - **API**: REST with OpenAPI/Swagger documentation
-- **Authentication**: JWT with refresh tokens
-- **Real-time**: Socket.io or native WebSockets
-- **Task Queue**: Bull or BullMQ (Redis-based)
-- **Caching**: Redis
+- **Authentication**: Spring Security with JWT
+- **Database Access**: Spring Data JPA
+- **Real-time**: Spring WebSocket with STOMP
+- **Task Queue**: Spring Batch or RabbitMQ
+- **Caching**: Spring Cache with Redis
+- **Validation**: Bean Validation (JSR-303)
+- **Logging**: SLF4J with Logback
 
 ### Database
 - **Primary Database**: PostgreSQL
-- **ORM**: Prisma or TypeORM
-- **Migrations**: Built-in ORM migrations
+- **ORM**: Spring Data JPA with Hibernate
+- **Migrations**: Flyway or Liquibase
+- **Connection Pooling**: HikariCP
 - **Caching Layer**: Redis
 - **File Storage**: AWS S3 or local storage with MinIO
 
@@ -38,9 +47,10 @@ This document outlines the technical architecture for a comprehensive project ma
 - **Containerization**: Docker
 - **Container Orchestration**: Docker Compose (dev), Kubernetes (prod)
 - **CI/CD**: GitHub Actions or GitLab CI
-- **Monitoring**: Prometheus + Grafana
-- **Logging**: Winston + ELK Stack
-- **Testing**: Jest, React Testing Library, Cypress
+- **Monitoring**: Prometheus + Grafana + Spring Boot Actuator
+- **Logging**: SLF4J/Logback + ELK Stack
+- **Frontend Testing**: Jest, React Testing Library, Cypress
+- **Backend Testing**: JUnit 5, Mockito, Spring Boot Test, RestAssured
 
 ## System Architecture
 

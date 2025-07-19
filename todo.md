@@ -1,23 +1,29 @@
 # Project Management Application - Implementation TODO List
 
 ## Project Setup and Infrastructure
-- [ ] Initialize project with build tools and package manager
-- [ ] Set up development environment and linting
-- [ ] Configure TypeScript/JavaScript framework
-- [ ] Set up testing framework
-- [ ] Create project folder structure
-- [ ] Set up version control workflows
-- [ ] Configure CI/CD pipeline
+- [ ] Initialize frontend with Vite and React using pnpm
+- [ ] Initialize backend with Spring Boot 3.4.5 (Java 17+)
+- [ ] Configure backend to run on port 20003
+- [ ] Set up TypeScript configuration for frontend
+- [ ] Configure ESLint and Prettier for frontend
+- [ ] Set up Maven/Gradle for backend build
+- [ ] Create project folder structure (frontend/backend separation)
+- [ ] Set up Git workflows and .gitignore files
+- [ ] Configure Docker Compose for local development
+- [ ] Set up CI/CD pipeline for both frontend and backend
 
 ## Core Architecture
-- [ ] Design and implement data models/schemas
-- [ ] Set up database (SQL/NoSQL)
-- [ ] Create API architecture (REST/GraphQL)
-- [ ] Implement authentication system
-- [ ] Set up authorization and role-based access control
-- [ ] Create base UI component library
-- [ ] Implement routing system
-- [ ] Set up state management solution
+- [ ] Design JPA entities and database schema
+- [ ] Set up PostgreSQL database with Spring Data JPA
+- [ ] Configure Flyway/Liquibase for database migrations
+- [ ] Create REST API with Spring Web MVC
+- [ ] Set up OpenAPI/Swagger documentation
+- [ ] Implement Spring Security with JWT authentication
+- [ ] Configure CORS for frontend-backend communication
+- [ ] Create base React component library
+- [ ] Set up React Router v6 for frontend routing
+- [ ] Configure Redux Toolkit or Zustand for state management
+- [ ] Set up Axios for API communication
 
 ## Epic 1: Dashboard & Navigation
 - [ ] Create main layout with sidebar navigation
