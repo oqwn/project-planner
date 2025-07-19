@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { dashboardApi } from '../../services/api';
 import './TasksOverview.css';
 
-interface Task {
+interface DashboardTask {
   id: string;
   title: string;
   assignee: string;
@@ -11,75 +13,71 @@ interface Task {
 }
 
 export const TasksOverview: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterBy, setFilterBy] = useState('all');
+  const [tasks, setTasks] = useState<DashboardTask[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const tasks: Task[] = [
-    {
-      id: '1',
-      title: 'Design system implementation',
-      assignee: 'Sarah Chen',
-      dueDate: '2025-01-25',
-      priority: 'high',
-      status: 'in-progress'
-    },
-    {
-      id: '2',
-      title: 'API integration testing',
-      assignee: 'Mike Johnson',
-      dueDate: '2025-01-23',
-      priority: 'medium',
-      status: 'todo'
-    },
-    {
-      id: '3',
-      title: 'User authentication flow',
-      assignee: 'Emily Davis',
-      dueDate: '2025-01-20',
-      priority: 'high',
-      status: 'overdue'
-    },
-    {
-      id: '4',
-      title: 'Database optimization',
-      assignee: 'John Doe',
-      dueDate: '2025-01-28',
-      priority: 'low',
-      status: 'completed'
-    },
-    {
-      id: '5',
-      title: 'Mobile responsiveness',
-      assignee: 'Lisa Wang',
-      dueDate: '2025-01-26',
-      priority: 'medium',
-      status: 'in-progress'
-    }
-  ];
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        // Using a default project ID for now
+        const projectId = '1a2b3c4d-5e6f-7890-abcd-ef1234567890';
+        const recentTasks = await dashboardApi.getRecentTasks(projectId, 10);
+        // Map Task to DashboardTask
+        const dashboardTasks: DashboardTask[] = recentTasks.map((task) => ({
+          id: task.id,
+          title: task.title,
+          assignee: task.assignee || task.assigneeName || 'Unassigned',
+          dueDate: task.dueDate,
+          priority: task.priority,
+          status: task.status === 'parked' ? 'todo' : task.status,
+        }));
+        setTasks(dashboardTasks);
+      } catch (error) {
+        console.error('Failed to load tasks:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredTasks = tasks.filter(task => {
-    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         task.assignee.toLowerCase().includes(searchTerm.toLowerCase());
+    loadTasks();
+  }, []);
+
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.assignee.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterBy === 'all' || task.status === filterBy;
     return matchesSearch && matchesFilter;
   });
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'red';
-      case 'medium': return 'yellow';
-      case 'low': return 'blue';
-      default: return 'gray';
+      case 'high':
+        return 'red';
+      case 'medium':
+        return 'yellow';
+      case 'low':
+        return 'blue';
+      default:
+        return 'gray';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'green';
-      case 'in-progress': return 'blue';
-      case 'overdue': return 'red';
-      case 'todo': return 'gray';
-      default: return 'gray';
+      case 'completed':
+        return 'green';
+      case 'in-progress':
+        return 'blue';
+      case 'overdue':
+        return 'red';
+      case 'todo':
+        return 'gray';
+      default:
+        return 'gray';
     }
   };
 
@@ -87,7 +85,9 @@ export const TasksOverview: React.FC = () => {
     <div className="tasks-overview">
       <div className="tasks-header">
         <h2>Tasks Overview</h2>
-        <button className="create-task-btn">+ Create Task</button>
+        <button className="create-task-btn" onClick={() => navigate('/tasks')}>
+          + Create Task
+        </button>
       </div>
 
       <div className="tasks-filters">
@@ -100,7 +100,7 @@ export const TasksOverview: React.FC = () => {
             className="task-search"
           />
         </div>
-        
+
         <select
           value={filterBy}
           onChange={(e) => setFilterBy(e.target.value)}
@@ -124,36 +124,49 @@ export const TasksOverview: React.FC = () => {
         </div>
 
         <div className="table-body">
-          {filteredTasks.map((task) => (
-            <div key={task.id} className="table-row">
-              <div className="col-title">
-                <span className="task-title">{task.title}</span>
-              </div>
-              <div className="col-assignee">
-                <div className="assignee">
-                  <div className="assignee-avatar">
-                    {task.assignee.split(' ').map(n => n[0]).join('')}
+          {loading ? (
+            <div className="loading-message">Loading tasks...</div>
+          ) : (
+            filteredTasks.map((task) => (
+              <div key={task.id} className="table-row">
+                <div className="col-title">
+                  <span className="task-title">{task.title}</span>
+                </div>
+                <div className="col-assignee">
+                  <div className="assignee">
+                    <div className="assignee-avatar">
+                      {task.assignee
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')}
+                    </div>
+                    <span>{task.assignee}</span>
                   </div>
-                  <span>{task.assignee}</span>
+                </div>
+                <div className="col-due">
+                  <span
+                    className={task.status === 'overdue' ? 'overdue-date' : ''}
+                  >
+                    {new Date(task.dueDate).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="col-priority">
+                  <span
+                    className={`priority-badge ${getPriorityColor(task.priority)}`}
+                  >
+                    {task.priority}
+                  </span>
+                </div>
+                <div className="col-status">
+                  <span
+                    className={`status-badge ${getStatusColor(task.status)}`}
+                  >
+                    {task.status.replace('-', ' ')}
+                  </span>
                 </div>
               </div>
-              <div className="col-due">
-                <span className={task.status === 'overdue' ? 'overdue-date' : ''}>
-                  {new Date(task.dueDate).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="col-priority">
-                <span className={`priority-badge ${getPriorityColor(task.priority)}`}>
-                  {task.priority}
-                </span>
-              </div>
-              <div className="col-status">
-                <span className={`status-badge ${getStatusColor(task.status)}`}>
-                  {task.status.replace('-', ' ')}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 

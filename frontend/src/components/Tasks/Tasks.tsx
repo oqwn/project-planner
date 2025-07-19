@@ -14,9 +14,11 @@ export const Tasks: React.FC = () => {
   const {
     tasks,
     teamMembers,
+    loading,
+    error,
     createTask,
     updateTask,
-    deleteTask
+    deleteTask,
   } = useTasks();
 
   const handleCreateTask = (taskData: CreateTaskRequest) => {
@@ -45,10 +47,11 @@ export const Tasks: React.FC = () => {
         estimatedHours: taskData.estimatedHours,
         tags: taskData.tags,
         // Convert subtasks to include IDs
-        subtasks: taskData.subtasks?.map((st, index) => ({
-          id: selectedTask.subtasks[index]?.id || `st-${Date.now()}-${index}`,
-          ...st
-        })) || []
+        subtasks:
+          taskData.subtasks?.map((st, index) => ({
+            id: selectedTask.subtasks[index]?.id || `st-${Date.now()}-${index}`,
+            ...st,
+          })) || [],
       };
       updateTask(selectedTask.id, updates);
     }
@@ -61,6 +64,14 @@ export const Tasks: React.FC = () => {
     setIsDetailModalOpen(false);
     setSelectedTask(null);
   };
+
+  if (loading) {
+    return <div className="tasks-loading">Loading tasks...</div>;
+  }
+
+  if (error) {
+    return <div className="tasks-error">{error}</div>;
+  }
 
   return (
     <div className="tasks-page">

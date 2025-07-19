@@ -10,7 +10,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   return (
     <header className="header">
       <div className="header-left">
-        <button 
+        <button
           className="sidebar-toggle"
           onClick={onToggleSidebar}
           aria-label="Toggle sidebar"

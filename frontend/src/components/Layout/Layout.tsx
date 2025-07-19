@@ -17,14 +17,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="layout">
       <Sidebar collapsed={sidebarCollapsed} />
-      <div className={`main-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-        <Header 
-          onToggleSidebar={toggleSidebar} 
+      <div
+        className={`main-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}
+      >
+        <Header
+          onToggleSidebar={toggleSidebar}
           sidebarCollapsed={sidebarCollapsed}
         />
-        <main className="content-area">
-          {children}
-        </main>
+        <main className="content-area">{children}</main>
       </div>
     </div>
   );

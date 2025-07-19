@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { dashboardApi } from '../../services/api';
 import './StatsCards.css';
 
 interface StatCard {
@@ -11,40 +12,71 @@ interface StatCard {
 }
 
 export const StatsCards: React.FC = () => {
-  const stats: StatCard[] = [
-    {
-      title: 'Total Tasks',
-      value: '156',
-      change: '+12%',
-      trend: 'up',
-      icon: '📋',
-      color: 'blue'
-    },
-    {
-      title: 'In Progress',
-      value: '24',
-      change: '+8%',
-      trend: 'up',
-      icon: '⚡',
-      color: 'orange'
-    },
-    {
-      title: 'Completed',
-      value: '89',
-      change: '+15%',
-      trend: 'up',
-      icon: '✅',
-      color: 'green'
-    },
-    {
-      title: 'Overdue',
-      value: '7',
-      change: '-3%',
-      trend: 'down',
-      icon: '⚠️',
-      color: 'red'
-    }
-  ];
+  const [stats, setStats] = useState<StatCard[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        // Using a default project ID for now
+        const projectId = '1a2b3c4d-5e6f-7890-abcd-ef1234567890';
+        const dashboardStats = await dashboardApi.getStats(projectId);
+
+        const statsData: StatCard[] = [
+          {
+            title: 'Total Tasks',
+            value: dashboardStats.totalTasks.value.toString(),
+            change: dashboardStats.totalTasks.trend,
+            trend: dashboardStats.totalTasks.trend.startsWith('+')
+              ? 'up'
+              : 'down',
+            icon: '📋',
+            color: 'blue',
+          },
+          {
+            title: 'In Progress',
+            value: dashboardStats.inProgress.value.toString(),
+            change: dashboardStats.inProgress.trend,
+            trend: dashboardStats.inProgress.trend.startsWith('+')
+              ? 'up'
+              : 'down',
+            icon: '⚡',
+            color: 'orange',
+          },
+          {
+            title: 'Completed',
+            value: dashboardStats.completed.value.toString(),
+            change: dashboardStats.completed.trend,
+            trend: dashboardStats.completed.trend.startsWith('+')
+              ? 'up'
+              : 'down',
+            icon: '✅',
+            color: 'green',
+          },
+          {
+            title: 'Overdue',
+            value: dashboardStats.overdue.value.toString(),
+            change: dashboardStats.overdue.trend,
+            trend: dashboardStats.overdue.trend.startsWith('-') ? 'down' : 'up',
+            icon: '⚠️',
+            color: 'red',
+          },
+        ];
+
+        setStats(statsData);
+      } catch (error) {
+        console.error('Failed to load dashboard stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
+  if (loading) {
+    return <div className="stats-cards loading">Loading stats...</div>;
+  }
 
   return (
     <div className="stats-cards">
@@ -56,9 +88,7 @@ export const StatsCards: React.FC = () => {
           <div className="stat-content">
             <div className="stat-header">
               <h3 className="stat-title">{stat.title}</h3>
-              <span className={`stat-change ${stat.trend}`}>
-                {stat.change}
-              </span>
+              <span className={`stat-change ${stat.trend}`}>{stat.change}</span>
             </div>
             <div className="stat-value">{stat.value}</div>
           </div>

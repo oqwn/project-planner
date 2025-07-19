@@ -1,6 +1,9 @@
 export type TaskStatus = 'todo' | 'in-progress' | 'completed' | 'parked';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
+export type CreateTaskInput = CreateTaskRequest;
+export type UpdateTaskInput = Partial<Task>;
+
 export interface Subtask {
   id: string;
   title: string;
@@ -40,18 +43,19 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   assigneeId: string;
-  assigneeName: string;
+  assignee?: string; // For backward compatibility
+  assigneeName?: string;
   assigneeAvatar?: string;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
   dueDate: string;
-  estimatedHours: number;
+  estimatedHours?: number;
   actualHours?: number;
   subtasks: Subtask[];
   comments: TaskComment[];
   attachments: TaskAttachment[];
-  reminders: TaskReminder[];
+  reminders?: TaskReminder[];
   tags?: string[];
 }
 

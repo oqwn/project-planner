@@ -1,94 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { dashboardApi } from '../../services/api';
+import type { RecentActivity as RecentActivityType } from '../../types/dashboard';
 import './RecentActivity.css';
 
-interface Activity {
-  id: string;
-  type: 'task_created' | 'task_completed' | 'comment_added' | 'file_uploaded' | 'milestone_reached';
-  user: string;
-  description: string;
-  timestamp: string;
-  targetItem?: string;
-}
-
 export const RecentActivity: React.FC = () => {
-  const activities: Activity[] = [
-    {
-      id: '1',
-      type: 'task_completed',
-      user: 'Sarah Chen',
-      description: 'completed',
-      targetItem: 'User authentication flow',
-      timestamp: '2 hours ago'
-    },
-    {
-      id: '2',
-      type: 'comment_added',
-      user: 'Mike Johnson',
-      description: 'commented on',
-      targetItem: 'API integration testing',
-      timestamp: '4 hours ago'
-    },
-    {
-      id: '3',
-      type: 'task_created',
-      user: 'Emily Davis',
-      description: 'created',
-      targetItem: 'Mobile responsiveness',
-      timestamp: '6 hours ago'
-    },
-    {
-      id: '4',
-      type: 'file_uploaded',
-      user: 'John Doe',
-      description: 'uploaded file to',
-      targetItem: 'Design System Documentation',
-      timestamp: '8 hours ago'
-    },
-    {
-      id: '5',
-      type: 'milestone_reached',
-      user: 'Lisa Wang',
-      description: 'reached milestone',
-      targetItem: 'MVP Release v1.0',
-      timestamp: '1 day ago'
-    },
-    {
-      id: '6',
-      type: 'task_created',
-      user: 'Tom Wilson',
-      description: 'created',
-      targetItem: 'Performance optimization',
-      timestamp: '1 day ago'
-    },
-    {
-      id: '7',
-      type: 'comment_added',
-      user: 'Sarah Chen',
-      description: 'commented on',
-      targetItem: 'Database schema update',
-      timestamp: '2 days ago'
+  const [activities, setActivities] = useState<RecentActivityType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  useEffect(() => {
+    loadActivities();
+  }, []);
+
+  const loadActivities = async () => {
+    try {
+      // Using a default project ID for now
+      const projectId = '1a2b3c4d-5e6f-7890-abcd-ef1234567890';
+      const recentActivities = await dashboardApi.getRecentActivities(
+        projectId,
+        page * limit
+      );
+      setActivities(recentActivities);
+    } catch (error) {
+      console.error('Failed to load activities:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const loadMore = async () => {
+    setPage((prev) => prev + 1);
+    await loadActivities();
+  };
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'task_completed': return '✅';
-      case 'task_created': return '📋';
-      case 'comment_added': return '💬';
-      case 'file_uploaded': return '📎';
-      case 'milestone_reached': return '🎯';
-      default: return '📝';
+      case 'task_completed':
+        return '✅';
+      case 'task_created':
+        return '📋';
+      case 'comment_added':
+        return '💬';
+      case 'file_uploaded':
+        return '📎';
+      case 'milestone_reached':
+        return '🎯';
+      default:
+        return '📝';
     }
   };
 
   const getActivityColor = (type: string) => {
     switch (type) {
-      case 'task_completed': return 'green';
-      case 'task_created': return 'blue';
-      case 'comment_added': return 'purple';
-      case 'file_uploaded': return 'orange';
-      case 'milestone_reached': return 'yellow';
-      default: return 'gray';
+      case 'task_completed':
+        return 'green';
+      case 'task_created':
+        return 'blue';
+      case 'comment_added':
+        return 'purple';
+      case 'file_uploaded':
+        return 'orange';
+      case 'milestone_reached':
+        return 'yellow';
+      default:
+        return 'gray';
     }
   };
 
@@ -100,28 +76,36 @@ export const RecentActivity: React.FC = () => {
       </div>
 
       <div className="activity-list">
-        {activities.map((activity) => (
-          <div key={activity.id} className="activity-item">
-            <div className={`activity-icon ${getActivityColor(activity.type)}`}>
-              {getActivityIcon(activity.type)}
-            </div>
-            
-            <div className="activity-content">
-              <div className="activity-text">
-                <span className="activity-user">{activity.user}</span>
-                <span className="activity-action">{activity.description}</span>
-                {activity.targetItem && (
-                  <span className="activity-target">{activity.targetItem}</span>
-                )}
+        {loading ? (
+          <div className="loading-message">Loading activities...</div>
+        ) : (
+          activities.map((activity) => (
+            <div key={activity.id} className="activity-item">
+              <div
+                className={`activity-icon ${getActivityColor(activity.type)}`}
+              >
+                {getActivityIcon(activity.type)}
               </div>
-              <div className="activity-time">{activity.timestamp}</div>
+
+              <div className="activity-content">
+                <div className="activity-text">
+                  <span className="activity-user">{activity.user}</span>
+                  <span className="activity-action">{activity.action}</span>
+                  {activity.target && (
+                    <span className="activity-target">{activity.target}</span>
+                  )}
+                </div>
+                <div className="activity-time">{activity.timestamp}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       <div className="activity-footer">
-        <button className="load-more-btn">Load More</button>
+        <button className="load-more-btn" onClick={loadMore}>
+          Load More
+        </button>
       </div>
     </div>
   );

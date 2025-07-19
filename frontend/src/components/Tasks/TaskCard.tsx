@@ -8,18 +8,24 @@ interface TaskCardProps {
   priorityColor: string;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick, priorityColor }) => {
-  const completedSubtasks = task.subtasks.filter(st => st.completed).length;
+export const TaskCard: React.FC<TaskCardProps> = ({
+  task,
+  onClick,
+  priorityColor,
+}) => {
+  const completedSubtasks = task.subtasks.filter((st) => st.completed).length;
   const totalSubtasks = task.subtasks.length;
-  const subtaskProgress = totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0;
+  const subtaskProgress =
+    totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0;
 
   const getDaysUntilDue = () => {
     const today = new Date();
     const dueDate = new Date(task.dueDate);
     const diffTime = dueDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) return { text: `${Math.abs(diffDays)}d overdue`, isOverdue: true };
+
+    if (diffDays < 0)
+      return { text: `${Math.abs(diffDays)}d overdue`, isOverdue: true };
     if (diffDays === 0) return { text: 'Due today', isToday: true };
     if (diffDays === 1) return { text: 'Due tomorrow', isTomorrow: true };
     if (diffDays <= 7) return { text: `${diffDays}d left`, isThisWeek: true };
@@ -29,7 +35,11 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick, priorityColor
   const dueDateInfo = getDaysUntilDue();
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
   };
 
   return (
@@ -38,12 +48,18 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick, priorityColor
         <div className={`priority-indicator ${priorityColor}`}></div>
         <div className="task-actions">
           {task.attachments.length > 0 && (
-            <span className="attachment-count" title={`${task.attachments.length} attachments`}>
+            <span
+              className="attachment-count"
+              title={`${task.attachments.length} attachments`}
+            >
               📎 {task.attachments.length}
             </span>
           )}
           {task.comments.length > 0 && (
-            <span className="comment-count" title={`${task.comments.length} comments`}>
+            <span
+              className="comment-count"
+              title={`${task.comments.length} comments`}
+            >
               💬 {task.comments.length}
             </span>
           )}
@@ -61,7 +77,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick, priorityColor
         <div className="subtasks-section">
           <div className="subtasks-progress">
             <div className="progress-bar">
-              <div 
+              <div
                 className="progress-fill"
                 style={{ width: `${subtaskProgress}%` }}
               ></div>
@@ -75,12 +91,19 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick, priorityColor
 
       <div className="task-meta">
         <div className="due-date">
-          <span className={`due-date-text ${
-            dueDateInfo.isOverdue ? 'overdue' : 
-            dueDateInfo.isToday ? 'today' : 
-            dueDateInfo.isTomorrow ? 'tomorrow' :
-            dueDateInfo.isThisWeek ? 'this-week' : 'normal'
-          }`}>
+          <span
+            className={`due-date-text ${
+              dueDateInfo.isOverdue
+                ? 'overdue'
+                : dueDateInfo.isToday
+                  ? 'today'
+                  : dueDateInfo.isTomorrow
+                    ? 'tomorrow'
+                    : dueDateInfo.isThisWeek
+                      ? 'this-week'
+                      : 'normal'
+            }`}
+          >
             🕒 {dueDateInfo.text}
           </span>
         </div>
@@ -88,9 +111,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick, priorityColor
         <div className="assignee-section">
           <div className="assignee-avatar" title={task.assigneeName}>
             {task.assigneeAvatar ? (
-              <img src={task.assigneeAvatar} alt={task.assigneeName} />
+              <img
+                src={task.assigneeAvatar}
+                alt={task.assigneeName || task.assignee || 'Unknown'}
+              />
             ) : (
-              <span>{getInitials(task.assigneeName)}</span>
+              <span>
+                {getInitials(task.assigneeName || task.assignee || 'Unknown')}
+              </span>
             )}
           </div>
         </div>
@@ -104,9 +132,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick, priorityColor
             </span>
           ))}
           {task.tags.length > 3 && (
-            <span className="tag-overflow">
-              +{task.tags.length - 3}
-            </span>
+            <span className="tag-overflow">+{task.tags.length - 3}</span>
           )}
         </div>
       )}

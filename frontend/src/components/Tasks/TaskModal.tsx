@@ -15,7 +15,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   onClose,
   onSave,
   task,
-  teamMembers
+  teamMembers,
 }) => {
   const [formData, setFormData] = useState<CreateTaskRequest>({
     title: '',
@@ -25,7 +25,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     priority: 'medium',
     estimatedHours: 1,
     subtasks: [],
-    tags: []
+    tags: [],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -39,9 +39,13 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         assigneeId: task.assigneeId,
         dueDate: task.dueDate,
         priority: task.priority,
-        estimatedHours: task.estimatedHours,
-        subtasks: task.subtasks.map(st => ({ title: st.title, completed: st.completed, dependsOn: st.dependsOn })),
-        tags: task.tags || []
+        estimatedHours: task.estimatedHours || 1,
+        subtasks: task.subtasks.map((st) => ({
+          title: st.title,
+          completed: st.completed,
+          dependsOn: st.dependsOn,
+        })),
+        tags: task.tags || [],
       });
     } else {
       setFormData({
@@ -52,7 +56,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         priority: 'medium',
         estimatedHours: 1,
         subtasks: [],
-        tags: []
+        tags: [],
       });
     }
     setErrors({});
@@ -85,7 +89,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       onSave(formData);
       onClose();
@@ -94,18 +98,21 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   const addSubtask = () => {
     if (newSubtask.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        subtasks: [...(prev.subtasks || []), { title: newSubtask.trim(), completed: false }]
+        subtasks: [
+          ...(prev.subtasks || []),
+          { title: newSubtask.trim(), completed: false },
+        ],
       }));
       setNewSubtask('');
     }
   };
 
   const removeSubtask = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      subtasks: prev.subtasks?.filter((_, i) => i !== index) || []
+      subtasks: prev.subtasks?.filter((_, i) => i !== index) || [],
     }));
   };
 
@@ -120,10 +127,14 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="task-modal" onClick={e => e.stopPropagation()}>
+      <div className="task-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{task ? 'Edit Task' : 'Create New Task'}</h2>
-          <button className="close-btn" onClick={onClose} aria-label="Close modal">
+          <button
+            className="close-btn"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
             ✕
           </button>
         </div>
@@ -135,11 +146,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               id="title"
               type="text"
               value={formData.title}
-              onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
               className={errors.title ? 'error' : ''}
               placeholder="Enter task title..."
             />
-            {errors.title && <span className="error-message">{errors.title}</span>}
+            {errors.title && (
+              <span className="error-message">{errors.title}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -147,7 +162,12 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             <textarea
               id="description"
               value={formData.description}
-              onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               placeholder="Describe the task..."
               rows={3}
             />
@@ -159,17 +179,24 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               <select
                 id="assignee"
                 value={formData.assigneeId}
-                onChange={e => setFormData(prev => ({ ...prev, assigneeId: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    assigneeId: e.target.value,
+                  }))
+                }
                 className={errors.assigneeId ? 'error' : ''}
               >
                 <option value="">Select assignee...</option>
-                {teamMembers.map(member => (
+                {teamMembers.map((member) => (
                   <option key={member.id} value={member.id}>
                     {member.name}
                   </option>
                 ))}
               </select>
-              {errors.assigneeId && <span className="error-message">{errors.assigneeId}</span>}
+              {errors.assigneeId && (
+                <span className="error-message">{errors.assigneeId}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -177,7 +204,12 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               <select
                 id="priority"
                 value={formData.priority}
-                onChange={e => setFormData(prev => ({ ...prev, priority: e.target.value as TaskPriority }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    priority: e.target.value as TaskPriority,
+                  }))
+                }
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -193,10 +225,14 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 id="dueDate"
                 type="date"
                 value={formData.dueDate}
-                onChange={e => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, dueDate: e.target.value }))
+                }
                 className={errors.dueDate ? 'error' : ''}
               />
-              {errors.dueDate && <span className="error-message">{errors.dueDate}</span>}
+              {errors.dueDate && (
+                <span className="error-message">{errors.dueDate}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -207,10 +243,17 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 min="0.5"
                 step="0.5"
                 value={formData.estimatedHours}
-                onChange={e => setFormData(prev => ({ ...prev, estimatedHours: parseFloat(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    estimatedHours: parseFloat(e.target.value) || 0,
+                  }))
+                }
                 className={errors.estimatedHours ? 'error' : ''}
               />
-              {errors.estimatedHours && <span className="error-message">{errors.estimatedHours}</span>}
+              {errors.estimatedHours && (
+                <span className="error-message">{errors.estimatedHours}</span>
+              )}
             </div>
           </div>
 
@@ -220,15 +263,19 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               <input
                 type="text"
                 value={newSubtask}
-                onChange={e => setNewSubtask(e.target.value)}
-                onKeyPress={e => handleKeyPress(e, addSubtask)}
+                onChange={(e) => setNewSubtask(e.target.value)}
+                onKeyPress={(e) => handleKeyPress(e, addSubtask)}
                 placeholder="Add a subtask..."
               />
-              <button type="button" onClick={addSubtask} className="add-subtask-btn">
+              <button
+                type="button"
+                onClick={addSubtask}
+                className="add-subtask-btn"
+              >
                 Add
               </button>
             </div>
-            
+
             {formData.subtasks && formData.subtasks.length > 0 && (
               <div className="subtasks-list">
                 {formData.subtasks.map((subtask, index) => (

@@ -19,11 +19,11 @@ export const Dashboard: React.FC = () => {
         <div className="dashboard-card tasks-overview">
           <TasksOverview />
         </div>
-        
+
         <div className="dashboard-card recent-activity">
           <RecentActivity />
         </div>
-        
+
         <div className="dashboard-card project-progress">
           <ProjectProgress />
         </div>

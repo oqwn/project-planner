@@ -1,7 +1,14 @@
 import axios from 'axios';
 import type { User, CreateUserRequest, UpdateUserRequest } from '../types/user';
+import type { Task, CreateTaskInput, UpdateTaskInput } from '../types/task';
+import type {
+  DashboardStats,
+  RecentActivity,
+  ProjectProgress,
+  TeamMember,
+} from '../types/dashboard';
 
-const API_BASE_URL = 'http://localhost:20005/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // Create axios instance with default config
 export const api = axios.create({
@@ -19,6 +26,150 @@ export const userApi = {
   update: (id: string, user: UpdateUserRequest) =>
     api.put<User>(`/users/${id}`, user),
   delete: (id: string) => api.delete(`/users/${id}`),
+};
+
+// Task API endpoints
+export const taskApi = {
+  // Get all tasks for a project
+  getTasks: async (projectId: string): Promise<Task[]> => {
+    const { data } = await api.get(`/tasks/project/${projectId}`);
+    return data.map(transformTaskFromApi);
+  },
+
+  // Get a single task by ID
+  getTask: async (taskId: string): Promise<Task> => {
+    const { data } = await api.get(`/tasks/${taskId}`);
+    return transformTaskFromApi(data);
+  },
+
+  // Create a new task
+  createTask: async (
+    projectId: string,
+    task: CreateTaskInput
+  ): Promise<Task> => {
+    const { data } = await api.post('/tasks', {
+      ...task,
+      projectId,
+      assigneeId: task.assigneeId || 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', // Default user ID
+      createdBy: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', // Current user ID
+    });
+    return transformTaskFromApi(data);
+  },
+
+  // Update an existing task
+  updateTask: async (
+    taskId: string,
+    updates: UpdateTaskInput
+  ): Promise<Task> => {
+    const { data } = await api.put(`/tasks/${taskId}`, updates);
+    return transformTaskFromApi(data);
+  },
+
+  // Delete a task
+  deleteTask: async (taskId: string): Promise<void> => {
+    await api.delete(`/tasks/${taskId}`);
+  },
+
+  // Get team members for assignment
+  getTeamMembers: async (projectId: string): Promise<TeamMember[]> => {
+    const { data } = await api.get(`/tasks/team-members/${projectId}`);
+    return data;
+  },
+
+  // Add a comment to a task
+  addComment: async (taskId: string, content: string): Promise<void> => {
+    await api.post(`/tasks/${taskId}/comments`, {
+      content,
+      userId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', // Current user ID
+    });
+  },
+
+  // Add a subtask
+  addSubtask: async (taskId: string, title: string): Promise<void> => {
+    await api.post(`/tasks/${taskId}/subtasks`, {
+      title,
+      completed: false,
+    });
+  },
+
+  // Update subtask
+  updateSubtask: async (
+    taskId: string,
+    subtaskId: string,
+    completed: boolean
+  ): Promise<void> => {
+    await api.put(`/tasks/${taskId}/subtasks/${subtaskId}`, { completed });
+  },
+};
+
+// Dashboard API endpoints
+export const dashboardApi = {
+  // Get dashboard statistics
+  getStats: async (projectId: string): Promise<DashboardStats> => {
+    const { data } = await api.get(`/dashboard/stats/${projectId}`);
+    return {
+      totalTasks: { value: data.totalTasks, trend: data.totalTasksTrend },
+      inProgress: { value: data.inProgressTasks, trend: data.inProgressTrend },
+      completed: { value: data.completedTasks, trend: data.completedTrend },
+      overdue: { value: data.overdueTasks, trend: data.overdueTrend },
+    };
+  },
+
+  // Get recent tasks for dashboard
+  getRecentTasks: async (projectId: string, limit = 10): Promise<Task[]> => {
+    const { data } = await api.get(
+      `/dashboard/recent-tasks/${projectId}?limit=${limit}`
+    );
+    return data.map((task: any) => ({
+      id: task.id,
+      title: task.title,
+      description: '',
+      assignee: task.assignee,
+      assigneeId: task.assigneeId || '',
+      createdBy: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      dueDate: task.dueDate,
+      priority: task.priority,
+      status: task.status,
+      subtasks: [],
+      comments: [],
+      attachments: [],
+      tags: [],
+    }));
+  },
+
+  // Get recent activities
+  getRecentActivities: async (
+    projectId: string,
+    limit = 10
+  ): Promise<RecentActivity[]> => {
+    const { data } = await api.get(
+      `/dashboard/recent-activities/${projectId}?limit=${limit}`
+    );
+    return data.map((activity: any) => ({
+      id: crypto.randomUUID(), // Generate ID on frontend
+      type: activity.type,
+      user: activity.user,
+      action: activity.description,
+      target: activity.targetItem,
+      timestamp: activity.timestamp,
+    }));
+  },
+
+  // Get project progress
+  getProjectProgress: async (projectId: string): Promise<ProjectProgress[]> => {
+    const { data } = await api.get(`/dashboard/project-progress/${projectId}`);
+    return data.map((project: any) => ({
+      id: project.id,
+      name: project.name,
+      progress: project.progress,
+      dueDate: project.dueDate,
+      status: project.status,
+      tasksCompleted: project.tasksCompleted,
+      totalTasks: project.totalTasks,
+    }));
+  },
 };
 
 // Add request interceptor for potential auth tokens
@@ -39,3 +190,51 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Helper function to transform API task response to frontend Task type
+function transformTaskFromApi(apiTask: any): Task {
+  return {
+    id: apiTask.id,
+    title: apiTask.title,
+    description: apiTask.description || '',
+    status: apiTask.status,
+    priority: apiTask.priority,
+    assignee: apiTask.assigneeName,
+    assigneeId: apiTask.assigneeId,
+    assigneeName: apiTask.assigneeName,
+    createdBy: apiTask.createdByName || 'Unknown',
+    dueDate: apiTask.dueDate,
+    createdAt: apiTask.createdAt,
+    updatedAt: apiTask.updatedAt,
+    tags: apiTask.tags || [],
+    subtasks:
+      apiTask.subtasks?.map((st: any) => ({
+        id: st.id,
+        title: st.title,
+        completed: st.completed,
+      })) || [],
+    comments:
+      apiTask.comments?.map((c: any) => ({
+        id: c.id,
+        author: c.userName,
+        user: c.userName,
+        content: c.content,
+        timestamp: c.createdAt,
+        authorId: c.userId,
+      })) || [],
+    attachments:
+      apiTask.attachments?.map((a: any) => ({
+        id: a.id,
+        filename: a.fileName,
+        name: a.fileName,
+        fileSize: a.fileSize,
+        size: a.fileSize,
+        fileType: a.fileType,
+        type: a.fileType,
+        url: a.fileUrl,
+        uploadedBy: a.uploadedBy,
+        uploadedAt: a.uploadedAt,
+      })) || [],
+    reminders: [],
+  };
+}

@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from '@hello-pangea/dnd';
 import type { Task, TaskStatus, KanbanColumn } from '../../types/task';
 import { TaskCard } from './TaskCard';
 import './KanbanBoard.css';
@@ -15,36 +20,36 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   tasks,
   onTaskUpdate,
   onTaskClick,
-  onCreateTask
+  onCreateTask,
 }) => {
   const [columns] = useState<KanbanColumn[]>([
     {
       id: 'todo',
       title: 'To Do',
       tasks: [],
-      limit: undefined
+      limit: undefined,
     },
     {
       id: 'in-progress',
       title: 'In Progress',
       tasks: [],
-      limit: 5
+      limit: 5,
     },
     {
       id: 'completed',
       title: 'Completed',
-      tasks: []
+      tasks: [],
     },
     {
       id: 'parked',
       title: 'Parked',
-      tasks: []
-    }
+      tasks: [],
+    },
   ]);
 
   // Group tasks by status
   const getTasksByStatus = (status: TaskStatus): Task[] => {
-    return tasks.filter(task => task.status === status);
+    return tasks.filter((task) => task.status === status);
   };
 
   const getColumnTaskCount = (status: TaskStatus): number => {
@@ -68,7 +73,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     }
 
     // Find the task being moved
-    const task = tasks.find(t => t.id === draggableId);
+    const task = tasks.find((t) => t.id === draggableId);
     if (!task) return;
 
     // Update task status
@@ -78,20 +83,29 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'red';
-      case 'medium': return 'yellow';
-      case 'low': return 'blue';
-      default: return 'gray';
+      case 'high':
+        return 'red';
+      case 'medium':
+        return 'yellow';
+      case 'low':
+        return 'blue';
+      default:
+        return 'gray';
     }
   };
 
   const getStatusColor = (status: TaskStatus) => {
     switch (status) {
-      case 'todo': return '#6b7280';
-      case 'in-progress': return '#2563eb';
-      case 'completed': return '#059669';
-      case 'parked': return '#d97706';
-      default: return '#6b7280';
+      case 'todo':
+        return '#6b7280';
+      case 'in-progress':
+        return '#2563eb';
+      case 'completed':
+        return '#059669';
+      case 'parked':
+        return '#d97706';
+      default:
+        return '#6b7280';
     }
   };
 
@@ -115,20 +129,20 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
               <div key={column.id} className="kanban-column">
                 <div className="column-header">
                   <div className="column-title">
-                    <span 
+                    <span
                       className="column-indicator"
                       style={{ backgroundColor: getStatusColor(column.id) }}
                     ></span>
                     <h3>{column.title}</h3>
-                    <span className={`task-count ${isOverLimit ? 'over-limit' : ''}`}>
+                    <span
+                      className={`task-count ${isOverLimit ? 'over-limit' : ''}`}
+                    >
                       {taskCount}
                       {column.limit && ` / ${column.limit}`}
                     </span>
                   </div>
                   {isOverLimit && (
-                    <div className="limit-warning">
-                      ⚠️ Over limit
-                    </div>
+                    <div className="limit-warning">⚠️ Over limit</div>
                   )}
                 </div>
 
@@ -166,12 +180,12 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                         </Draggable>
                       ))}
                       {provided.placeholder}
-                      
+
                       {columnTasks.length === 0 && (
                         <div className="empty-column">
                           <p>No tasks yet</p>
                           {column.id === 'todo' && (
-                            <button 
+                            <button
                               className="add-task-to-column"
                               onClick={onCreateTask}
                             >

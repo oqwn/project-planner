@@ -18,16 +18,18 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   task,
   onSave,
   onDelete,
-  teamMembers
+  teamMembers,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [newComment, setNewComment] = useState('');
-  const [selectedSubtasks, setSelectedSubtasks] = useState<Set<string>>(new Set());
+  const [selectedSubtasks, setSelectedSubtasks] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
     if (task) {
       const completedSubtasks = new Set(
-        task.subtasks.filter(st => st.completed).map(st => st.id)
+        task.subtasks.filter((st) => st.completed).map((st) => st.id)
       );
       setSelectedSubtasks(completedSubtasks);
     }
@@ -58,22 +60,26 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
       newSelected.add(subtaskId);
     }
     setSelectedSubtasks(newSelected);
-    
+
     // Update the task with new subtask completion status
-    const updatedSubtasks = task.subtasks.map(st => ({
+    const updatedSubtasks = task.subtasks.map((st) => ({
       ...st,
-      completed: newSelected.has(st.id)
+      completed: newSelected.has(st.id),
     }));
-    
+
     onSave({
       title: task.title,
       description: task.description,
       assigneeId: task.assigneeId,
       dueDate: task.dueDate,
       priority: task.priority,
-      estimatedHours: task.estimatedHours,
-      subtasks: updatedSubtasks.map(st => ({ title: st.title, completed: st.completed, dependsOn: st.dependsOn })),
-      tags: task.tags
+      estimatedHours: task.estimatedHours || 0,
+      subtasks: updatedSubtasks.map((st) => ({
+        title: st.title,
+        completed: st.completed,
+        dependsOn: st.dependsOn,
+      })),
+      tags: task.tags,
     });
   };
 
@@ -88,20 +94,29 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return '#ef4444';
-      case 'medium': return '#f59e0b';
-      case 'low': return '#3b82f6';
-      default: return '#6b7280';
+      case 'high':
+        return '#ef4444';
+      case 'medium':
+        return '#f59e0b';
+      case 'low':
+        return '#3b82f6';
+      default:
+        return '#6b7280';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'todo': return '#6b7280';
-      case 'in-progress': return '#2563eb';
-      case 'completed': return '#059669';
-      case 'parked': return '#d97706';
-      default: return '#6b7280';
+      case 'todo':
+        return '#6b7280';
+      case 'in-progress':
+        return '#2563eb';
+      case 'completed':
+        return '#059669';
+      case 'parked':
+        return '#d97706';
+      default:
+        return '#6b7280';
     }
   };
 
@@ -110,8 +125,9 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     const dueDate = new Date(task.dueDate);
     const diffTime = dueDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) return { text: `${Math.abs(diffDays)} days overdue`, isOverdue: true };
+
+    if (diffDays < 0)
+      return { text: `${Math.abs(diffDays)} days overdue`, isOverdue: true };
     if (diffDays === 0) return { text: 'Due today', isToday: true };
     if (diffDays === 1) return { text: 'Due tomorrow', isTomorrow: true };
     return { text: `${diffDays} days remaining`, isNormal: true };
@@ -121,29 +137,34 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="task-detail-modal" onClick={e => e.stopPropagation()}>
+      <div className="task-detail-modal" onClick={(e) => e.stopPropagation()}>
         <div className="task-detail-header">
           <div className="task-detail-title-section">
-            <div className="task-detail-priority" style={{ backgroundColor: getPriorityColor(task.priority) }}>
+            <div
+              className="task-detail-priority"
+              style={{ backgroundColor: getPriorityColor(task.priority) }}
+            >
               {task.priority}
             </div>
             <h1 className="task-detail-title">{task.title}</h1>
-            <div className="task-detail-status" style={{ backgroundColor: getStatusColor(task.status) }}>
+            <div
+              className="task-detail-status"
+              style={{ backgroundColor: getStatusColor(task.status) }}
+            >
               {task.status.replace('-', ' ')}
             </div>
           </div>
-          
+
           <div className="task-detail-actions">
-            <button 
-              className="edit-btn"
-              onClick={() => setIsEditMode(true)}
-            >
+            <button className="edit-btn" onClick={() => setIsEditMode(true)}>
               ✏️ Edit
             </button>
-            <button 
+            <button
               className="delete-btn"
               onClick={() => {
-                if (window.confirm('Are you sure you want to delete this task?')) {
+                if (
+                  window.confirm('Are you sure you want to delete this task?')
+                ) {
                   onDelete(task.id);
                 }
               }}
@@ -168,7 +189,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
             {task.subtasks.length > 0 && (
               <div className="task-detail-section">
                 <h3>
-                  Subtasks 
+                  Subtasks
                   <span className="subtask-progress">
                     ({selectedSubtasks.size}/{task.subtasks.length} completed)
                   </span>
@@ -182,7 +203,9 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                         onChange={() => handleSubtaskToggle(subtask.id)}
                         className="subtask-checkbox"
                       />
-                      <span className={`subtask-text ${selectedSubtasks.has(subtask.id) ? 'completed' : ''}`}>
+                      <span
+                        className={`subtask-text ${selectedSubtasks.has(subtask.id) ? 'completed' : ''}`}
+                      >
                         {subtask.title}
                       </span>
                     </label>
@@ -199,9 +222,11 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                     <div key={attachment.id} className="attachment-item">
                       <div className="attachment-icon">📎</div>
                       <div className="attachment-info">
-                        <div className="attachment-name">{attachment.filename}</div>
+                        <div className="attachment-name">
+                          {attachment.filename}
+                        </div>
                         <div className="attachment-meta">
-                          {(attachment.fileSize / 1024).toFixed(1)} KB • 
+                          {(attachment.fileSize / 1024).toFixed(1)} KB •
                           Uploaded by {attachment.uploadedBy}
                         </div>
                       </div>
@@ -213,7 +238,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
 
             <div className="task-detail-section">
               <h3>Comments ({task.comments.length})</h3>
-              
+
               <form onSubmit={handleAddComment} className="add-comment-form">
                 <textarea
                   value={newComment}
@@ -222,7 +247,11 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                   className="comment-input"
                   rows={3}
                 />
-                <button type="submit" className="add-comment-btn" disabled={!newComment.trim()}>
+                <button
+                  type="submit"
+                  className="add-comment-btn"
+                  disabled={!newComment.trim()}
+                >
                   Add Comment
                 </button>
               </form>
@@ -231,7 +260,9 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                 {task.comments.map((comment) => (
                   <div key={comment.id} className="comment-item">
                     <div className="comment-header">
-                      <strong className="comment-author">{comment.author}</strong>
+                      <strong className="comment-author">
+                        {comment.author}
+                      </strong>
                       <span className="comment-time">
                         {new Date(comment.timestamp).toLocaleDateString()}
                       </span>
@@ -239,9 +270,11 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                     <p className="comment-content">{comment.content}</p>
                   </div>
                 ))}
-                
+
                 {task.comments.length === 0 && (
-                  <p className="no-comments">No comments yet. Be the first to comment!</p>
+                  <p className="no-comments">
+                    No comments yet. Be the first to comment!
+                  </p>
                 )}
               </div>
             </div>
@@ -250,20 +283,27 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
           <div className="task-detail-sidebar">
             <div className="task-meta-section">
               <h4>Task Details</h4>
-              
+
               <div className="meta-item">
                 <label>Assignee</label>
                 <div className="assignee-info">
                   <div className="assignee-avatar">
-                    {task.assigneeName.split(' ').map(n => n[0]).join('')}
+                    {(task.assigneeName || task.assignee || 'Unknown')
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')}
                   </div>
-                  <span>{task.assigneeName}</span>
+                  <span>
+                    {task.assigneeName || task.assignee || 'Unassigned'}
+                  </span>
                 </div>
               </div>
 
               <div className="meta-item">
                 <label>Due Date</label>
-                <div className={`due-date ${dueDateInfo.isOverdue ? 'overdue' : dueDateInfo.isToday ? 'today' : ''}`}>
+                <div
+                  className={`due-date ${dueDateInfo.isOverdue ? 'overdue' : dueDateInfo.isToday ? 'today' : ''}`}
+                >
                   {new Date(task.dueDate).toLocaleDateString()}
                   <div className="due-date-info">{dueDateInfo.text}</div>
                 </div>
