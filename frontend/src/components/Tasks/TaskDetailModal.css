@@ -395,6 +395,134 @@
   border: 1px solid #dbeafe;
 }
 
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .task-detail-modal {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+  
+  .task-detail-header {
+    border-bottom-color: #374151;
+  }
+  
+  .task-detail-title {
+    color: #f9fafb;
+  }
+  
+  .task-detail-section h3 {
+    color: #f9fafb;
+  }
+  
+  .task-description {
+    color: #d1d5db;
+  }
+  
+  .subtask-item {
+    background: #374151;
+  }
+  
+  .subtask-item:hover {
+    background: #4b5563;
+  }
+  
+  .subtask-text {
+    color: #d1d5db;
+  }
+  
+  .subtask-text.completed {
+    color: #6b7280;
+  }
+  
+  .attachment-item,
+  .comment-item {
+    background: #374151;
+  }
+  
+  .attachment-name,
+  .comment-author,
+  .comment-content {
+    color: #d1d5db;
+  }
+  
+  .attachment-icon {
+    color: #9ca3af;
+  }
+  
+  .comment-input {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+  
+  .comment-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .no-comments {
+    color: #6b7280;
+  }
+  
+  .task-meta-section {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .task-meta-section h4 {
+    color: #f9fafb;
+  }
+  
+  .meta-item span {
+    color: #d1d5db;
+  }
+  
+  .due-date {
+    color: #d1d5db;
+  }
+  
+  .due-date.overdue {
+    color: #f87171;
+  }
+  
+  .due-date.today {
+    color: #fbbf24;
+  }
+  
+  .tag {
+    background: #1e3a8a;
+    color: #93c5fd;
+    border-color: #1e40af;
+  }
+  
+  .edit-btn,
+  .delete-btn {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+  }
+  
+  .edit-btn:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+  
+  .delete-btn:hover {
+    background: #7f1d1d;
+    border-color: #dc2626;
+    color: #fca5a5;
+  }
+  
+  .close-btn {
+    color: #9ca3af;
+  }
+  
+  .close-btn:hover {
+    background: #374151;
+    color: #f3f4f6;
+  }
+}
+
 @media (max-width: 768px) {
   .task-detail-modal {
     max-width: none;
