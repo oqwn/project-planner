@@ -76,8 +76,8 @@ export const Tasks: React.FC = () => {
       {error && (
         <div className="error-notification">
           {error}
-          <button 
-            className="error-dismiss" 
+          <button
+            className="error-dismiss"
             onClick={() => setError(null)}
             aria-label="Dismiss error"
           >
@@ -85,7 +85,7 @@ export const Tasks: React.FC = () => {
           </button>
         </div>
       )}
-      
+
       <KanbanBoard
         tasks={tasks}
         onTaskUpdate={handleTaskUpdate}

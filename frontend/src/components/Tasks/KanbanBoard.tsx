@@ -4,6 +4,10 @@ import {
   Droppable,
   Draggable,
   type DropResult,
+  type DroppableProvided,
+  type DroppableStateSnapshot,
+  type DraggableProvided,
+  type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
 import type { Task, TaskStatus, KanbanColumn } from '../../types/task';
 import { TaskCard } from './TaskCard';
@@ -147,7 +151,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 </div>
 
                 <Droppable droppableId={column.id}>
-                  {(provided: any, snapshot: any) => (
+                  {(
+                    provided: DroppableProvided,
+                    snapshot: DroppableStateSnapshot
+                  ) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
@@ -161,7 +168,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                           draggableId={task.id}
                           index={index}
                         >
-                          {(provided: any, snapshot: any) => (
+                          {(
+                            provided: DraggableProvided,
+                            snapshot: DraggableStateSnapshot
+                          ) => (
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}

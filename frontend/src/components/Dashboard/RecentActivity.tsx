@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { dashboardApi } from '../../services/api';
 import type { RecentActivity as RecentActivityType } from '../../types/dashboard';
 import './RecentActivity.css';
@@ -9,11 +9,7 @@ export const RecentActivity: React.FC = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  useEffect(() => {
-    loadActivities();
-  }, []);
-
-  const loadActivities = async () => {
+  const loadActivities = useCallback(async () => {
     try {
       // Using Project Alpha ID from test data
       const projectId = '550e8400-e29b-41d4-a716-446655440001';
@@ -27,7 +23,11 @@ export const RecentActivity: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
+
+  useEffect(() => {
+    loadActivities();
+  }, [loadActivities]);
 
   const loadMore = async () => {
     setPage((prev) => prev + 1);

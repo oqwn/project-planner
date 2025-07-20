@@ -8,6 +8,67 @@ import type {
   TeamMember,
 } from '../types/dashboard';
 
+// API Response Types
+interface ApiTaskResponse {
+  id: string;
+  title: string;
+  description?: string;
+  status: string;
+  priority: string;
+  assigneeId?: string;
+  assigneeName?: string;
+  createdByName?: string;
+  dueDate?: string;
+  createdAt: string;
+  updatedAt: string;
+  tags?: string[];
+  subtasks?: ApiSubtaskResponse[];
+  comments?: ApiCommentResponse[];
+  attachments?: ApiAttachmentResponse[];
+}
+
+interface ApiSubtaskResponse {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+interface ApiCommentResponse {
+  id: string;
+  userId: string;
+  userName: string;
+  content: string;
+  createdAt: string;
+}
+
+interface ApiAttachmentResponse {
+  id: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl: string;
+  uploadedBy: string;
+  uploadedAt: string;
+}
+
+interface ApiRecentTaskResponse {
+  id: string;
+  title: string;
+  assignee: string;
+  assigneeId?: string;
+  dueDate?: string;
+  priority: string;
+  status: string;
+}
+
+interface ApiRecentActivityResponse {
+  type: string;
+  user: string;
+  description: string;
+  targetItem: string;
+  timestamp: string;
+}
+
 const API_BASE_URL = 'http://localhost:20005/api';
 
 // Create axios instance with default config
@@ -120,7 +181,7 @@ export const dashboardApi = {
     const { data } = await api.get(
       `/dashboard/recent-tasks/${projectId}?limit=${limit}`
     );
-    return data.map((task: any) => ({
+    return data.map((task: ApiRecentTaskResponse) => ({
       id: task.id,
       title: task.title,
       description: '',
@@ -147,7 +208,7 @@ export const dashboardApi = {
     const { data } = await api.get(
       `/dashboard/recent-activities/${projectId}?limit=${limit}`
     );
-    return data.map((activity: any) => ({
+    return data.map((activity: ApiRecentActivityResponse) => ({
       id: crypto.randomUUID(), // Generate ID on frontend
       type: activity.type,
       user: activity.user,
@@ -160,15 +221,21 @@ export const dashboardApi = {
   // Get project progress
   getProjectProgress: async (projectId: string): Promise<ProjectProgress[]> => {
     const { data } = await api.get(`/dashboard/project-progress/${projectId}`);
-    return data.map((project: any) => ({
-      id: project.id,
-      name: project.name,
-      progress: project.progress,
-      dueDate: project.dueDate,
-      status: project.status,
-      tasksCompleted: project.tasksCompleted,
-      totalTasks: project.totalTasks,
-    }));
+    return data.map(
+      (project: {
+        id: string;
+        name: string;
+        completionPercentage: number;
+      }) => ({
+        id: project.id,
+        name: project.name,
+        progress: project.progress,
+        dueDate: project.dueDate,
+        status: project.status,
+        tasksCompleted: project.tasksCompleted,
+        totalTasks: project.totalTasks,
+      })
+    );
   },
 };
 
@@ -192,7 +259,7 @@ api.interceptors.response.use(
 );
 
 // Helper function to transform API task response to frontend Task type
-function transformTaskFromApi(apiTask: any): Task {
+function transformTaskFromApi(apiTask: ApiTaskResponse): Task {
   return {
     id: apiTask.id,
     title: apiTask.title,
@@ -208,13 +275,13 @@ function transformTaskFromApi(apiTask: any): Task {
     updatedAt: apiTask.updatedAt,
     tags: apiTask.tags || [],
     subtasks:
-      apiTask.subtasks?.map((st: any) => ({
+      apiTask.subtasks?.map((st: ApiSubtaskResponse) => ({
         id: st.id,
         title: st.title,
         completed: st.completed,
       })) || [],
     comments:
-      apiTask.comments?.map((c: any) => ({
+      apiTask.comments?.map((c: ApiCommentResponse) => ({
         id: c.id,
         author: c.userName,
         user: c.userName,
@@ -223,7 +290,7 @@ function transformTaskFromApi(apiTask: any): Task {
         authorId: c.userId,
       })) || [],
     attachments:
-      apiTask.attachments?.map((a: any) => ({
+      apiTask.attachments?.map((a: ApiAttachmentResponse) => ({
         id: a.id,
         filename: a.fileName,
         name: a.fileName,
