@@ -12,24 +12,18 @@ import { useAuthStore } from './store/authStore';
 import './App.css';
 
 function App() {
-  const { setUser, initializeAuth } = useAuthStore((state) => ({
-    setUser: state.setUser,
-    initializeAuth: state.initializeAuth,
-  }));
+  const setUser = useAuthStore((state) => state.setUser);
 
   useEffect(() => {
     // Initialize auth service with token from localStorage
     authService.initializeAuth();
 
-    // Initialize auth store with user data from localStorage
-    initializeAuth();
-
-    // Double-check and sync with auth service
+    // Get current user from localStorage and set in store
     const currentUser = authService.getCurrentUser();
     if (currentUser) {
       setUser(currentUser);
     }
-  }, [setUser, initializeAuth]);
+  }, []); // Empty dependency array - run only once on mount
 
   return (
     <Router>
