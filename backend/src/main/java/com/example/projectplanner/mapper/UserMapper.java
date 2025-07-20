@@ -45,15 +45,12 @@ public interface UserMapper {
     })
     Optional<User> findByEmail(String email);
     
-    @Select("SELECT id, email, name, password_hash, role, created_at, updated_at FROM users ORDER BY created_at DESC")
+    @Select("SELECT id, email, name, role FROM users ORDER BY created_at DESC")
     @Results({
         @Result(property = "id", column = "id"),
         @Result(property = "email", column = "email"),
         @Result(property = "name", column = "name"),
-        @Result(property = "passwordHash", column = "password_hash"),
-        @Result(property = "role", column = "role"),
-        @Result(property = "createdAt", column = "created_at"),
-        @Result(property = "updatedAt", column = "updated_at")
+        @Result(property = "role", column = "role")
     })
     List<User> findAll();
     

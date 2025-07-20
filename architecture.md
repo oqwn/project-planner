@@ -29,14 +29,14 @@ This document outlines the technical architecture for a comprehensive project ma
 - **Port**: 20005 ✅ (updated from 20003)
 - **CORS**: Configured for localhost:5173 ✅
 - **DevTools**: Enabled for hot reload ✅
-- **API**: REST with OpenAPI/Swagger documentation (TBD)
+- **API**: REST with OpenAPI/Swagger documentation ✅
+- **Database Access**: MyBatis with custom mappers ✅
+- **Validation**: Bean Validation (JSR-303) ✅
+- **Logging**: SLF4J with Logback ✅
 - **Authentication**: Spring Security with JWT (TBD)
-- **Database Access**: Spring Data JPA (TBD)
 - **Real-time**: Spring WebSocket with STOMP (TBD)
 - **Task Queue**: Spring Batch or RabbitMQ (TBD)
 - **Caching**: Spring Cache with Redis (TBD)
-- **Validation**: Bean Validation (JSR-303) (TBD)
-- **Logging**: SLF4J with Logback (TBD)
 
 ### Database ✅ IMPLEMENTED
 - **Primary Database**: PostgreSQL ✅

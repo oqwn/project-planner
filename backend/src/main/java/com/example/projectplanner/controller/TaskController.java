@@ -169,9 +169,9 @@ public class TaskController {
         return ResponseEntity.ok(stats);
     }
     
-    @GetMapping("/team-members")
-    @Operation(summary = "Get all team members")
-    public ResponseEntity<List<TeamMemberResponse>> getTeamMembers() {
+    @GetMapping("/team-members/{projectId}")
+    @Operation(summary = "Get team members for a project")
+    public ResponseEntity<List<TeamMemberResponse>> getTeamMembers(@PathVariable UUID projectId) {
         List<User> users = userMapper.findAll();
         List<TeamMemberResponse> response = new ArrayList<>();
         
