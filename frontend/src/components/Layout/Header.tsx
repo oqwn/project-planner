@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import authService from '../../services/auth';
+import { ProjectSwitcher } from '../ProjectSwitcher/ProjectSwitcher';
 import './Header.css';
 
 interface HeaderProps {
@@ -35,6 +36,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
       </div>
 
       <div className="header-right">
+        <ProjectSwitcher />
+        
         <div className="search-box">
           <input
             type="text"

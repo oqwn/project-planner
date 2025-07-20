@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Task, CreateTaskRequest } from '../types/task';
 import type { TeamMember } from '../types/dashboard';
 import { taskApi } from '../services/api';
+import { useProject } from '../contexts/ProjectContext';
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { selectedProject } = useProject();
 
   // Project IDs from test data
   const projectIds = [
@@ -15,18 +17,22 @@ export const useTasks = () => {
     '550e8400-e29b-41d4-a716-446655440002', // Beta Release
   ];
 
-  // Load tasks and team members on mount
+  // Load tasks and team members on mount and when project changes
   useEffect(() => {
     loadData();
-  }, []);
+  }, [selectedProject]);
 
   const loadData = async () => {
     try {
       setLoading(true);
       
-      // Fetch tasks from all projects
-      const taskPromises = projectIds.map(id => taskApi.getTasks(id));
-      const teamPromises = projectIds.map(id => taskApi.getTeamMembers(id));
+      // If a specific project is selected, fetch only that project's tasks
+      // Otherwise, fetch from all projects
+      const projectsToFetch = selectedProject ? [selectedProject.id] : projectIds;
+      
+      // Fetch tasks from selected project(s)
+      const taskPromises = projectsToFetch.map(id => taskApi.getTasks(id));
+      const teamPromises = projectsToFetch.map(id => taskApi.getTeamMembers(id));
       
       const [taskResults, teamResults] = await Promise.all([
         Promise.all(taskPromises),

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { dashboardApi } from '../../services/api';
+import { useProject } from '../../contexts/ProjectContext';
 import './StatsCards.css';
 
 interface StatCard {
@@ -14,13 +15,14 @@ interface StatCard {
 export const StatsCards: React.FC = () => {
   const [stats, setStats] = useState<StatCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const { selectedProject } = useProject();
 
   useEffect(() => {
     const loadStats = async () => {
       try {
-        // Using Project Alpha ID from test data
-        const projectId = '550e8400-e29b-41d4-a716-446655440001';
-        const dashboardStats = await dashboardApi.getStats(projectId);
+        if (!selectedProject) return;
+        
+        const dashboardStats = await dashboardApi.getStats(selectedProject.id);
 
         const statsData: StatCard[] = [
           {
@@ -72,7 +74,7 @@ export const StatsCards: React.FC = () => {
     };
 
     loadStats();
-  }, []);
+  }, [selectedProject]);
 
   if (loading) {
     return <div className="stats-cards loading">Loading stats...</div>;

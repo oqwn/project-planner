@@ -1,0 +1,60 @@
+.project-switcher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 8px;
+  margin-right: 20px;
+}
+
+.project-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.project-select {
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+  min-width: 150px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.project-select:hover {
+  border-color: #6366f1;
+}
+
+.project-select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .project-switcher {
+    background: rgba(99, 102, 241, 0.2);
+  }
+  
+  .project-label {
+    color: #9ca3af;
+  }
+  
+  .project-select {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #f3f4f6;
+  }
+  
+  .project-select:hover {
+    border-color: #6366f1;
+  }
+}

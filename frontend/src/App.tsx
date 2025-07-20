@@ -9,6 +9,7 @@ import Register from './components/Auth/Register';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import authService from './services/auth';
 import { useAuthStore } from './store/authStore';
+import { ProjectProvider } from './contexts/ProjectContext';
 import './App.css';
 
 function App() {
@@ -34,24 +35,26 @@ function App() {
           path="/*"
           element={
             <ProtectedRoute>
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/users" element={<UserList />} />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route
-                    path="/timesheets"
-                    element={<TimesheetsPlaceholder />}
-                  />
-                  <Route
-                    path="/collaboration"
-                    element={<CollaborationPlaceholder />}
-                  />
-                  <Route path="/reports" element={<ReportsPlaceholder />} />
-                  <Route path="/settings" element={<SettingsPlaceholder />} />
-                </Routes>
-              </Layout>
+              <ProjectProvider>
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/users" element={<UserList />} />
+                    <Route path="/tasks" element={<Tasks />} />
+                    <Route
+                      path="/timesheets"
+                      element={<TimesheetsPlaceholder />}
+                    />
+                    <Route
+                      path="/collaboration"
+                      element={<CollaborationPlaceholder />}
+                    />
+                    <Route path="/reports" element={<ReportsPlaceholder />} />
+                    <Route path="/settings" element={<SettingsPlaceholder />} />
+                  </Routes>
+                </Layout>
+              </ProjectProvider>
             </ProtectedRoute>
           }
         />
