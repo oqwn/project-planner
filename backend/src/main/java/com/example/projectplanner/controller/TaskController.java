@@ -148,6 +148,20 @@ public class TaskController {
             }
         }
         
+        // Update subtasks if provided
+        if (request.getSubtasks() != null) {
+            for (UpdateSubtaskRequest subtaskRequest : request.getSubtasks()) {
+                if (subtaskRequest.getId() != null) {
+                    // Update existing subtask
+                    Subtask subtask = new Subtask();
+                    subtask.setId(subtaskRequest.getId());
+                    subtask.setTitle(subtaskRequest.getTitle());
+                    subtask.setCompleted(subtaskRequest.isCompleted());
+                    subtaskMapper.update(subtask);
+                }
+            }
+        }
+        
         // Fetch the updated task
         Optional<Task> updatedTask = taskMapper.findById(id);
         TaskResponse response = mapToTaskResponse(updatedTask.get());

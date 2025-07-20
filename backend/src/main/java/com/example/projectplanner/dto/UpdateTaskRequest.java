@@ -14,6 +14,7 @@ public class UpdateTaskRequest {
     private Double estimatedHours;
     private Double actualHours;
     private List<String> tags;
+    private List<UpdateSubtaskRequest> subtasks;
     
     // Getters and Setters
     public String getTitle() {
@@ -86,5 +87,13 @@ public class UpdateTaskRequest {
     
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+    
+    public List<UpdateSubtaskRequest> getSubtasks() {
+        return subtasks;
+    }
+    
+    public void setSubtasks(List<UpdateSubtaskRequest> subtasks) {
+        this.subtasks = subtasks;
     }
 }
