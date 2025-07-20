@@ -27,10 +27,19 @@ public class DashboardController {
         DashboardStats stats = taskMapper.getDashboardStats(projectId);
         
         DashboardStatsResponse response = new DashboardStatsResponse();
-        response.setTotalTasks(stats.getTotalTasks());
-        response.setInProgressTasks(stats.getInProgressTasks());
-        response.setCompletedTasks(stats.getCompletedTasks());
-        response.setOverdueTasks(stats.getOverdueTasks());
+        
+        if (stats != null) {
+            response.setTotalTasks(stats.getTotalTasks());
+            response.setInProgressTasks(stats.getInProgressTasks());
+            response.setCompletedTasks(stats.getCompletedTasks());
+            response.setOverdueTasks(stats.getOverdueTasks());
+        } else {
+            // If no stats found (project doesn't exist or has no tasks), return zeros
+            response.setTotalTasks(0);
+            response.setInProgressTasks(0);
+            response.setCompletedTasks(0);
+            response.setOverdueTasks(0);
+        }
         
         // Calculate trend percentages (mock data for now)
         response.setTotalTasksTrend("+12%");

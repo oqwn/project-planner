@@ -47,6 +47,12 @@
 - 🔄 Spring Security: JWT authentication (pending implementation)
 
 ## Epic 1: Dashboard & Navigation ✅ COMPLETED
+### Recent Updates (2025-07-20):
+- Fixed NullPointerException in DashboardController.getDashboardStats() at line 30
+- Added null check for dashboard stats when project doesn't exist or has no data
+- Dashboard now returns zero values instead of crashing when no stats are available
+
+## Epic 1: Dashboard & Navigation ✅ COMPLETED
 - [x] Create main layout with sidebar navigation
 - [x] Implement sidebar component with icon navigation
 - [x] Create dashboard overview component

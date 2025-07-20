@@ -38,13 +38,14 @@ This document outlines the technical architecture for a comprehensive project ma
 - **Validation**: Bean Validation (JSR-303) (TBD)
 - **Logging**: SLF4J with Logback (TBD)
 
-### Database
-- **Primary Database**: PostgreSQL
-- **ORM**: Spring Data JPA with Hibernate
-- **Migrations**: Flyway or Liquibase
-- **Connection Pooling**: HikariCP
-- **Caching Layer**: Redis
-- **File Storage**: AWS S3 or local storage with MinIO
+### Database ✅ IMPLEMENTED
+- **Primary Database**: PostgreSQL ✅
+- **ORM**: MyBatis (instead of JPA) ✅
+- **Migrations**: Flyway ✅
+- **Connection Pooling**: HikariCP ✅
+- **Views**: dashboard_stats, recent_activities for optimized queries ✅
+- **Caching Layer**: Redis (TBD)
+- **File Storage**: AWS S3 or local storage with MinIO (TBD)
 
 ### DevOps & Infrastructure ✅ IMPLEMENTED
 - **Containerization**: Docker ✅
