@@ -9,14 +9,13 @@ import java.util.UUID;
 @Mapper
 public interface SubtaskMapper {
     
-    @Select("SELECT * FROM subtasks WHERE task_id = #{taskId} ORDER BY created_at ASC")
+    @Select("SELECT id, task_id, name, is_completed, created_at FROM subtasks WHERE task_id = #{taskId} ORDER BY created_at ASC")
     @Results({
         @Result(property = "id", column = "id"),
         @Result(property = "taskId", column = "task_id"),
         @Result(property = "title", column = "name"),
         @Result(property = "completed", column = "is_completed"),
-        @Result(property = "createdAt", column = "created_at"),
-        @Result(property = "updatedAt", column = "updated_at")
+        @Result(property = "createdAt", column = "created_at")
     })
     List<Subtask> findByTaskId(UUID taskId);
     

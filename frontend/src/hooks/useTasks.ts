@@ -9,8 +9,8 @@ export const useTasks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Using a default project ID for now
-  const projectId = '1a2b3c4d-5e6f-7890-abcd-ef1234567890';
+  // Using Project Alpha ID from test data
+  const projectId = '550e8400-e29b-41d4-a716-446655440001';
 
   // Load tasks and team members on mount
   useEffect(() => {

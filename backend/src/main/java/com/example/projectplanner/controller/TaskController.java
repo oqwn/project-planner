@@ -213,7 +213,7 @@ public class TaskController {
             subtaskResponse.setId(subtask.getId());
             subtaskResponse.setTitle(subtask.getTitle());
             subtaskResponse.setCompleted(subtask.isCompleted());
-            subtaskResponse.setDependsOn(subtaskMapper.findDependenciesBySubtaskId(subtask.getId()));
+            subtaskResponse.setDependsOn(new ArrayList<>()); // Empty list for now
             subtaskResponses.add(subtaskResponse);
         }
         response.setSubtasks(subtaskResponses);

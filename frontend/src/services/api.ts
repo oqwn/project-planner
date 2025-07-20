@@ -50,8 +50,8 @@ export const taskApi = {
     const { data } = await api.post('/tasks', {
       ...task,
       projectId,
-      assigneeId: task.assigneeId || 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', // Default user ID
-      createdBy: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', // Current user ID
+      assigneeId: task.assigneeId || '550e8400-e29b-41d4-a716-446655440014', // Default to John Doe (Project Manager)
+      createdBy: '550e8400-e29b-41d4-a716-446655440014', // Current user ID (John Doe)
     });
     return transformTaskFromApi(data);
   },

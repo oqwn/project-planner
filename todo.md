@@ -51,6 +51,8 @@
 - Fixed NullPointerException in DashboardController.getDashboardStats() at line 30
 - Added null check for dashboard stats when project doesn't exist or has no data
 - Dashboard now returns zero values instead of crashing when no stats are available
+- Added comprehensive test data: 20 tasks and 50+ subtasks with proper relationships
+- Created V4 migration with realistic project data including comments, time entries, and task dependencies
 
 ## Epic 1: Dashboard & Navigation ✅ COMPLETED
 - [x] Create main layout with sidebar navigation
