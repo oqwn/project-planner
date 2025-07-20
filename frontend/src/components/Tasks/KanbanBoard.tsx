@@ -51,9 +51,38 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     },
   ]);
 
-  // Group tasks by status
+  // Helper function to get priority order
+  const getPriorityOrder = (priority: string): number => {
+    switch (priority) {
+      case 'high':
+        return 0;
+      case 'medium':
+        return 1;
+      case 'low':
+        return 2;
+      default:
+        return 3;
+    }
+  };
+
+  // Group tasks by status and sort by priority
   const getTasksByStatus = (status: TaskStatus): Task[] => {
-    return tasks.filter((task) => task.status === status);
+    return tasks
+      .filter((task) => task.status === status)
+      .sort((a, b) => {
+        const priorityA = getPriorityOrder(a.priority);
+        const priorityB = getPriorityOrder(b.priority);
+
+        // Sort by priority first (high to low), then by created date (newest first)
+        if (priorityA !== priorityB) {
+          return priorityA - priorityB;
+        }
+
+        // If same priority, sort by creation date (newest first)
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
   };
 
   const getColumnTaskCount = (status: TaskStatus): number => {
