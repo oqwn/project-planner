@@ -12,7 +12,6 @@ public class TaskComment {
     private String content;
     private List<UUID> mentions;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     
     // Getters and Setters
     public UUID getId() {
@@ -71,11 +70,4 @@ public class TaskComment {
         this.createdAt = createdAt;
     }
     
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-    
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

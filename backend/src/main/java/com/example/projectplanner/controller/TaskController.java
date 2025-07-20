@@ -4,9 +4,11 @@ import com.example.projectplanner.dto.*;
 import com.example.projectplanner.entity.Task;
 import com.example.projectplanner.entity.DashboardStats;
 import com.example.projectplanner.entity.Subtask;
+import com.example.projectplanner.entity.TaskComment;
 import com.example.projectplanner.mapper.TaskMapper;
 import com.example.projectplanner.mapper.SubtaskMapper;
 import com.example.projectplanner.mapper.UserMapper;
+import com.example.projectplanner.mapper.TaskCommentMapper;
 import com.example.projectplanner.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -34,6 +37,9 @@ public class TaskController {
     
     @Autowired
     private UserMapper userMapper;
+    
+    @Autowired
+    private TaskCommentMapper taskCommentMapper;
     
     @GetMapping("/project/{projectId}")
     @Operation(summary = "Get all tasks for a project")
@@ -187,6 +193,67 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
     
+    @PostMapping("/{taskId}/comments")
+    @Operation(summary = "Add a comment to a task")
+    public ResponseEntity<CommentResponse> addComment(@PathVariable UUID taskId, @RequestBody CreateCommentRequest request) {
+        // Check if task exists
+        Optional<Task> taskOpt = taskMapper.findById(taskId);
+        if (taskOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        TaskComment comment = new TaskComment();
+        comment.setId(UUID.randomUUID());
+        comment.setTaskId(taskId);
+        comment.setUserId(request.getUserId());
+        comment.setContent(request.getContent());
+        comment.setCreatedAt(LocalDateTime.now());
+        
+        taskCommentMapper.insert(comment);
+        
+        // Fetch the created comment with author name
+        TaskComment createdComment = taskCommentMapper.findById(comment.getId());
+        CommentResponse response = mapToCommentResponse(createdComment);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    
+    @GetMapping("/{taskId}/comments")
+    @Operation(summary = "Get all comments for a task")
+    public ResponseEntity<List<CommentResponse>> getTaskComments(@PathVariable UUID taskId) {
+        List<TaskComment> comments = taskCommentMapper.findByTaskId(taskId);
+        List<CommentResponse> response = new ArrayList<>();
+        
+        for (TaskComment comment : comments) {
+            response.add(mapToCommentResponse(comment));
+        }
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    @DeleteMapping("/comments/{commentId}")
+    @Operation(summary = "Delete a comment")
+    public ResponseEntity<Void> deleteComment(@PathVariable UUID commentId) {
+        TaskComment comment = taskCommentMapper.findById(commentId);
+        if (comment == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        taskCommentMapper.deleteById(commentId);
+        return ResponseEntity.noContent().build();
+    }
+    
+    private CommentResponse mapToCommentResponse(TaskComment comment) {
+        CommentResponse response = new CommentResponse();
+        response.setId(comment.getId());
+        response.setContent(comment.getContent());
+        response.setAuthor(comment.getAuthorName());
+        response.setAuthorId(comment.getUserId());
+        response.setTimestamp(comment.getCreatedAt());
+        response.setMentions(comment.getMentions() != null ? comment.getMentions() : new ArrayList<>());
+        return response;
+    }
+    
     private TaskResponse mapToTaskResponse(Task task) {
         TaskResponse response = new TaskResponse();
         response.setId(task.getId());
@@ -222,8 +289,15 @@ public class TaskController {
         List<String> tags = taskMapper.findTagsByTaskId(task.getId());
         response.setTags(tags);
         
-        // TODO: Load comments, attachments, reminders
-        response.setComments(new ArrayList<>());
+        // Load comments
+        List<TaskComment> comments = taskCommentMapper.findByTaskId(task.getId());
+        List<CommentResponse> commentResponses = new ArrayList<>();
+        for (TaskComment comment : comments) {
+            commentResponses.add(mapToCommentResponse(comment));
+        }
+        response.setComments(commentResponses);
+        
+        // TODO: Load attachments, reminders
         response.setAttachments(new ArrayList<>());
         response.setReminders(new ArrayList<>());
         
