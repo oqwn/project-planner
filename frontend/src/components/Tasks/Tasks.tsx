@@ -16,6 +16,7 @@ export const Tasks: React.FC = () => {
     teamMembers,
     loading,
     error,
+    setError,
     createTask,
     updateTask,
     deleteTask,
@@ -69,12 +70,22 @@ export const Tasks: React.FC = () => {
     return <div className="tasks-loading">Loading tasks...</div>;
   }
 
-  if (error) {
-    return <div className="tasks-error">{error}</div>;
-  }
-
   return (
     <div className="tasks-page">
+      {/* Show error as a non-blocking notification */}
+      {error && (
+        <div className="error-notification">
+          {error}
+          <button 
+            className="error-dismiss" 
+            onClick={() => setError(null)}
+            aria-label="Dismiss error"
+          >
+            ×
+          </button>
+        </div>
+      )}
+      
       <KanbanBoard
         tasks={tasks}
         onTaskUpdate={handleTaskUpdate}
