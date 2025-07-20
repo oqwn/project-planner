@@ -111,8 +111,8 @@ public class DashboardController {
         project.setProgress(calculateProgress(stats));
         project.setDueDate("2025-02-15");
         project.setStatus(determineProjectStatus(stats));
-        project.setTasksCompleted(stats.getCompletedTasks());
-        project.setTotalTasks(stats.getTotalTasks());
+        project.setTasksCompleted(stats != null ? stats.getCompletedTasks() : 0);
+        project.setTotalTasks(stats != null ? stats.getTotalTasks() : 0);
         
         projects.add(project);
         
@@ -120,11 +120,12 @@ public class DashboardController {
     }
     
     private int calculateProgress(DashboardStats stats) {
-        if (stats.getTotalTasks() == 0) return 0;
+        if (stats == null || stats.getTotalTasks() == 0) return 0;
         return (int) ((stats.getCompletedTasks() * 100.0) / stats.getTotalTasks());
     }
     
     private String determineProjectStatus(DashboardStats stats) {
+        if (stats == null) return "unknown";
         if (stats.getOverdueTasks() > 0) return "delayed";
         if (stats.getInProgressTasks() > stats.getCompletedTasks()) return "at-risk";
         return "on-track";
