@@ -1,25 +1,58 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { Tasks } from './components/Tasks/Tasks';
 import { UserList } from './components/UserList';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
+import authService from './services/auth';
+import { useAuthStore } from './store/authStore';
 import './App.css';
 
 function App() {
+  const setUser = useAuthStore((state) => state.setUser);
+
+  useEffect(() => {
+    authService.initializeAuth();
+    const currentUser = authService.getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
+    }
+  }, [setUser]);
+
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/users" element={<UserList />} />
-          <Route path="/tasks" element={<Tasks />} />
-          <Route path="/timesheets" element={<TimesheetsPlaceholder />} />
-          <Route path="/collaboration" element={<CollaborationPlaceholder />} />
-          <Route path="/reports" element={<ReportsPlaceholder />} />
-          <Route path="/settings" element={<SettingsPlaceholder />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/users" element={<UserList />} />
+                  <Route path="/tasks" element={<Tasks />} />
+                  <Route
+                    path="/timesheets"
+                    element={<TimesheetsPlaceholder />}
+                  />
+                  <Route
+                    path="/collaboration"
+                    element={<CollaborationPlaceholder />}
+                  />
+                  <Route path="/reports" element={<ReportsPlaceholder />} />
+                  <Route path="/settings" element={<SettingsPlaceholder />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
