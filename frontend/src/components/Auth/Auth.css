@@ -18,24 +18,20 @@
   box-sizing: border-box;
 }
 
-/* Animated background gradient */
+/* Static background gradient */
 .auth-container::before {
   content: '';
-  position: absolute;
-  width: 150%;
-  height: 150%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: radial-gradient(circle at 20% 50%, #5b3ff9 0%, transparent 50%),
               radial-gradient(circle at 80% 80%, #7c3aed 0%, transparent 50%),
               radial-gradient(circle at 40% 20%, #3b82f6 0%, transparent 50%),
               radial-gradient(circle at 80% 10%, #8b5cf6 0%, transparent 40%);
-  animation: gradientShift 20s ease infinite;
-  opacity: 0.5;
-}
-
-@keyframes gradientShift {
-  0%, 100% { transform: translate(-30%, -30%) rotate(0deg); }
-  33% { transform: translate(-20%, -40%) rotate(120deg); }
-  66% { transform: translate(-40%, -20%) rotate(240deg); }
+  opacity: 0.3;
+  z-index: -1;
 }
 
 .auth-card {

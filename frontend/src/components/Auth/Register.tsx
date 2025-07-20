@@ -63,15 +63,23 @@ export default function Register() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-logo">
-          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="10" width="20" height="20" rx="4" fill="#6366f1"/>
-            <rect x="32" y="10" width="18" height="20" rx="4" fill="#8b5cf6"/>
-            <rect x="10" y="32" width="20" height="18" rx="4" fill="#a78bfa"/>
-            <rect x="32" y="32" width="18" height="18" rx="4" fill="#c4b5fd"/>
+          <svg
+            width="60"
+            height="60"
+            viewBox="0 0 60 60"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="10" y="10" width="20" height="20" rx="4" fill="#6366f1" />
+            <rect x="32" y="10" width="18" height="20" rx="4" fill="#8b5cf6" />
+            <rect x="10" y="32" width="20" height="18" rx="4" fill="#a78bfa" />
+            <rect x="32" y="32" width="18" height="18" rx="4" fill="#c4b5fd" />
           </svg>
         </div>
         <h2>Get Started</h2>
-        <p className="auth-subtitle">Create your account to access Project Planner</p>
+        <p className="auth-subtitle">
+          Create your account to access Project Planner
+        </p>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">

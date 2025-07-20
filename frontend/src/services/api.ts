@@ -239,13 +239,12 @@ export const dashboardApi = {
   },
 };
 
-// Add request interceptor for potential auth tokens
+// Add request interceptor for auth tokens
 api.interceptors.request.use((config) => {
-  // Add auth token here when authentication is implemented
-  // const token = localStorage.getItem('authToken');
-  // if (token) {
-  //   config.headers.Authorization = `Bearer ${token}`;
-  // }
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
