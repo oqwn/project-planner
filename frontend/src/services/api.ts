@@ -177,10 +177,11 @@ export const dashboardApi = {
   },
 
   // Get recent tasks for dashboard
-  getRecentTasks: async (projectId: string, limit = 10): Promise<Task[]> => {
-    const { data } = await api.get(
-      `/dashboard/recent-tasks/${projectId}?limit=${limit}`
-    );
+  getRecentTasks: async (projectId: string, limit?: number): Promise<Task[]> => {
+    const url = limit 
+      ? `/dashboard/recent-tasks/${projectId}?limit=${limit}`
+      : `/dashboard/recent-tasks/${projectId}`;
+    const { data } = await api.get(url);
     return data.map((task: ApiRecentTaskResponse) => ({
       id: task.id,
       title: task.title,
@@ -222,18 +223,14 @@ export const dashboardApi = {
   getProjectProgress: async (projectId: string): Promise<ProjectProgress[]> => {
     const { data } = await api.get(`/dashboard/project-progress/${projectId}`);
     return data.map(
-      (project: {
-        id: string;
-        name: string;
-        completionPercentage: number;
-      }) => ({
+      (project: any) => ({
         id: project.id,
         name: project.name,
-        progress: project.progress,
-        dueDate: project.dueDate,
-        status: project.status,
-        tasksCompleted: project.tasksCompleted,
-        totalTasks: project.totalTasks,
+        progress: project.completionPercentage || project.progress || 0,
+        dueDate: project.dueDate || new Date().toISOString(),
+        status: (project.status || 'on-track') as 'on-track' | 'at-risk' | 'delayed',
+        tasksCompleted: project.tasksCompleted || 0,
+        totalTasks: project.totalTasks || 0,
       })
     );
   },
@@ -263,13 +260,13 @@ function transformTaskFromApi(apiTask: ApiTaskResponse): Task {
     id: apiTask.id,
     title: apiTask.title,
     description: apiTask.description || '',
-    status: apiTask.status,
-    priority: apiTask.priority,
+    status: apiTask.status as Task['status'],
+    priority: apiTask.priority as Task['priority'],
     assignee: apiTask.assigneeName,
-    assigneeId: apiTask.assigneeId,
+    assigneeId: apiTask.assigneeId || '',
     assigneeName: apiTask.assigneeName,
     createdBy: apiTask.createdByName || 'Unknown',
-    dueDate: apiTask.dueDate,
+    dueDate: apiTask.dueDate || new Date().toISOString(),
     createdAt: apiTask.createdAt,
     updatedAt: apiTask.updatedAt,
     tags: apiTask.tags || [],

@@ -70,6 +70,7 @@ export const useTasks = () => {
         description: taskData.description,
         status: 'todo', // Default status
         priority: taskData.priority,
+        assigneeId: taskData.assigneeId || '',
         assignee: taskData.assigneeId || '',
         assigneeName:
           teamMembers.find((m) => m.id === taskData.assigneeId)?.name || '',
@@ -84,6 +85,7 @@ export const useTasks = () => {
           })) || [],
         comments: [],
         attachments: [],
+        createdBy: '', // Will be set by backend
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
