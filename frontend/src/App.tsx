@@ -12,15 +12,24 @@ import { useAuthStore } from './store/authStore';
 import './App.css';
 
 function App() {
-  const setUser = useAuthStore((state) => state.setUser);
+  const { setUser, initializeAuth } = useAuthStore((state) => ({
+    setUser: state.setUser,
+    initializeAuth: state.initializeAuth,
+  }));
 
   useEffect(() => {
+    // Initialize auth service with token from localStorage
     authService.initializeAuth();
+
+    // Initialize auth store with user data from localStorage
+    initializeAuth();
+
+    // Double-check and sync with auth service
     const currentUser = authService.getCurrentUser();
     if (currentUser) {
       setUser(currentUser);
     }
-  }, [setUser]);
+  }, [setUser, initializeAuth]);
 
   return (
     <Router>
