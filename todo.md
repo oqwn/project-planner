@@ -26,7 +26,7 @@
 - [x] Configure Flyway for database migrations
 - [x] Create REST API with Spring Web MVC
 - [x] Set up OpenAPI/Swagger documentation
-- [ ] Implement Spring Security with JWT authentication
+- [x] Implement Spring Security with JWT authentication
 - [x] Configure CORS for frontend-backend communication
 - [x] Create base React component library
 - [x] Set up React Router v6 for frontend routing
@@ -44,7 +44,7 @@
 - ✅ React Router v6: Navigation structure with Home and Users pages
 - ✅ Zustand: UserStore for state management with API integration
 - ✅ Axios: HTTP client with interceptors and type-safe API calls
-- 🔄 Spring Security: JWT authentication (pending implementation)
+- ✅ Spring Security: JWT authentication with login/register endpoints
 
 ## Epic 1: Dashboard & Navigation ✅ COMPLETED
 ### Recent Updates (2025-07-20):

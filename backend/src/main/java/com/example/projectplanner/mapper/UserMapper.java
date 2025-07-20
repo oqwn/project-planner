@@ -43,7 +43,7 @@ public interface UserMapper {
         @Result(property = "createdAt", column = "created_at"),
         @Result(property = "updatedAt", column = "updated_at")
     })
-    Optional<User> findByEmail(String email);
+    User findByEmail(String email);
     
     @Select("SELECT id, email, name, role FROM users ORDER BY created_at DESC")
     @Results({

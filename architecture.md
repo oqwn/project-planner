@@ -33,7 +33,7 @@ This document outlines the technical architecture for a comprehensive project ma
 - **Database Access**: MyBatis with custom mappers ✅
 - **Validation**: Bean Validation (JSR-303) ✅
 - **Logging**: SLF4J with Logback ✅
-- **Authentication**: Spring Security with JWT (TBD)
+- **Authentication**: Spring Security with JWT ✅
 - **Real-time**: Spring WebSocket with STOMP (TBD)
 - **Task Queue**: Spring Batch or RabbitMQ (TBD)
 - **Caching**: Spring Cache with Redis (TBD)
