@@ -9,6 +9,11 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Disable transitions during drag to prevent animation conflicts */
+.task-card-wrapper.dragging .task-card {
+  transition: none;
+}
+
 .task-card:hover {
   border-color: #d1d5db;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

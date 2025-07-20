@@ -121,7 +121,7 @@
 }
 
 .task-card-wrapper {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Removed transitions to prevent conflicts with drag-and-drop animations */
 }
 
 .task-card-wrapper.dragging {
