@@ -160,7 +160,8 @@ CREATE TRIGGER update_tasks_updated_at BEFORE UPDATE ON tasks
 -- Dashboard stats view
 CREATE OR REPLACE VIEW dashboard_stats AS
 SELECT 
-    COUNT(DISTINCT p.id) as total_projects,
+    p.id as project_id,
+    p.name as project_name,
     COUNT(DISTINCT t.id) as total_tasks,
     COUNT(DISTINCT CASE WHEN t.status = 'COMPLETED' THEN t.id END) as completed_tasks,
     COUNT(DISTINCT CASE WHEN t.status = 'IN_PROGRESS' THEN t.id END) as in_progress_tasks,
@@ -170,7 +171,8 @@ SELECT
 FROM projects p
 LEFT JOIN tasks t ON p.id = t.project_id
 LEFT JOIN users u ON u.id = t.assignee_id
-WHERE p.status = 'ACTIVE';
+WHERE p.status = 'ACTIVE'
+GROUP BY p.id, p.name;
 
 -- Recent activities view
 CREATE OR REPLACE VIEW recent_activities AS
