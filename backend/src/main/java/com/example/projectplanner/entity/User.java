@@ -1,6 +1,6 @@
 package com.example.projectplanner.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,8 +12,8 @@ public class User {
     private UserRole role;
     private List<String> interests;
     private List<String> associations;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 
     // Constructors
     public User() {}
@@ -24,8 +24,8 @@ public class User {
         this.name = name;
         this.passwordHash = passwordHash;
         this.role = role;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
     }
 
     // Getters and Setters
@@ -50,11 +50,11 @@ public class User {
     public List<String> getAssociations() { return associations; }
     public void setAssociations(List<String> associations) { this.associations = associations; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public enum UserRole {
         ADMIN, PROJECT_MANAGER, TEAM_LEAD, MEMBER, VIEWER
