@@ -234,26 +234,169 @@ INSERT INTO projects (id, name, description, start_date, end_date, status, creat
     ('550e8400-e29b-41d4-a716-446655440001', 'Project Alpha', 'Main product development project', '2025-01-01', '2025-06-30', 'ACTIVE', '550e8400-e29b-41d4-a716-446655440014'),
     ('550e8400-e29b-41d4-a716-446655440002', 'Beta Release', 'Beta testing and release preparation', '2025-01-15', '2025-03-15', 'ACTIVE', '550e8400-e29b-41d4-a716-446655440014');
 
--- Insert sample tasks
+-- Insert sample tasks (Project Alpha - 15 tasks)
 INSERT INTO tasks (id, name, description, status, priority, assignee_id, project_id, created_by, due_date, estimated_hours, actual_hours, tags) VALUES
-    ('550e8400-e29b-41d4-a716-446655440021', 'Design system implementation', 'Create comprehensive design system', 'IN_PROGRESS', 'HIGH', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-01-25', 16.0, 8.0, ARRAY['design', 'ui', 'frontend']),
-    ('550e8400-e29b-41d4-a716-446655440022', 'API integration testing', 'Test all API endpoints', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440013', '2025-01-23', 12.0, NULL, ARRAY['testing', 'api', 'backend']),
-    ('550e8400-e29b-41d4-a716-446655440023', 'User authentication flow', 'Implement secure authentication', 'COMPLETED', 'HIGH', '550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-01-20', 20.0, 18.0, ARRAY['security', 'auth', 'backend']),
-    ('550e8400-e29b-41d4-a716-446655440024', 'Database optimization', 'Optimize queries and indexing', 'TODO', 'LOW', '550e8400-e29b-41d4-a716-446655440014', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440012', '2025-01-28', 8.0, NULL, ARRAY['database', 'performance']),
-    ('550e8400-e29b-41d4-a716-446655440025', 'Mobile responsiveness', 'Ensure mobile compatibility', 'IN_PROGRESS', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440015', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440011', '2025-01-26', 14.0, 6.0, ARRAY['mobile', 'responsive', 'ui']),
-    ('550e8400-e29b-41d4-a716-446655440026', 'Performance monitoring', 'Setup monitoring tools', 'TODO', 'HIGH', '550e8400-e29b-41d4-a716-446655440016', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-01-22', 10.0, NULL, ARRAY['monitoring', 'devops']),
-    ('550e8400-e29b-41d4-a716-446655440027', 'Data migration scripts', 'Create migration tools', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-01-30', 15.0, NULL, ARRAY['migration', 'data']),
-    ('550e8400-e29b-41d4-a716-446655440028', 'Security audit', 'Security vulnerability assessment', 'IN_PROGRESS', 'HIGH', '550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-01-24', 20.0, 5.0, ARRAY['security', 'audit']);
+    ('550e8400-e29b-41d4-a716-446655440021', 'Design system implementation', 'Create comprehensive design system with components library', 'IN_PROGRESS', 'HIGH', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-01-25', 16.0, 8.0, ARRAY['design', 'ui', 'frontend']),
+    ('550e8400-e29b-41d4-a716-446655440022', 'API integration testing', 'Test all API endpoints and validate responses', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440013', '2025-01-23', 12.0, NULL, ARRAY['testing', 'api', 'backend']),
+    ('550e8400-e29b-41d4-a716-446655440023', 'User authentication flow', 'Implement secure authentication with JWT tokens', 'COMPLETED', 'HIGH', '550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-01-20', 20.0, 18.0, ARRAY['security', 'auth', 'backend']),
+    ('550e8400-e29b-41d4-a716-446655440024', 'Database optimization', 'Optimize queries and indexing for better performance', 'TODO', 'LOW', '550e8400-e29b-41d4-a716-446655440014', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440012', '2025-01-28', 8.0, NULL, ARRAY['database', 'performance']),
+    ('550e8400-e29b-41d4-a716-446655440025', 'Mobile responsiveness', 'Ensure mobile compatibility across all devices', 'IN_PROGRESS', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440015', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440011', '2025-01-26', 14.0, 6.0, ARRAY['mobile', 'responsive', 'ui']),
+    ('550e8400-e29b-41d4-a716-446655440029', 'Project dashboard development', 'Build interactive project dashboard with analytics', 'TODO', 'HIGH', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-01', 24.0, NULL, ARRAY['dashboard', 'analytics', 'frontend']),
+    ('550e8400-e29b-41d4-a716-446655440030', 'Task management system', 'Implement CRUD operations for task management', 'IN_PROGRESS', 'HIGH', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-01-29', 20.0, 8.0, ARRAY['crud', 'backend', 'tasks']),
+    ('550e8400-e29b-41d4-a716-446655440031', 'File upload functionality', 'Add file upload and management features', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-05', 16.0, NULL, ARRAY['files', 'upload', 'storage']),
+    ('550e8400-e29b-41d4-a716-446655440032', 'Real-time notifications', 'Implement WebSocket notifications for real-time updates', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440015', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-03', 18.0, NULL, ARRAY['websocket', 'notifications', 'realtime']),
+    ('550e8400-e29b-41d4-a716-446655440033', 'User profile management', 'Create user profile pages with preferences', 'TODO', 'LOW', '550e8400-e29b-41d4-a716-446655440016', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-07', 12.0, NULL, ARRAY['profile', 'user', 'preferences']),
+    ('550e8400-e29b-41d4-a716-446655440034', 'Search and filtering', 'Add advanced search and filtering capabilities', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-04', 14.0, NULL, ARRAY['search', 'filter', 'frontend']),
+    ('550e8400-e29b-41d4-a716-446655440035', 'Email notifications', 'Set up email notification system for important events', 'TODO', 'LOW', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-10', 10.0, NULL, ARRAY['email', 'notifications', 'integration']),
+    ('550e8400-e29b-41d4-a716-446655440036', 'Team collaboration features', 'Add team chat and collaboration tools', 'TODO', 'HIGH', '550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-08', 22.0, NULL, ARRAY['collaboration', 'chat', 'team']),
+    ('550e8400-e29b-41d4-a716-446655440037', 'Data export functionality', 'Enable data export in multiple formats (CSV, PDF, Excel)', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440015', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-06', 16.0, NULL, ARRAY['export', 'csv', 'pdf']),
+    ('550e8400-e29b-41d4-a716-446655440038', 'Time tracking integration', 'Integrate time tracking with project tasks', 'IN_PROGRESS', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440016', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-02', 18.0, 4.0, ARRAY['time', 'tracking', 'integration']),
+    ('550e8400-e29b-41d4-a716-446655440039', 'Calendar integration', 'Integrate with external calendar systems', 'TODO', 'LOW', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440014', '2025-02-12', 12.0, NULL, ARRAY['calendar', 'integration', 'scheduling']),
 
--- Insert subtasks
+-- Beta Release Project tasks (8 tasks)
+    ('550e8400-e29b-41d4-a716-446655440026', 'Performance monitoring', 'Setup monitoring tools and dashboards', 'TODO', 'HIGH', '550e8400-e29b-41d4-a716-446655440016', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-01-22', 10.0, NULL, ARRAY['monitoring', 'devops']),
+    ('550e8400-e29b-41d4-a716-446655440027', 'Data migration scripts', 'Create migration tools for legacy data', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-01-30', 15.0, NULL, ARRAY['migration', 'data']),
+    ('550e8400-e29b-41d4-a716-446655440028', 'Security audit', 'Security vulnerability assessment and fixes', 'IN_PROGRESS', 'HIGH', '550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-01-24', 20.0, 5.0, ARRAY['security', 'audit']),
+    ('550e8400-e29b-41d4-a716-446655440040', 'Load testing', 'Conduct comprehensive load testing of the application', 'TODO', 'HIGH', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-02-14', 16.0, NULL, ARRAY['load-testing', 'performance', 'qa']),
+    ('550e8400-e29b-41d4-a716-446655440041', 'User acceptance testing', 'Coordinate UAT with stakeholders', 'TODO', 'HIGH', '550e8400-e29b-41d4-a716-446655440015', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-02-16', 12.0, NULL, ARRAY['uat', 'testing', 'stakeholders']),
+    ('550e8400-e29b-41d4-a716-446655440042', 'Documentation finalization', 'Complete technical and user documentation', 'IN_PROGRESS', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440016', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-02-10', 14.0, 3.0, ARRAY['documentation', 'manual', 'tech-docs']),
+    ('550e8400-e29b-41d4-a716-446655440043', 'Deployment automation', 'Setup CI/CD pipeline for automated deployments', 'TODO', 'MEDIUM', '550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-02-08', 18.0, NULL, ARRAY['cicd', 'deployment', 'automation']),
+    ('550e8400-e29b-41d4-a716-446655440044', 'Beta release preparation', 'Prepare for beta release including user onboarding', 'TODO', 'HIGH', '550e8400-e29b-41d4-a716-446655440014', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440014', '2025-02-18', 10.0, NULL, ARRAY['beta', 'release', 'onboarding']);
+
+-- Insert subtasks (60+ subtasks across all tasks)
 INSERT INTO subtasks (id, task_id, name, is_completed) VALUES
-    ('550e8400-e29b-41d4-a716-446655440031', '550e8400-e29b-41d4-a716-446655440021', 'Create color palette', true),
-    ('550e8400-e29b-41d4-a716-446655440032', '550e8400-e29b-41d4-a716-446655440021', 'Design typography system', true),
-    ('550e8400-e29b-41d4-a716-446655440033', '550e8400-e29b-41d4-a716-446655440021', 'Build component library', false),
-    ('550e8400-e29b-41d4-a716-446655440034', '550e8400-e29b-41d4-a716-446655440021', 'Document usage guidelines', false),
-    ('550e8400-e29b-41d4-a716-446655440035', '550e8400-e29b-41d4-a716-446655440022', 'Test authentication endpoints', false),
-    ('550e8400-e29b-41d4-a716-446655440036', '550e8400-e29b-41d4-a716-446655440022', 'Test task management APIs', false),
-    ('550e8400-e29b-41d4-a716-446655440037', '550e8400-e29b-41d4-a716-446655440022', 'Test error handling', false);
+    -- Design system implementation subtasks
+    ('550e8400-e29b-41d4-a716-446655440051', '550e8400-e29b-41d4-a716-446655440021', 'Create color palette', true),
+    ('550e8400-e29b-41d4-a716-446655440052', '550e8400-e29b-41d4-a716-446655440021', 'Design typography system', true),
+    ('550e8400-e29b-41d4-a716-446655440053', '550e8400-e29b-41d4-a716-446655440021', 'Build component library', false),
+    ('550e8400-e29b-41d4-a716-446655440054', '550e8400-e29b-41d4-a716-446655440021', 'Document usage guidelines', false),
+    ('550e8400-e29b-41d4-a716-446655440055', '550e8400-e29b-41d4-a716-446655440021', 'Create Storybook setup', false),
+
+    -- API integration testing subtasks
+    ('550e8400-e29b-41d4-a716-446655440056', '550e8400-e29b-41d4-a716-446655440022', 'Test authentication endpoints', false),
+    ('550e8400-e29b-41d4-a716-446655440057', '550e8400-e29b-41d4-a716-446655440022', 'Test task management APIs', false),
+    ('550e8400-e29b-41d4-a716-446655440058', '550e8400-e29b-41d4-a716-446655440022', 'Test error handling', false),
+    ('550e8400-e29b-41d4-a716-446655440059', '550e8400-e29b-41d4-a716-446655440022', 'Test data validation', false),
+
+    -- User authentication flow subtasks
+    ('550e8400-e29b-41d4-a716-446655440060', '550e8400-e29b-41d4-a716-446655440023', 'Implement JWT tokens', true),
+    ('550e8400-e29b-41d4-a716-446655440061', '550e8400-e29b-41d4-a716-446655440023', 'Create login page', true),
+    ('550e8400-e29b-41d4-a716-446655440062', '550e8400-e29b-41d4-a716-446655440023', 'Create registration page', true),
+    ('550e8400-e29b-41d4-a716-446655440063', '550e8400-e29b-41d4-a716-446655440023', 'Implement password reset', true),
+
+    -- Database optimization subtasks
+    ('550e8400-e29b-41d4-a716-446655440064', '550e8400-e29b-41d4-a716-446655440024', 'Analyze query performance', false),
+    ('550e8400-e29b-41d4-a716-446655440065', '550e8400-e29b-41d4-a716-446655440024', 'Add database indexes', false),
+    ('550e8400-e29b-41d4-a716-446655440066', '550e8400-e29b-41d4-a716-446655440024', 'Optimize complex queries', false),
+
+    -- Mobile responsiveness subtasks
+    ('550e8400-e29b-41d4-a716-446655440067', '550e8400-e29b-41d4-a716-446655440025', 'Create mobile navigation', false),
+    ('550e8400-e29b-41d4-a716-446655440068', '550e8400-e29b-41d4-a716-446655440025', 'Optimize touch interactions', false),
+    ('550e8400-e29b-41d4-a716-446655440069', '550e8400-e29b-41d4-a716-446655440025', 'Test on various devices', false),
+    ('550e8400-e29b-41d4-a716-446655440070', '550e8400-e29b-41d4-a716-446655440025', 'Responsive grid layout', true),
+
+    -- Project dashboard development subtasks
+    ('550e8400-e29b-41d4-a716-446655440071', '550e8400-e29b-41d4-a716-446655440029', 'Design dashboard layout', false),
+    ('550e8400-e29b-41d4-a716-446655440072', '550e8400-e29b-41d4-a716-446655440029', 'Implement charts and graphs', false),
+    ('550e8400-e29b-41d4-a716-446655440073', '550e8400-e29b-41d4-a716-446655440029', 'Add real-time data updates', false),
+    ('550e8400-e29b-41d4-a716-446655440074', '550e8400-e29b-41d4-a716-446655440029', 'Create custom widgets', false),
+
+    -- Task management system subtasks
+    ('550e8400-e29b-41d4-a716-446655440075', '550e8400-e29b-41d4-a716-446655440030', 'Create task creation form', true),
+    ('550e8400-e29b-41d4-a716-446655440076', '550e8400-e29b-41d4-a716-446655440030', 'Implement task editing', false),
+    ('550e8400-e29b-41d4-a716-446655440077', '550e8400-e29b-41d4-a716-446655440030', 'Add task deletion', false),
+    ('550e8400-e29b-41d4-a716-446655440078', '550e8400-e29b-41d4-a716-446655440030', 'Implement task status updates', true),
+
+    -- File upload functionality subtasks
+    ('550e8400-e29b-41d4-a716-446655440079', '550e8400-e29b-41d4-a716-446655440031', 'Setup file storage backend', false),
+    ('550e8400-e29b-41d4-a716-446655440080', '550e8400-e29b-41d4-a716-446655440031', 'Create upload UI component', false),
+    ('550e8400-e29b-41d4-a716-446655440081', '550e8400-e29b-41d4-a716-446655440031', 'Implement file validation', false),
+    ('550e8400-e29b-41d4-a716-446655440082', '550e8400-e29b-41d4-a716-446655440031', 'Add file preview functionality', false),
+
+    -- Real-time notifications subtasks
+    ('550e8400-e29b-41d4-a716-446655440083', '550e8400-e29b-41d4-a716-446655440032', 'Setup WebSocket server', false),
+    ('550e8400-e29b-41d4-a716-446655440084', '550e8400-e29b-41d4-a716-446655440032', 'Create notification UI', false),
+    ('550e8400-e29b-41d4-a716-446655440085', '550e8400-e29b-41d4-a716-446655440032', 'Implement push notifications', false),
+
+    -- User profile management subtasks
+    ('550e8400-e29b-41d4-a716-446655440086', '550e8400-e29b-41d4-a716-446655440033', 'Create profile page layout', false),
+    ('550e8400-e29b-41d4-a716-446655440087', '550e8400-e29b-41d4-a716-446655440033', 'Add avatar upload', false),
+    ('550e8400-e29b-41d4-a716-446655440088', '550e8400-e29b-41d4-a716-446655440033', 'Implement preferences settings', false),
+
+    -- Search and filtering subtasks
+    ('550e8400-e29b-41d4-a716-446655440089', '550e8400-e29b-41d4-a716-446655440034', 'Create search interface', false),
+    ('550e8400-e29b-41d4-a716-446655440090', '550e8400-e29b-41d4-a716-446655440034', 'Implement advanced filters', false),
+    ('550e8400-e29b-41d4-a716-446655440091', '550e8400-e29b-41d4-a716-446655440034', 'Add search result highlighting', false),
+
+    -- Email notifications subtasks
+    ('550e8400-e29b-41d4-a716-446655440092', '550e8400-e29b-41d4-a716-446655440035', 'Setup email service', false),
+    ('550e8400-e29b-41d4-a716-446655440093', '550e8400-e29b-41d4-a716-446655440035', 'Create email templates', false),
+    ('550e8400-e29b-41d4-a716-446655440094', '550e8400-e29b-41d4-a716-446655440035', 'Implement notification preferences', false),
+
+    -- Team collaboration features subtasks
+    ('550e8400-e29b-41d4-a716-446655440095', '550e8400-e29b-41d4-a716-446655440036', 'Create chat interface', false),
+    ('550e8400-e29b-41d4-a716-446655440096', '550e8400-e29b-41d4-a716-446655440036', 'Implement file sharing', false),
+    ('550e8400-e29b-41d4-a716-446655440097', '550e8400-e29b-41d4-a716-446655440036', 'Add team activity feed', false),
+    ('550e8400-e29b-41d4-a716-446655440098', '550e8400-e29b-41d4-a716-446655440036', 'Create team member directory', false),
+
+    -- Data export functionality subtasks
+    ('550e8400-e29b-41d4-a716-446655440099', '550e8400-e29b-41d4-a716-446655440037', 'Implement CSV export', false),
+    ('550e8400-e29b-41d4-a716-446655440100', '550e8400-e29b-41d4-a716-446655440037', 'Add PDF generation', false),
+    ('550e8400-e29b-41d4-a716-446655440101', '550e8400-e29b-41d4-a716-446655440037', 'Create Excel export', false),
+
+    -- Time tracking integration subtasks
+    ('550e8400-e29b-41d4-a716-446655440102', '550e8400-e29b-41d4-a716-446655440038', 'Create time entry interface', false),
+    ('550e8400-e29b-41d4-a716-446655440103', '550e8400-e29b-41d4-a716-446655440038', 'Implement time tracking widget', true),
+    ('550e8400-e29b-41d4-a716-446655440104', '550e8400-e29b-41d4-a716-446655440038', 'Add time reports', false),
+
+    -- Calendar integration subtasks
+    ('550e8400-e29b-41d4-a716-446655440105', '550e8400-e29b-41d4-a716-446655440039', 'Setup calendar API integration', false),
+    ('550e8400-e29b-41d4-a716-446655440106', '550e8400-e29b-41d4-a716-446655440039', 'Create calendar view', false),
+    ('550e8400-e29b-41d4-a716-446655440107', '550e8400-e29b-41d4-a716-446655440039', 'Sync with Google Calendar', false),
+
+    -- Performance monitoring subtasks
+    ('550e8400-e29b-41d4-a716-446655440108', '550e8400-e29b-41d4-a716-446655440026', 'Setup monitoring infrastructure', false),
+    ('550e8400-e29b-41d4-a716-446655440109', '550e8400-e29b-41d4-a716-446655440026', 'Create performance dashboards', false),
+    ('550e8400-e29b-41d4-a716-446655440110', '550e8400-e29b-41d4-a716-446655440026', 'Configure alerts and notifications', false),
+
+    -- Data migration scripts subtasks
+    ('550e8400-e29b-41d4-a716-446655440111', '550e8400-e29b-41d4-a716-446655440027', 'Analyze legacy data structure', false),
+    ('550e8400-e29b-41d4-a716-446655440112', '550e8400-e29b-41d4-a716-446655440027', 'Write migration scripts', false),
+    ('550e8400-e29b-41d4-a716-446655440113', '550e8400-e29b-41d4-a716-446655440027', 'Test data migration', false),
+    ('550e8400-e29b-41d4-a716-446655440114', '550e8400-e29b-41d4-a716-446655440027', 'Validate migrated data', false),
+
+    -- Security audit subtasks
+    ('550e8400-e29b-41d4-a716-446655440115', '550e8400-e29b-41d4-a716-446655440028', 'Conduct vulnerability scan', true),
+    ('550e8400-e29b-41d4-a716-446655440116', '550e8400-e29b-41d4-a716-446655440028', 'Review authentication security', false),
+    ('550e8400-e29b-41d4-a716-446655440117', '550e8400-e29b-41d4-a716-446655440028', 'Test input validation', false),
+    ('550e8400-e29b-41d4-a716-446655440118', '550e8400-e29b-41d4-a716-446655440028', 'Fix security vulnerabilities', false),
+
+    -- Load testing subtasks
+    ('550e8400-e29b-41d4-a716-446655440119', '550e8400-e29b-41d4-a716-446655440040', 'Setup load testing tools', false),
+    ('550e8400-e29b-41d4-a716-446655440120', '550e8400-e29b-41d4-a716-446655440040', 'Create load test scenarios', false),
+    ('550e8400-e29b-41d4-a716-446655440121', '550e8400-e29b-41d4-a716-446655440040', 'Execute load tests', false),
+    ('550e8400-e29b-41d4-a716-446655440122', '550e8400-e29b-41d4-a716-446655440040', 'Analyze performance results', false),
+
+    -- User acceptance testing subtasks
+    ('550e8400-e29b-41d4-a716-446655440123', '550e8400-e29b-41d4-a716-446655440041', 'Prepare UAT test cases', false),
+    ('550e8400-e29b-41d4-a716-446655440124', '550e8400-e29b-41d4-a716-446655440041', 'Coordinate with stakeholders', false),
+    ('550e8400-e29b-41d4-a716-446655440125', '550e8400-e29b-41d4-a716-446655440041', 'Execute UAT sessions', false),
+
+    -- Documentation finalization subtasks
+    ('550e8400-e29b-41d4-a716-446655440126', '550e8400-e29b-41d4-a716-446655440042', 'Write technical documentation', false),
+    ('550e8400-e29b-41d4-a716-446655440127', '550e8400-e29b-41d4-a716-446655440042', 'Create user manual', true),
+    ('550e8400-e29b-41d4-a716-446655440128', '550e8400-e29b-41d4-a716-446655440042', 'Update API documentation', false),
+    ('550e8400-e29b-41d4-a716-446655440129', '550e8400-e29b-41d4-a716-446655440042', 'Review and finalize docs', false),
+
+    -- Deployment automation subtasks
+    ('550e8400-e29b-41d4-a716-446655440130', '550e8400-e29b-41d4-a716-446655440043', 'Setup CI/CD pipeline', false),
+    ('550e8400-e29b-41d4-a716-446655440131', '550e8400-e29b-41d4-a716-446655440043', 'Configure deployment environments', false),
+    ('550e8400-e29b-41d4-a716-446655440132', '550e8400-e29b-41d4-a716-446655440043', 'Test automated deployments', false),
+
+    -- Beta release preparation subtasks
+    ('550e8400-e29b-41d4-a716-446655440133', '550e8400-e29b-41d4-a716-446655440044', 'Create beta user onboarding', false),
+    ('550e8400-e29b-41d4-a716-446655440134', '550e8400-e29b-41d4-a716-446655440044', 'Setup feedback collection', false),
+    ('550e8400-e29b-41d4-a716-446655440135', '550e8400-e29b-41d4-a716-446655440044', 'Prepare beta release notes', false);
 
 -- Insert sample comments
 INSERT INTO task_comments (id, task_id, user_id, content) VALUES
