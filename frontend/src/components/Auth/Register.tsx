@@ -62,56 +62,77 @@ export default function Register() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Create an Account</h2>
+        <div className="auth-logo">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="20" height="20" rx="4" fill="#6366f1"/>
+            <rect x="32" y="10" width="18" height="20" rx="4" fill="#8b5cf6"/>
+            <rect x="10" y="32" width="20" height="18" rx="4" fill="#a78bfa"/>
+            <rect x="32" y="32" width="18" height="18" rx="4" fill="#c4b5fd"/>
+          </svg>
+        </div>
+        <h2>Get Started</h2>
+        <p className="auth-subtitle">Create your account to access Project Planner</p>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter your email"
-            />
+            <div className="input-wrapper">
+              <span className="input-icon">✉️</span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="Enter your email"
+              />
+            </div>
           </div>
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter your full name"
-            />
+            <div className="input-wrapper">
+              <span className="input-icon">👤</span>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Create a password (min 6 characters)"
-            />
+            <div className="input-wrapper">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Create a password (min 6 characters)"
+              />
+            </div>
           </div>
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              placeholder="Confirm your password"
-            />
+            <div className="input-wrapper">
+              <span className="input-icon">🔐</span>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                placeholder="Confirm your password"
+              />
+            </div>
           </div>
           <button type="submit" className="auth-button" disabled={loading}>
             {loading ? 'Creating account...' : 'Register'}
