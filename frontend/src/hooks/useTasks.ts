@@ -9,8 +9,11 @@ export const useTasks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Using Project Alpha ID from test data
-  const projectId = '550e8400-e29b-41d4-a716-446655440001';
+  // Project IDs from test data
+  const projectIds = [
+    '550e8400-e29b-41d4-a716-446655440001', // Project Alpha
+    '550e8400-e29b-41d4-a716-446655440002', // Beta Release
+  ];
 
   // Load tasks and team members on mount
   useEffect(() => {
@@ -20,12 +23,26 @@ export const useTasks = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [tasksData, teamData] = await Promise.all([
-        taskApi.getTasks(projectId),
-        taskApi.getTeamMembers(projectId),
+      
+      // Fetch tasks from all projects
+      const taskPromises = projectIds.map(id => taskApi.getTasks(id));
+      const teamPromises = projectIds.map(id => taskApi.getTeamMembers(id));
+      
+      const [taskResults, teamResults] = await Promise.all([
+        Promise.all(taskPromises),
+        Promise.all(teamPromises),
       ]);
-      setTasks(tasksData);
-      setTeamMembers(teamData);
+      
+      // Combine tasks from all projects
+      const allTasks = taskResults.flat();
+      setTasks(allTasks);
+      
+      // Combine and deduplicate team members
+      const allTeamMembers = teamResults.flat();
+      const uniqueTeamMembers = Array.from(
+        new Map(allTeamMembers.map(member => [member.id, member])).values()
+      );
+      setTeamMembers(uniqueTeamMembers);
     } catch (err) {
       console.error('Failed to load tasks:', err);
       setError('Failed to load tasks. Please try again.');
@@ -35,7 +52,10 @@ export const useTasks = () => {
   };
 
   const createTask = useCallback(
-    async (taskData: CreateTaskRequest) => {
+    async (taskData: CreateTaskRequest, projectId?: string) => {
+      // Use first project as default if no projectId specified
+      const targetProjectId = projectId || projectIds[0];
+      
       // Create a temporary task with optimistic ID
       const tempId = `temp-${Date.now()}`;
       const tempTask: Task = {
@@ -67,7 +87,7 @@ export const useTasks = () => {
 
       try {
         // Make API call in background
-        const newTask = await taskApi.createTask(projectId, taskData);
+        const newTask = await taskApi.createTask(targetProjectId, taskData);
 
         // Replace temporary task with real task from server
         setTasks((prev) =>
@@ -84,7 +104,7 @@ export const useTasks = () => {
         setTimeout(() => setError(null), 3000);
       }
     },
-    [projectId, teamMembers]
+    [teamMembers]
   );
 
   const updateTask = useCallback(
