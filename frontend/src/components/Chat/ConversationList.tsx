@@ -33,6 +33,7 @@ interface User {
 interface ConversationListProps {
   currentUserId: string;
   selectedConversationId?: string;
+  projectId?: string;
   onConversationSelect: (conversationId: string) => void;
   onNewConversation: () => void;
   onStartDirectMessage?: (userId: string) => void;
@@ -41,6 +42,7 @@ interface ConversationListProps {
 const ConversationList: React.FC<ConversationListProps> = ({
   currentUserId,
   selectedConversationId,
+  projectId,
   onConversationSelect,
   onNewConversation,
   onStartDirectMessage,
@@ -82,7 +84,12 @@ const ConversationList: React.FC<ConversationListProps> = ({
       const token = localStorage.getItem('auth_token');
       console.log('Auth token from localStorage:', token);
       
-      const response = await fetch('/api/users', {
+      // If we have a projectId, fetch project members; otherwise fetch all users
+      const endpoint = projectId 
+        ? `/api/projects/${projectId}/members`
+        : '/api/users';
+      
+      const response = await fetch(endpoint, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -96,8 +103,21 @@ const ConversationList: React.FC<ConversationListProps> = ({
       console.log('Fetched users:', data);
       console.log('Current user ID (email):', currentUserId);
       
+      // Transform data based on endpoint
+      let users: User[] = [];
+      if (projectId && data.length > 0 && data[0].userId) {
+        // Project members endpoint returns different structure
+        users = data.map((member: any) => ({
+          id: member.userId,
+          name: member.userName,
+          email: member.userEmail,
+        }));
+      } else {
+        users = data;
+      }
+      
       // Filter out current user
-      const filteredUsers = data.filter(
+      const filteredUsers = users.filter(
         (user: User) => user.email !== currentUserId
       );
       console.log('Filtered users:', filteredUsers);

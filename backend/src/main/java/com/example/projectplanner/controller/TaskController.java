@@ -5,11 +5,13 @@ import com.example.projectplanner.entity.Task;
 import com.example.projectplanner.entity.DashboardStats;
 import com.example.projectplanner.entity.Subtask;
 import com.example.projectplanner.entity.TaskComment;
+import com.example.projectplanner.entity.ProjectMember;
 import com.example.projectplanner.mapper.TaskMapper;
 import com.example.projectplanner.mapper.SubtaskMapper;
 import com.example.projectplanner.mapper.UserMapper;
 import com.example.projectplanner.mapper.TaskCommentMapper;
 import com.example.projectplanner.entity.User;
+import com.example.projectplanner.service.ProjectMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class TaskController {
     
     @Autowired
     private TaskCommentMapper taskCommentMapper;
+    
+    @Autowired
+    private ProjectMemberService projectMemberService;
     
     @GetMapping("/project/{projectId}")
     @Operation(summary = "Get all tasks for a project")
@@ -192,16 +197,20 @@ public class TaskController {
     @GetMapping("/team-members/{projectId}")
     @Operation(summary = "Get team members for a project")
     public ResponseEntity<List<TeamMemberResponse>> getTeamMembers(@PathVariable UUID projectId) {
-        List<User> users = userMapper.findAll();
+        // This endpoint is deprecated - use /api/projects/{projectId}/members instead
+        // Keeping for backward compatibility
+        
+        // Get actual project members
+        List<ProjectMember> projectMembers = projectMemberService.getProjectMembers(projectId);
         List<TeamMemberResponse> response = new ArrayList<>();
         
-        for (User user : users) {
-            TeamMemberResponse member = new TeamMemberResponse();
-            member.setId(user.getId());
-            member.setName(user.getName());
-            member.setEmail(user.getEmail());
-            member.setRole(user.getRole().name());
-            response.add(member);
+        for (ProjectMember member : projectMembers) {
+            TeamMemberResponse teamMember = new TeamMemberResponse();
+            teamMember.setId(member.getUserId());
+            teamMember.setName(member.getUserName());
+            teamMember.setEmail(member.getUserEmail());
+            teamMember.setRole(member.getRole().getDisplayName());
+            response.add(teamMember);
         }
         
         return ResponseEntity.ok(response);
