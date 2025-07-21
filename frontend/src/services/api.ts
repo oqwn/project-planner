@@ -163,6 +163,28 @@ export const taskApi = {
   },
 };
 
+// Time Tracking API endpoints
+export const timeTrackingApi = {
+  async createTimeEntry(data: { taskId: string; date: string; hours: number; description?: string }) {
+    const response = await api.post('/api/time-entries', data);
+    return response.data;
+  },
+
+  async getProjectTimeEntries(projectId: string) {
+    const response = await api.get(`/api/time-entries/project/${projectId}`);
+    return response.data;
+  },
+
+  async getMyTimeEntries() {
+    const response = await api.get('/api/time-entries/my-entries');
+    return response.data;
+  },
+
+  async deleteTimeEntry(entryId: string) {
+    await api.delete(`/api/time-entries/${entryId}`);
+  },
+};
+
 // Dashboard API endpoints
 export const dashboardApi = {
   // Get dashboard statistics

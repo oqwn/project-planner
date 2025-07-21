@@ -132,4 +132,7 @@ public interface TaskMapper {
     default void deleteTagsByTaskId(UUID taskId) {
         // No-op for now - tags should be updated via the main task update
     }
+    
+    @Select("SELECT COUNT(*) > 0 FROM tasks WHERE id = #{id}")
+    boolean existsById(@Param("id") UUID id);
 }

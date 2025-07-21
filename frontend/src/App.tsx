@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { Tasks } from './components/Tasks/Tasks';
+import { TimeTracking } from './components/TimeTracking/TimeTracking';
 import { UserList } from './components/UserList';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
@@ -42,10 +43,7 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/users" element={<UserList />} />
                     <Route path="/tasks" element={<Tasks />} />
-                    <Route
-                      path="/timesheets"
-                      element={<TimesheetsPlaceholder />}
-                    />
+                    <Route path="/timesheets" element={<TimeTracking />} />
                     <Route
                       path="/collaboration"
                       element={<CollaborationPlaceholder />}
@@ -64,12 +62,6 @@ function App() {
 }
 
 // Placeholder components for future implementation
-const TimesheetsPlaceholder: React.FC = () => (
-  <div className="placeholder-page">
-    <h1>Timesheets</h1>
-    <p>Time tracking interface coming soon...</p>
-  </div>
-);
 
 const CollaborationPlaceholder: React.FC = () => (
   <div className="placeholder-page">

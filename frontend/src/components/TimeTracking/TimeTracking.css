@@ -1,0 +1,50 @@
+.time-tracking {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.time-tracking-header {
+  margin-bottom: 2rem;
+}
+
+.time-tracking-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.time-tracking-header p {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.time-tracking-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.time-entry-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.time-entries-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+@media (max-width: 1024px) {
+  .time-tracking-content {
+    grid-template-columns: 1fr;
+  }
+}
