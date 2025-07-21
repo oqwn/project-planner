@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useAuthStore } from '../../store/authStore';
+import { ProjectContext } from '../../contexts/ProjectContext';
 import ConversationList from './ConversationList';
 import NewConversationModal from './NewConversationModal';
 import { ChatMessage } from './ChatMessage';
@@ -46,7 +47,16 @@ interface Conversation {
 }
 
 export const EnhancedChat: React.FC = () => {
+  const projectContext = useContext(ProjectContext);
   const user = useAuthStore((state) => state.user);
+
+  if (!projectContext) {
+    throw new Error('EnhancedChat must be used within ProjectProvider');
+  }
+
+  const { selectedProject } = projectContext;
+  const projectId = selectedProject?.id;
+
   const [selectedConversationId, setSelectedConversationId] = useState<
     string | undefined
   >();
@@ -317,6 +327,7 @@ export const EnhancedChat: React.FC = () => {
       <ConversationList
         currentUserId={user?.email || ''}
         selectedConversationId={selectedConversationId}
+        projectId={projectId}
         onConversationSelect={setSelectedConversationId}
         onNewConversation={() => setShowNewConversationModal(true)}
         onStartDirectMessage={handleStartDirectMessage}

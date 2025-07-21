@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuthStore } from '../../store/authStore';
 import './ConversationList.css';
 
 interface ConversationParticipant {
@@ -47,6 +48,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
   onNewConversation,
   onStartDirectMessage,
 }) => {
+  const user = useAuthStore((state) => state.user);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +64,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
     try {
       const response = await fetch('/api/chat/conversations', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${user?.token}`,
         },
       });
 
@@ -81,17 +83,19 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
   const fetchAvailableUsers = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      console.log('Auth token from localStorage:', token);
+      console.log('Auth token from user store:', user?.token);
+      console.log('ProjectId:', projectId);
       
       // If we have a projectId, fetch project members; otherwise fetch all users
       const endpoint = projectId 
         ? `/api/projects/${projectId}/members`
         : '/api/users';
       
+      console.log('Fetching from endpoint:', endpoint);
+      
       const response = await fetch(endpoint, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${user?.token}`,
         },
       });
 
