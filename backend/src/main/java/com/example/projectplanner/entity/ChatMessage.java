@@ -6,7 +6,8 @@ import java.util.UUID;
 
 public class ChatMessage {
     private UUID id;
-    private UUID projectId;
+    private UUID conversationId;
+    private UUID projectId; // Keep for backward compatibility, null for DMs
     private UUID senderId;
     private String content;
     private MessageType type;
@@ -24,9 +25,9 @@ public class ChatMessage {
     // Constructors
     public ChatMessage() {}
 
-    public ChatMessage(UUID projectId, UUID senderId, String content, MessageType type) {
+    public ChatMessage(UUID conversationId, UUID senderId, String content, MessageType type) {
         this.id = UUID.randomUUID();
-        this.projectId = projectId;
+        this.conversationId = conversationId;
         this.senderId = senderId;
         this.content = content;
         this.type = type;
@@ -42,6 +43,14 @@ public class ChatMessage {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(UUID conversationId) {
+        this.conversationId = conversationId;
     }
 
     public UUID getProjectId() {

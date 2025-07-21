@@ -7,6 +7,7 @@ import com.example.projectplanner.entity.ChatMessage.MessageType;
 
 public class ChatMessageResponse {
     private UUID id;
+    private UUID conversationId;
     private UUID projectId;
     private UUID senderId;
     private String senderName;
@@ -30,6 +31,14 @@ public class ChatMessageResponse {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(UUID conversationId) {
+        this.conversationId = conversationId;
     }
 
     public UUID getProjectId() {

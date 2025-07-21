@@ -5,7 +5,8 @@ import java.util.UUID;
 import com.example.projectplanner.entity.ChatMessage.MessageType;
 
 public class ChatMessageRequest {
-    private UUID projectId;
+    private UUID conversationId;
+    private UUID projectId; // Keep for backward compatibility
     private String content;
     private MessageType type;
     private UUID replyToMessageId;
@@ -13,6 +14,14 @@ public class ChatMessageRequest {
     private List<UUID> attachmentIds;
 
     // Getters and Setters
+    public UUID getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(UUID conversationId) {
+        this.conversationId = conversationId;
+    }
+
     public UUID getProjectId() {
         return projectId;
     }

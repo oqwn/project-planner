@@ -40,11 +40,14 @@ public class ChatService {
 
         // Create chat message entity
         ChatMessage message = new ChatMessage(
-            request.getProjectId(),
+            request.getConversationId(),
             currentUser.getId(),
             request.getContent(),
             request.getType()
         );
+        
+        // Set project ID for backward compatibility if provided
+        message.setProjectId(request.getProjectId());
 
         message.setReplyToMessageId(request.getReplyToMessageId());
         message.setMentions(request.getMentions());
@@ -81,6 +84,25 @@ public class ChatService {
         
         int offset = page * size;
         List<ChatMessageResponse> messages = chatMessageMapper.findByProjectId(projectId, size, offset);
+        
+        // Set own message flags and load attachments
+        return messages.stream().map(message -> {
+            message.setOwnMessage(currentUser != null && currentUser.getId().equals(message.getSenderId()));
+            
+            // Load attachments for messages that have them
+            // This would require additional logic to get attachment IDs from the message
+            // For now, we'll leave attachments empty in the list view for performance
+            
+            return message;
+        }).collect(Collectors.toList());
+    }
+
+    public List<ChatMessageResponse> getConversationMessages(UUID conversationId, int page, int size, String userEmail) {
+        // Get current user for own message flagging
+        User currentUser = userMapper.findByEmail(userEmail);
+        
+        int offset = page * size;
+        List<ChatMessageResponse> messages = chatMessageMapper.findByConversationId(conversationId, size, offset);
         
         // Set own message flags and load attachments
         return messages.stream().map(message -> {
