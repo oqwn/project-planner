@@ -24,11 +24,18 @@ interface Conversation {
   avatarUrl?: string;
 }
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface ConversationListProps {
   currentUserId: string;
   selectedConversationId?: string;
   onConversationSelect: (conversationId: string) => void;
   onNewConversation: () => void;
+  onStartDirectMessage?: (userId: string) => void;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({
@@ -36,13 +43,17 @@ const ConversationList: React.FC<ConversationListProps> = ({
   selectedConversationId,
   onConversationSelect,
   onNewConversation,
+  onStartDirectMessage,
 }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState<'conversations' | 'users'>('conversations');
 
   useEffect(() => {
     fetchConversations();
+    fetchAvailableUsers();
   }, []);
 
   const fetchConversations = async () => {
@@ -63,6 +74,29 @@ const ConversationList: React.FC<ConversationListProps> = ({
       console.error('Error fetching conversations:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAvailableUsers = async () => {
+    try {
+      const response = await fetch('/api/users', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+
+      const data = await response.json();
+      // Filter out current user
+      const filteredUsers = data.filter(
+        (user: User) => user.email !== currentUserId
+      );
+      setAvailableUsers(filteredUsers);
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
   };
 
@@ -135,6 +169,21 @@ const ConversationList: React.FC<ConversationListProps> = ({
         </button>
       </div>
 
+      <div className="tabs">
+        <button
+          className={`tab ${activeTab === 'conversations' ? 'active' : ''}`}
+          onClick={() => setActiveTab('conversations')}
+        >
+          Conversations
+        </button>
+        <button
+          className={`tab ${activeTab === 'users' ? 'active' : ''}`}
+          onClick={() => setActiveTab('users')}
+        >
+          Team Members
+        </button>
+      </div>
+
       <div className="conversation-search">
         <input
           type="text"
@@ -145,12 +194,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
       </div>
 
       <div className="conversations">
-        {filteredConversations.length === 0 ? (
-          <div className="no-conversations">
-            {searchTerm ? 'No conversations found' : 'No conversations yet'}
-          </div>
-        ) : (
-          filteredConversations.map((conversation) => (
+        {activeTab === 'conversations' ? (
+          filteredConversations.length === 0 ? (
+            <div className="no-conversations">
+              {searchTerm ? 'No conversations found' : 'No conversations yet. Click the Team Members tab to start chatting!'}
+            </div>
+          ) : (
+            filteredConversations.map((conversation) => (
             <div
               key={conversation.id}
               className={`conversation-item ${selectedConversationId === conversation.id ? 'selected' : ''}`}
@@ -189,7 +239,42 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 </div>
               </div>
             </div>
-          ))
+            ))
+          )
+        ) : (
+          // Users tab
+          <div className="available-users">
+            {loading ? (
+              <div className="loading">Loading team members...</div>
+            ) : availableUsers.length === 0 ? (
+              <div className="no-users">No team members found</div>
+            ) : (
+              availableUsers
+                .filter(user => 
+                  user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map(user => (
+                  <div
+                    key={user.id}
+                    className="user-item"
+                    onClick={() => {
+                      if (onStartDirectMessage) {
+                        onStartDirectMessage(user.id);
+                      }
+                    }}
+                  >
+                    <div className="user-avatar">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="user-info">
+                      <h4>{user.name}</h4>
+                      <p>{user.email}</p>
+                    </div>
+                  </div>
+                ))
+            )}
+          </div>
         )}
       </div>
     </div>

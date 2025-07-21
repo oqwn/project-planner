@@ -41,6 +41,35 @@
   background-color: #0056b3;
 }
 
+.tabs {
+  display: flex;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab:hover {
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+.tab.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
 .conversation-search {
   padding: 12px 20px;
   background-color: #fff;
@@ -201,4 +230,59 @@
 
 .conversations::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+
+/* Available Users */
+.available-users {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-item:hover {
+  background-color: #f5f5f5;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.user-info h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.user-info p {
+  margin: 2px 0 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.no-users {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 14px;
 }

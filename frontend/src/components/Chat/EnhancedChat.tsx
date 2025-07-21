@@ -292,6 +292,26 @@ export const EnhancedChat: React.FC = () => {
     return selectedConversation.name;
   };
 
+  const handleStartDirectMessage = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/chat/conversations/dm/${userId}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+
+      if (response.ok) {
+        const conversation = await response.json();
+        setSelectedConversationId(conversation.id);
+        // Refresh conversation list
+        window.location.reload(); // TODO: Implement proper refresh
+      }
+    } catch (error) {
+      console.error('Error creating DM:', error);
+    }
+  };
+
   return (
     <div className="enhanced-chat-container">
       <ConversationList
@@ -299,6 +319,7 @@ export const EnhancedChat: React.FC = () => {
         selectedConversationId={selectedConversationId}
         onConversationSelect={setSelectedConversationId}
         onNewConversation={() => setShowNewConversationModal(true)}
+        onStartDirectMessage={handleStartDirectMessage}
       />
 
       <div className="chat-main">
