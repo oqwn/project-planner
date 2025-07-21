@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import type { Task } from '../../types/task';
-import type { CreateTimeEntryRequest, TimeEntry } from '../../types/timeTracking';
+import type {
+  CreateTimeEntryRequest,
+  TimeEntry,
+} from '../../types/timeTracking';
 import { timeTrackingApi } from '../../services/api';
 import { CustomDropdown } from '../common/CustomDropdown';
 import './TimeEntryForm.css';
@@ -10,7 +13,10 @@ interface TimeEntryFormProps {
   onEntryAdded: (entry: TimeEntry) => void;
 }
 
-export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdded }) => {
+export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
+  tasks,
+  onEntryAdded,
+}) => {
   const [formData, setFormData] = useState<CreateTimeEntryRequest>({
     taskId: '',
     date: new Date().toISOString().split('T')[0],
@@ -47,14 +53,17 @@ export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdde
 
     try {
       setSubmitting(true);
-      
+
       // Call API to create time entry
       const response = await timeTrackingApi.createTimeEntry(formData);
-      
+
       // Transform response to match TimeEntry type
       const newEntry: TimeEntry = {
         ...response,
-        taskName: response.taskName || tasks.find(t => t.id === formData.taskId)?.title || '',
+        taskName:
+          response.taskName ||
+          tasks.find((t) => t.id === formData.taskId)?.title ||
+          '',
         updatedAt: response.updatedAt || response.createdAt,
       };
 
@@ -78,20 +87,22 @@ export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdde
   return (
     <div className="time-entry-form">
       <h2>Log Time Entry</h2>
-      
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="task">Task *</label>
           <CustomDropdown
-            options={tasks.map(task => ({
+            options={tasks.map((task) => ({
               value: task.id,
               label: task.title,
               subLabel: `${task.assignee || 'Unassigned'} • ${task.priority} priority`,
               icon: (
-                <div className={`task-priority-dot ${task.priority.toLowerCase()}`}>
+                <div
+                  className={`task-priority-dot ${task.priority.toLowerCase()}`}
+                >
                   {task.priority.charAt(0).toUpperCase()}
                 </div>
-              )
+              ),
             }))}
             value={formData.taskId}
             onChange={(value) => setFormData({ ...formData, taskId: value })}
@@ -99,7 +110,9 @@ export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdde
             error={!!errors.taskId}
             searchable={true}
           />
-          {errors.taskId && <span className="error-message">{errors.taskId}</span>}
+          {errors.taskId && (
+            <span className="error-message">{errors.taskId}</span>
+          )}
         </div>
 
         <div className="form-row">
@@ -109,11 +122,15 @@ export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdde
               id="date"
               type="date"
               value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, date: e.target.value })
+              }
               className={errors.date ? 'error' : ''}
               max={new Date().toISOString().split('T')[0]}
             />
-            {errors.date && <span className="error-message">{errors.date}</span>}
+            {errors.date && (
+              <span className="error-message">{errors.date}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -125,11 +142,18 @@ export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdde
               min="0"
               max="24"
               value={formData.hours || ''}
-              onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  hours: parseFloat(e.target.value) || 0,
+                })
+              }
               className={errors.hours ? 'error' : ''}
               placeholder="0"
             />
-            {errors.hours && <span className="error-message">{errors.hours}</span>}
+            {errors.hours && (
+              <span className="error-message">{errors.hours}</span>
+            )}
           </div>
         </div>
 
@@ -138,17 +162,15 @@ export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdde
           <textarea
             id="description"
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             placeholder="What did you work on?"
             rows={3}
           />
         </div>
 
-        <button 
-          type="submit" 
-          className="submit-btn"
-          disabled={submitting}
-        >
+        <button type="submit" className="submit-btn" disabled={submitting}>
           {submitting ? 'Adding...' : 'Add Time Entry'}
         </button>
       </form>

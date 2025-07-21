@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
       <div className="header-right">
         <ProjectSwitcher />
-        
+
         <div className="search-box">
           <input
             type="text"

@@ -69,6 +69,17 @@ interface ApiRecentActivityResponse {
   timestamp: string;
 }
 
+interface ProjectProgressResponse {
+  id: string;
+  name: string;
+  completionPercentage?: number;
+  progress?: number;
+  dueDate?: string;
+  status?: string;
+  tasksCompleted?: number;
+  totalTasks?: number;
+}
+
 const API_BASE_URL = 'http://localhost:20005/api';
 
 // Create axios instance with default config
@@ -165,23 +176,28 @@ export const taskApi = {
 
 // Time Tracking API endpoints
 export const timeTrackingApi = {
-  async createTimeEntry(data: { taskId: string; date: string; hours: number; description?: string }) {
-    const response = await api.post('/api/time-entries', data);
+  async createTimeEntry(data: {
+    taskId: string;
+    date: string;
+    hours: number;
+    description?: string;
+  }) {
+    const response = await api.post('/time-entries', data);
     return response.data;
   },
 
   async getProjectTimeEntries(projectId: string) {
-    const response = await api.get(`/api/time-entries/project/${projectId}`);
+    const response = await api.get(`/time-entries/project/${projectId}`);
     return response.data;
   },
 
   async getMyTimeEntries() {
-    const response = await api.get('/api/time-entries/my-entries');
+    const response = await api.get('/time-entries/my-entries');
     return response.data;
   },
 
   async deleteTimeEntry(entryId: string) {
-    await api.delete(`/api/time-entries/${entryId}`);
+    await api.delete(`/time-entries/${entryId}`);
   },
 };
 
@@ -199,8 +215,11 @@ export const dashboardApi = {
   },
 
   // Get recent tasks for dashboard
-  getRecentTasks: async (projectId: string, limit?: number): Promise<Task[]> => {
-    const url = limit 
+  getRecentTasks: async (
+    projectId: string,
+    limit?: number
+  ): Promise<Task[]> => {
+    const url = limit
       ? `/dashboard/recent-tasks/${projectId}?limit=${limit}`
       : `/dashboard/recent-tasks/${projectId}`;
     const { data } = await api.get(url);
@@ -244,17 +263,18 @@ export const dashboardApi = {
   // Get project progress
   getProjectProgress: async (projectId: string): Promise<ProjectProgress[]> => {
     const { data } = await api.get(`/dashboard/project-progress/${projectId}`);
-    return data.map(
-      (project: any) => ({
-        id: project.id,
-        name: project.name,
-        progress: project.completionPercentage || project.progress || 0,
-        dueDate: project.dueDate || new Date().toISOString(),
-        status: (project.status || 'on-track') as 'on-track' | 'at-risk' | 'delayed',
-        tasksCompleted: project.tasksCompleted || 0,
-        totalTasks: project.totalTasks || 0,
-      })
-    );
+    return data.map((project: ProjectProgressResponse) => ({
+      id: project.id,
+      name: project.name,
+      progress: project.completionPercentage || project.progress || 0,
+      dueDate: project.dueDate || new Date().toISOString(),
+      status: (project.status || 'on-track') as
+        | 'on-track'
+        | 'at-risk'
+        | 'delayed',
+      tasksCompleted: project.tasksCompleted || 0,
+      totalTasks: project.totalTasks || 0,
+    }));
   },
 };
 

@@ -46,7 +46,7 @@ export const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
   return (
     <div className="time-entries-table">
       <h2>Time Entries</h2>
-      
+
       {entries.length === 0 ? (
         <div className="empty-state">
           <p>No time entries yet. Start logging your work hours above!</p>
@@ -69,7 +69,9 @@ export const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
                   <td className="date-cell">{formatDate(entry.date)}</td>
                   <td className="task-cell">{entry.taskName}</td>
                   <td className="hours-cell">{entry.hours}h</td>
-                  <td className="description-cell">{entry.description || '-'}</td>
+                  <td className="description-cell">
+                    {entry.description || '-'}
+                  </td>
                   <td className="actions-cell">
                     <button
                       className="delete-btn"
@@ -84,9 +86,14 @@ export const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
             </tbody>
             <tfoot>
               <tr>
-                <td colSpan={2} className="total-label">Total Hours:</td>
+                <td colSpan={2} className="total-label">
+                  Total Hours:
+                </td>
                 <td className="total-hours">
-                  {entries.reduce((sum, entry) => sum + entry.hours, 0).toFixed(2)}h
+                  {entries
+                    .reduce((sum, entry) => sum + entry.hours, 0)
+                    .toFixed(2)}
+                  h
                 </td>
                 <td colSpan={2}></td>
               </tr>

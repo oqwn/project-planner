@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Task, CreateTaskRequest } from '../types/task';
 import type { TeamMember } from '../types/dashboard';
 import { taskApi } from '../services/api';
-import { useProject } from '../contexts/ProjectContext';
+import { useProject } from "./useProject";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -25,28 +25,32 @@ export const useTasks = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      
+
       // If a specific project is selected, fetch only that project's tasks
       // Otherwise, fetch from all projects
-      const projectsToFetch = selectedProject ? [selectedProject.id] : projectIds;
-      
+      const projectsToFetch = selectedProject
+        ? [selectedProject.id]
+        : projectIds;
+
       // Fetch tasks from selected project(s)
-      const taskPromises = projectsToFetch.map(id => taskApi.getTasks(id));
-      const teamPromises = projectsToFetch.map(id => taskApi.getTeamMembers(id));
-      
+      const taskPromises = projectsToFetch.map((id) => taskApi.getTasks(id));
+      const teamPromises = projectsToFetch.map((id) =>
+        taskApi.getTeamMembers(id)
+      );
+
       const [taskResults, teamResults] = await Promise.all([
         Promise.all(taskPromises),
         Promise.all(teamPromises),
       ]);
-      
+
       // Combine tasks from all projects
       const allTasks = taskResults.flat();
       setTasks(allTasks);
-      
+
       // Combine and deduplicate team members
       const allTeamMembers = teamResults.flat();
       const uniqueTeamMembers = Array.from(
-        new Map(allTeamMembers.map(member => [member.id, member])).values()
+        new Map(allTeamMembers.map((member) => [member.id, member])).values()
       );
       setTeamMembers(uniqueTeamMembers);
     } catch (err) {
@@ -61,7 +65,7 @@ export const useTasks = () => {
     async (taskData: CreateTaskRequest, projectId?: string) => {
       // Use first project as default if no projectId specified
       const targetProjectId = projectId || projectIds[0];
-      
+
       // Create a temporary task with optimistic ID
       const tempId = `temp-${Date.now()}`;
       const tempTask: Task = {

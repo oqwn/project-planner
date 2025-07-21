@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dashboardApi } from '../../services/api';
-import { useProject } from '../../contexts/ProjectContext';
+import { useProject } from "../../hooks/useProject";
 import './TasksOverview.css';
 
 interface DashboardTask {
@@ -25,9 +25,12 @@ export const TasksOverview: React.FC = () => {
     const loadTasks = async () => {
       try {
         if (!selectedProject) return;
-        
+
         // Fetch all tasks with high limit to get all tasks
-        const recentTasks = await dashboardApi.getRecentTasks(selectedProject.id, 1000);
+        const recentTasks = await dashboardApi.getRecentTasks(
+          selectedProject.id,
+          1000
+        );
         // Map Task to DashboardTask
         const dashboardTasks: DashboardTask[] = recentTasks.map((task) => ({
           id: task.id,

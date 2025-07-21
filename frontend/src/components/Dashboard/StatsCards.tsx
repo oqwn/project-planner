@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { dashboardApi } from '../../services/api';
-import { useProject } from '../../contexts/ProjectContext';
+import { useProject } from "../../hooks/useProject";
 import './StatsCards.css';
 
 interface StatCard {
@@ -21,7 +21,7 @@ export const StatsCards: React.FC = () => {
     const loadStats = async () => {
       try {
         if (!selectedProject) return;
-        
+
         const dashboardStats = await dashboardApi.getStats(selectedProject.id);
 
         const statsData: StatCard[] = [

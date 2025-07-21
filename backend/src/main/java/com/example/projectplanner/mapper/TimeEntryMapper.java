@@ -13,7 +13,7 @@ public interface TimeEntryMapper {
             "VALUES (#{id}, #{taskId}, #{userId}, #{date}, #{hours}, #{description}, #{createdAt})")
     void insert(TimeEntry timeEntry);
 
-    @Select("SELECT te.*, t.title as task_name, u.name as user_name " +
+    @Select("SELECT te.*, t.name as task_name, u.name as user_name " +
             "FROM time_entries te " +
             "JOIN tasks t ON te.task_id = t.id " +
             "JOIN users u ON te.user_id = u.id " +
@@ -32,7 +32,7 @@ public interface TimeEntryMapper {
     })
     TimeEntryResponse findById(@Param("id") UUID id);
 
-    @Select("SELECT te.*, t.title as task_name, u.name as user_name " +
+    @Select("SELECT te.*, t.name as task_name, u.name as user_name " +
             "FROM time_entries te " +
             "JOIN tasks t ON te.task_id = t.id " +
             "JOIN users u ON te.user_id = u.id " +
@@ -52,7 +52,7 @@ public interface TimeEntryMapper {
     })
     List<TimeEntryResponse> findByProjectId(@Param("projectId") UUID projectId);
 
-    @Select("SELECT te.*, t.title as task_name, u.name as user_name " +
+    @Select("SELECT te.*, t.name as task_name, u.name as user_name " +
             "FROM time_entries te " +
             "JOIN tasks t ON te.task_id = t.id " +
             "JOIN users u ON te.user_id = u.id " +

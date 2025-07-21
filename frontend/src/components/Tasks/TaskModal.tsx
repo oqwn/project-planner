@@ -178,7 +178,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             <div className="form-group">
               <label htmlFor="assignee">Assignee *</label>
               <CustomDropdown
-                options={teamMembers.map(member => ({
+                options={teamMembers.map((member) => ({
                   value: member.id,
                   label: member.name,
                   icon: (
@@ -186,13 +186,18 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                       {member.avatar ? (
                         <img src={member.avatar} alt={member.name} />
                       ) : (
-                        member.name.split(' ').map(n => n[0]).join('')
+                        member.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')
                       )}
                     </div>
-                  )
+                  ),
                 }))}
                 value={formData.assigneeId}
-                onChange={(value) => setFormData((prev) => ({ ...prev, assigneeId: value }))}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, assigneeId: value }))
+                }
                 placeholder="Select assignee..."
                 error={!!errors.assigneeId}
                 searchable={true}
@@ -206,24 +211,29 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               <label htmlFor="priority">Priority</label>
               <CustomDropdown
                 options={[
-                  { 
-                    value: 'low', 
+                  {
+                    value: 'low',
                     label: 'Low Priority',
-                    icon: <div className="priority-indicator blue"></div>
+                    icon: <div className="priority-indicator blue"></div>,
                   },
-                  { 
-                    value: 'medium', 
+                  {
+                    value: 'medium',
                     label: 'Medium Priority',
-                    icon: <div className="priority-indicator yellow"></div>
+                    icon: <div className="priority-indicator yellow"></div>,
                   },
-                  { 
-                    value: 'high', 
+                  {
+                    value: 'high',
                     label: 'High Priority',
-                    icon: <div className="priority-indicator red"></div>
-                  }
+                    icon: <div className="priority-indicator red"></div>,
+                  },
                 ]}
                 value={formData.priority}
-                onChange={(value) => setFormData((prev) => ({ ...prev, priority: value as TaskPriority }))}
+                onChange={(value) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    priority: value as TaskPriority,
+                  }))
+                }
                 placeholder="Select priority..."
               />
             </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TimeEntryForm } from './TimeEntryForm';
 import { TimeEntriesTable } from './TimeEntriesTable';
-import { useProject } from '../../contexts/ProjectContext';
+import { useProject } from "../../hooks/useProject";
 import { taskApi, timeTrackingApi } from '../../services/api';
 import type { Task } from '../../types/task';
 import type { TimeEntry } from '../../types/timeTracking';
@@ -29,7 +29,9 @@ export const TimeTracking: React.FC = () => {
       setTasks(tasksData);
 
       // Load time entries
-      const entriesData = await timeTrackingApi.getProjectTimeEntries(selectedProject.id);
+      const entriesData = await timeTrackingApi.getProjectTimeEntries(
+        selectedProject.id
+      );
       setTimeEntries(entriesData);
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -43,7 +45,7 @@ export const TimeTracking: React.FC = () => {
   };
 
   const handleDeleteEntry = (entryId: string) => {
-    setTimeEntries(timeEntries.filter(entry => entry.id !== entryId));
+    setTimeEntries(timeEntries.filter((entry) => entry.id !== entryId));
   };
 
   return (
@@ -55,10 +57,7 @@ export const TimeTracking: React.FC = () => {
 
       <div className="time-tracking-content">
         <div className="time-entry-section">
-          <TimeEntryForm 
-            tasks={tasks}
-            onEntryAdded={handleAddEntry}
-          />
+          <TimeEntryForm tasks={tasks} onEntryAdded={handleAddEntry} />
         </div>
 
         <div className="time-entries-section">

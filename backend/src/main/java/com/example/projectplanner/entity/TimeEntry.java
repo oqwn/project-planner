@@ -2,7 +2,7 @@ package com.example.projectplanner.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class TimeEntry {
@@ -12,7 +12,7 @@ public class TimeEntry {
     private LocalDate date;
     private BigDecimal hours;
     private String description;
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     // Constructors
     public TimeEntry() {}
@@ -24,7 +24,7 @@ public class TimeEntry {
         this.date = date;
         this.hours = hours;
         this.description = description;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
     }
 
     // Getters and Setters
@@ -46,6 +46,6 @@ public class TimeEntry {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 }

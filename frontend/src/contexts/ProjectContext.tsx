@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
 interface Project {
@@ -12,7 +12,7 @@ interface ProjectContextType {
   setSelectedProject: (project: Project) => void;
 }
 
-const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
+export const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 // Available projects
 const AVAILABLE_PROJECTS: Project[] = [
@@ -20,15 +20,19 @@ const AVAILABLE_PROJECTS: Project[] = [
   { id: '550e8400-e29b-41d4-a716-446655440002', name: 'Beta Release' },
 ];
 
-export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [selectedProject, setSelectedProject] = useState<Project>(AVAILABLE_PROJECTS[0]);
+export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [selectedProject, setSelectedProject] = useState<Project>(
+    AVAILABLE_PROJECTS[0]
+  );
 
   return (
-    <ProjectContext.Provider 
-      value={{ 
-        projects: AVAILABLE_PROJECTS, 
-        selectedProject, 
-        setSelectedProject 
+    <ProjectContext.Provider
+      value={{
+        projects: AVAILABLE_PROJECTS,
+        selectedProject,
+        setSelectedProject,
       }}
     >
       {children}
@@ -36,10 +40,3 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   );
 };
 
-export const useProject = () => {
-  const context = useContext(ProjectContext);
-  if (context === undefined) {
-    throw new Error('useProject must be used within a ProjectProvider');
-  }
-  return context;
-};
