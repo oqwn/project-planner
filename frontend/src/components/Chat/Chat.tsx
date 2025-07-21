@@ -53,7 +53,7 @@ export const Chat: React.FC = () => {
 
     // Set up WebSocket connection
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:20005/ws'),
+      webSocketFactory: () => new SockJS('http://localhost:20005/ws-chat'),
       onConnect: () => {
         console.log('Connected to WebSocket');
         setIsConnected(true);
@@ -114,9 +114,9 @@ export const Chat: React.FC = () => {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`/api/chat-messages/project/${projectId}`, {
+      const response = await fetch(`/api/chat/project/${projectId}/messages`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${user?.token}`,
         },
       });
       if (response.ok) {
@@ -130,9 +130,9 @@ export const Chat: React.FC = () => {
 
   const fetchProjectUsers = async () => {
     try {
-      const response = await fetch(`/api/users/project/${projectId}`, {
+      const response = await fetch(`/api/users`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${user?.token}`,
         },
       });
       if (response.ok) {
@@ -178,13 +178,12 @@ export const Chat: React.FC = () => {
   const handleFileUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('projectId', projectId || '');
 
     try {
-      const response = await fetch('/api/files/upload', {
+      const response = await fetch(`/api/files/project/${projectId}/upload`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${user?.token}`,
         },
         body: formData,
       });
