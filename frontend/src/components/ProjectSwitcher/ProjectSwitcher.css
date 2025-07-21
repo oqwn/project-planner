@@ -38,23 +38,3 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .project-switcher {
-    background: rgba(99, 102, 241, 0.2);
-  }
-  
-  .project-label {
-    color: #9ca3af;
-  }
-  
-  .project-select {
-    background-color: #1f2937;
-    border-color: #374151;
-    color: #f3f4f6;
-  }
-  
-  .project-select:hover {
-    border-color: #6366f1;
-  }
-}

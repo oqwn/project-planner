@@ -5,6 +5,25 @@
   box-sizing: border-box;
 }
 
+/* Disable dark mode detection globally */
+:root {
+  color-scheme: light only;
+  forced-color-adjust: none;
+}
+
+html {
+  color-scheme: light only;
+  forced-color-adjust: none;
+}
+
+/* Prevent browser dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  * {
+    color-scheme: light only !important;
+    forced-color-adjust: none !important;
+  }
+}
+
 html {
   height: 100%;
 }
@@ -16,9 +35,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc;
-  color: #111827;
+  background-color: #f8fafc !important;
+  color: #111827 !important;
   line-height: 1.5;
+  color-scheme: light only;
 }
 
 #root {
@@ -28,7 +48,16 @@ body {
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
-  color: #111827;
+  color: #111827 !important;
+}
+
+/* Force light mode styles */
+label {
+  color: #374151 !important;
+}
+
+.modal-overlay *, .task-modal * {
+  color-scheme: light only;
 }
 
 /* Button Styles */
@@ -50,6 +79,9 @@ input, select, textarea {
   font-family: inherit;
   outline: none;
   transition: all 0.2s ease;
+  color-scheme: light only;
+  background-color: white !important;
+  color: #374151 !important;
 }
 
 input:focus, select:focus, textarea:focus {

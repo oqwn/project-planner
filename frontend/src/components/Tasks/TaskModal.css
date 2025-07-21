@@ -74,11 +74,18 @@
 .form-group textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #374151 !important;
   border-radius: 8px;
   font-size: 0.875rem;
   transition: all 0.2s ease;
   background: white;
+}
+
+/* Ensure consistent border color for all input types */
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"] {
+  border: 1px solid #374151 !important;
 }
 
 .form-group input:focus,
@@ -125,7 +132,7 @@
 
 .add-subtask-btn {
   background: #f3f4f6;
-  border: 1px solid #d1d5db;
+  border: 1px solid #374151;
   color: #374151;
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -138,13 +145,13 @@
 
 .add-subtask-btn:hover {
   background: #e5e7eb;
-  border-color: #9ca3af;
+  border-color: #374151;
 }
 
 .subtasks-list {
   max-height: 150px;
   overflow-y: auto;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #374151;
   border-radius: 6px;
   padding: 0.5rem;
 }
@@ -195,7 +202,7 @@
 
 .cancel-btn {
   background: #f9fafb;
-  border: 1px solid #d1d5db;
+  border: 1px solid #374151;
   color: #374151;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -206,7 +213,7 @@
 
 .cancel-btn:hover {
   background: #f3f4f6;
-  border-color: #9ca3af;
+  border-color: #374151;
 }
 
 .save-btn {
