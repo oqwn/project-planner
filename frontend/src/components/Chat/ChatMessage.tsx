@@ -5,8 +5,10 @@ interface ChatMessageProps {
   message: {
     id: string;
     content: string;
+    senderId?: string;
     senderName: string;
     timestamp: string;
+    projectId?: string;
     mentions?: string[];
     fileUrl?: string;
     fileName?: string;
@@ -62,4 +64,3 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     </div>
   );
 };
-

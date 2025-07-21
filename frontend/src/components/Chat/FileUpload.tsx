@@ -42,4 +42,3 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
     </div>
   );
 };
-

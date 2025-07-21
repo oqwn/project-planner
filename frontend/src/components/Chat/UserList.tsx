@@ -46,4 +46,3 @@ export const UserList: React.FC<UserListProps> = ({ users }) => {
     </div>
   );
 };
-
