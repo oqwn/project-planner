@@ -71,14 +71,18 @@ export const Chat: React.FC = () => {
         });
 
         // Send user presence
-        client.publish({
-          destination: '/app/presence',
-          body: JSON.stringify({
-            userId: user.email,
-            projectId,
-            isOnline: true,
-          }),
-        });
+        try {
+          client.publish({
+            destination: '/app/presence',
+            body: JSON.stringify({
+              userId: user.email,
+              projectId,
+              isOnline: true,
+            }),
+          });
+        } catch (error) {
+          console.warn('Failed to send online presence:', error);
+        }
       },
       onDisconnect: () => {
         console.log('Disconnected from WebSocket');
@@ -93,16 +97,22 @@ export const Chat: React.FC = () => {
     clientRef.current = client;
 
     return () => {
-      if (clientRef.current) {
+      if (clientRef.current && isConnected) {
         // Send offline presence before disconnecting
-        clientRef.current.publish({
-          destination: '/app/presence',
-          body: JSON.stringify({
-            userId: user.email,
-            projectId,
-            isOnline: false,
-          }),
-        });
+        try {
+          clientRef.current.publish({
+            destination: '/app/presence',
+            body: JSON.stringify({
+              userId: user.email,
+              projectId,
+              isOnline: false,
+            }),
+          });
+        } catch (error) {
+          console.warn('Failed to send offline presence:', error);
+        }
+      }
+      if (clientRef.current) {
         clientRef.current.deactivate();
       }
     };
@@ -169,10 +179,14 @@ export const Chat: React.FC = () => {
       mentions,
     };
 
-    clientRef.current.publish({
-      destination: '/app/chat.send',
-      body: JSON.stringify(message),
-    });
+    try {
+      clientRef.current.publish({
+        destination: '/app/chat.send',
+        body: JSON.stringify(message),
+      });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   const handleFileUpload = async (file: File) => {
