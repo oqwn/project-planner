@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Task, CreateTaskRequest } from '../types/task';
 import type { TeamMember } from '../types/dashboard';
 import { taskApi } from '../services/api';
-import { useProject } from "./useProject";
+import { useProject } from './useProject';
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);

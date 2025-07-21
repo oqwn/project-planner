@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TimeEntryForm } from './TimeEntryForm';
 import { TimeEntriesTable } from './TimeEntriesTable';
-import { useProject } from "../../hooks/useProject";
+import { useProject } from '../../hooks/useProject';
 import { taskApi, timeTrackingApi } from '../../services/api';
 import type { Task } from '../../types/task';
 import type { TimeEntry } from '../../types/timeTracking';

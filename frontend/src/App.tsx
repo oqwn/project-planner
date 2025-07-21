@@ -4,6 +4,7 @@ import { Layout } from './components/Layout/Layout';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { Tasks } from './components/Tasks/Tasks';
 import { TimeTracking } from './components/TimeTracking/TimeTracking';
+import { Chat } from './components/Chat/Chat';
 import { UserList } from './components/UserList';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
@@ -44,10 +45,7 @@ function App() {
                     <Route path="/users" element={<UserList />} />
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/timesheets" element={<TimeTracking />} />
-                    <Route
-                      path="/collaboration"
-                      element={<CollaborationPlaceholder />}
-                    />
+                    <Route path="/collaboration" element={<Chat />} />
                     <Route path="/reports" element={<ReportsPlaceholder />} />
                     <Route path="/settings" element={<SettingsPlaceholder />} />
                   </Routes>
@@ -62,13 +60,6 @@ function App() {
 }
 
 // Placeholder components for future implementation
-
-const CollaborationPlaceholder: React.FC = () => (
-  <div className="placeholder-page">
-    <h1>Collaboration</h1>
-    <p>Team collaboration tools coming soon...</p>
-  </div>
-);
 
 const ReportsPlaceholder: React.FC = () => (
   <div className="placeholder-page">

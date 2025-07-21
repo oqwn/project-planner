@@ -12,15 +12,15 @@ This document outlines the technical architecture for a comprehensive project ma
 - **Language**: TypeScript ✅
 - **Code Quality**: ESLint + Prettier ✅
 - **UI Library**: Material-UI or Ant Design (TBD)
-- **State Management**: Redux Toolkit or Zustand (TBD)
-- **Routing**: React Router v6 (TBD)
-- **Styling**: CSS Modules / Styled Components / Tailwind CSS (TBD)
+- **State Management**: Zustand ✅
+- **Routing**: React Router v6 ✅
+- **Styling**: CSS Modules ✅
 - **Charts**: Chart.js or D3.js for Gantt charts (TBD)
-- **Drag & Drop**: react-beautiful-dnd or @dnd-kit (TBD)
-- **Real-time**: Socket.io-client or WebSockets (TBD)
-- **HTTP Client**: Axios or Fetch API (TBD)
-- **Form Handling**: React Hook Form (TBD)
-- **Date Handling**: date-fns or dayjs (TBD)
+- **Drag & Drop**: @hello-pangea/dnd ✅
+- **Real-time**: @stomp/stompjs + sockjs-client ✅
+- **HTTP Client**: Axios ✅
+- **Form Handling**: React controlled components ✅
+- **Date Handling**: Native Date API ✅
 
 ### Backend ✅ IMPLEMENTED
 - **Runtime**: Java 21 ✅
@@ -34,7 +34,7 @@ This document outlines the technical architecture for a comprehensive project ma
 - **Validation**: Bean Validation (JSR-303) ✅
 - **Logging**: SLF4J with Logback ✅
 - **Authentication**: Spring Security with JWT ✅
-- **Real-time**: Spring WebSocket with STOMP (TBD)
+- **Real-time**: Spring WebSocket with STOMP ✅
 - **Task Queue**: Spring Batch or RabbitMQ (TBD)
 - **Caching**: Spring Cache with Redis (TBD)
 

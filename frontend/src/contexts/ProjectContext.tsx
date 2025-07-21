@@ -12,7 +12,9 @@ interface ProjectContextType {
   setSelectedProject: (project: Project) => void;
 }
 
-export const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
+export const ProjectContext = createContext<ProjectContextType | undefined>(
+  undefined
+);
 
 // Available projects
 const AVAILABLE_PROJECTS: Project[] = [
@@ -39,4 +41,3 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
     </ProjectContext.Provider>
   );
 };
-

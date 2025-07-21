@@ -1,5 +1,5 @@
 import React from 'react';
-import { useProject } from "../../hooks/useProject";
+import { useProject } from '../../hooks/useProject';
 import { CustomDropdown } from '../common/CustomDropdown';
 import './ProjectSwitcher.css';
 

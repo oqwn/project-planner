@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { dashboardApi } from '../../services/api';
-import { useProject } from "../../hooks/useProject";
+import { useProject } from '../../hooks/useProject';
 import './StatsCards.css';
 
 interface StatCard {

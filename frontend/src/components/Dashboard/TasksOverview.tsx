@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dashboardApi } from '../../services/api';
-import { useProject } from "../../hooks/useProject";
+import { useProject } from '../../hooks/useProject';
 import './TasksOverview.css';
 
 interface DashboardTask {
