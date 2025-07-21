@@ -3,7 +3,10 @@ package com.example.projectplanner.controller;
 import com.example.projectplanner.dto.*;
 import com.example.projectplanner.entity.DashboardStats;
 import com.example.projectplanner.entity.Task;
+import com.example.projectplanner.entity.User;
 import com.example.projectplanner.mapper.TaskMapper;
+import com.example.projectplanner.mapper.UserMapper;
+import com.example.projectplanner.mapper.ProjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,12 @@ public class DashboardController {
     
     @Autowired
     private TaskMapper taskMapper;
+    
+    @Autowired
+    private UserMapper userMapper;
+    
+    @Autowired
+    private ProjectMapper projectMapper;
     
     @GetMapping("/stats/{projectId}")
     @Operation(summary = "Get dashboard statistics for a project")
@@ -138,5 +147,33 @@ public class DashboardController {
         if (stats.getOverdueTasks() > 0) return "delayed";
         if (stats.getInProgressTasks() > stats.getCompletedTasks()) return "at-risk";
         return "on-track";
+    }
+    
+    @GetMapping("/debug/project-alpha-info")
+    @Operation(summary = "Debug endpoint to check Project Alpha members")
+    public ResponseEntity<Map<String, Object>> getProjectAlphaInfo() {
+        Map<String, Object> info = new HashMap<>();
+        
+        // Get all users in the system
+        List<User> allUsers = userMapper.findAll();
+        info.put("totalUsersInSystem", allUsers.size());
+        info.put("allUsers", allUsers);
+        
+        // Since we don't have a project_members table, we'll check who has tasks in any project
+        // In a real system, Project Alpha would have a specific UUID
+        System.out.println("=== DEBUG: Project Alpha Info ===");
+        System.out.println("Total users in system: " + allUsers.size());
+        for (User user : allUsers) {
+            System.out.println("  - " + user.getName() + " (" + user.getEmail() + ")");
+        }
+        System.out.println("================================");
+        
+        // Note: In a real implementation, Project Alpha members would be determined by:
+        // 1. A project_members table (which doesn't exist)
+        // 2. Users who have tasks assigned in the project
+        // 3. The project creator
+        info.put("note", "Project membership would typically be stored in a project_members table, which doesn't exist in the current schema");
+        
+        return ResponseEntity.ok(info);
     }
 }

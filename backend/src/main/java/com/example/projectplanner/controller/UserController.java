@@ -25,10 +25,13 @@ public class UserController {
     @Operation(summary = "Get all users", description = "Retrieve a list of all users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userMapper.findAll();
-        System.out.println("Fetching all users. Found: " + users.size() + " users");
-        for (User user : users) {
-            System.out.println("User: " + user.getName() + " (" + user.getEmail() + ")");
+        System.out.println("=== API: /api/users - Fetching all users ===");
+        System.out.println("Total users found: " + users.size());
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            System.out.println("User " + (i+1) + ": " + user.getName() + " (Email: " + user.getEmail() + ", ID: " + user.getId() + ")");
         }
+        System.out.println("==========================================");
         return ResponseEntity.ok(users);
     }
 
