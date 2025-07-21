@@ -81,6 +81,44 @@
   background: white;
 }
 
+.member-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  overflow: hidden;
+}
+
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.priority-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.priority-indicator.red {
+  background: #ef4444;
+}
+
+.priority-indicator.yellow {
+  background: #f59e0b;
+}
+
+.priority-indicator.blue {
+  background: #3b82f6;
+}
+
 /* Ensure consistent border color for all input types */
 .form-group input[type="text"],
 .form-group input[type="date"],

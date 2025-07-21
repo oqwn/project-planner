@@ -15,26 +15,14 @@
   white-space: nowrap;
 }
 
-.project-select {
-  padding: 6px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  background-color: white;
-  font-size: 14px;
-  font-weight: 500;
-  color: #1f2937;
-  cursor: pointer;
-  min-width: 150px;
-  outline: none;
-  transition: all 0.2s ease;
+.project-select-wrapper {
+  min-width: 200px;
 }
 
-.project-select:hover {
-  border-color: #6366f1;
-}
-
-.project-select:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+.project-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6366f1;
 }
 

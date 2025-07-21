@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Task, CreateTaskRequest, TaskPriority } from '../../types/task';
+import { CustomDropdown } from '../common/CustomDropdown';
 import './TaskModal.css';
 
 interface TaskModalProps {
@@ -176,24 +177,26 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="assignee">Assignee *</label>
-              <select
-                id="assignee"
+              <CustomDropdown
+                options={teamMembers.map(member => ({
+                  value: member.id,
+                  label: member.name,
+                  icon: (
+                    <div className="member-avatar">
+                      {member.avatar ? (
+                        <img src={member.avatar} alt={member.name} />
+                      ) : (
+                        member.name.split(' ').map(n => n[0]).join('')
+                      )}
+                    </div>
+                  )
+                }))}
                 value={formData.assigneeId}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    assigneeId: e.target.value,
-                  }))
-                }
-                className={errors.assigneeId ? 'error' : ''}
-              >
-                <option value="">Select assignee...</option>
-                {teamMembers.map((member) => (
-                  <option key={member.id} value={member.id}>
-                    {member.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => setFormData((prev) => ({ ...prev, assigneeId: value }))}
+                placeholder="Select assignee..."
+                error={!!errors.assigneeId}
+                searchable={true}
+              />
               {errors.assigneeId && (
                 <span className="error-message">{errors.assigneeId}</span>
               )}
@@ -201,20 +204,28 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
             <div className="form-group">
               <label htmlFor="priority">Priority</label>
-              <select
-                id="priority"
+              <CustomDropdown
+                options={[
+                  { 
+                    value: 'low', 
+                    label: 'Low Priority',
+                    icon: <div className="priority-indicator blue"></div>
+                  },
+                  { 
+                    value: 'medium', 
+                    label: 'Medium Priority',
+                    icon: <div className="priority-indicator yellow"></div>
+                  },
+                  { 
+                    value: 'high', 
+                    label: 'High Priority',
+                    icon: <div className="priority-indicator red"></div>
+                  }
+                ]}
                 value={formData.priority}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    priority: e.target.value as TaskPriority,
-                  }))
-                }
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
+                onChange={(value) => setFormData((prev) => ({ ...prev, priority: value as TaskPriority }))}
+                placeholder="Select priority..."
+              />
             </div>
           </div>
 

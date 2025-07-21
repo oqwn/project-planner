@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { Task } from '../../types/task';
 import type { CreateTimeEntryRequest, TimeEntry } from '../../types/timeTracking';
 import { timeTrackingApi } from '../../services/api';
+import { CustomDropdown } from '../common/CustomDropdown';
 import './TimeEntryForm.css';
 
 interface TimeEntryFormProps {
@@ -81,19 +82,23 @@ export const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ tasks, onEntryAdde
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="task">Task *</label>
-          <select
-            id="task"
+          <CustomDropdown
+            options={tasks.map(task => ({
+              value: task.id,
+              label: task.title,
+              subLabel: `${task.assignee || 'Unassigned'} • ${task.priority} priority`,
+              icon: (
+                <div className={`task-priority-dot ${task.priority.toLowerCase()}`}>
+                  {task.priority.charAt(0).toUpperCase()}
+                </div>
+              )
+            }))}
             value={formData.taskId}
-            onChange={(e) => setFormData({ ...formData, taskId: e.target.value })}
-            className={errors.taskId ? 'error' : ''}
-          >
-            <option value="">Select a task...</option>
-            {tasks.map((task) => (
-              <option key={task.id} value={task.id}>
-                {task.title}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => setFormData({ ...formData, taskId: value })}
+            placeholder="Select a task..."
+            error={!!errors.taskId}
+            searchable={true}
+          />
           {errors.taskId && <span className="error-message">{errors.taskId}</span>}
         </div>
 
