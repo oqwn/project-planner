@@ -79,9 +79,12 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
   const fetchAvailableUsers = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      console.log('Auth token from localStorage:', token);
+      
       const response = await fetch('/api/users', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -90,10 +93,14 @@ const ConversationList: React.FC<ConversationListProps> = ({
       }
 
       const data = await response.json();
+      console.log('Fetched users:', data);
+      console.log('Current user ID (email):', currentUserId);
+      
       // Filter out current user
       const filteredUsers = data.filter(
         (user: User) => user.email !== currentUserId
       );
+      console.log('Filtered users:', filteredUsers);
       setAvailableUsers(filteredUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
