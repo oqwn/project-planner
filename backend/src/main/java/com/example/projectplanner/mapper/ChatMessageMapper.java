@@ -11,8 +11,13 @@ import java.util.UUID;
 @Mapper
 public interface ChatMessageMapper {
 
-    @Insert("INSERT INTO chat_messages (id, conversation_id, project_id, sender_id, content, type, reply_to_message_id, mentions, attachment_ids, created_at, updated_at, is_deleted) " +
-            "VALUES (#{id}, #{conversationId}, #{projectId}, #{senderId}, #{content}, #{type}::message_type, #{replyToMessageId}, #{mentions, typeHandler=org.apache.ibatis.type.ArrayTypeHandler}, #{attachmentIds, typeHandler=org.apache.ibatis.type.ArrayTypeHandler}, #{createdAt}, #{updatedAt}, #{isDeleted})")
+    @Insert("INSERT INTO chat_messages (id, conversation_id, project_id, sender_id, content, type, reply_to_message_id, mentions, attachment_ids, created_at, updated_at, is_deleted, client_message_id, status) " +
+            "VALUES (#{id}, #{conversationId}, #{projectId}, #{senderId}, #{content}, " +
+            "#{type}::message_type, #{replyToMessageId}, " +
+            "#{mentions, jdbcType=ARRAY, typeHandler=com.example.projectplanner.mapper.typehandler.StringListTypeHandler}, " +
+            "#{attachmentIds, jdbcType=ARRAY, typeHandler=com.example.projectplanner.mapper.typehandler.UUIDListTypeHandler}, " +
+            "#{createdAt}, #{updatedAt}, #{isDeleted}, #{clientMessageId}, " +
+            "#{status}::message_status)")
     void insert(ChatMessage message);
 
     @Select("SELECT cm.*, u.name as sender_name, u.email as sender_email, " +
@@ -107,4 +112,32 @@ public interface ChatMessageMapper {
 
     @Select("SELECT COUNT(*) FROM chat_messages WHERE project_id = #{projectId} AND is_deleted = false")
     long countByProjectId(@Param("projectId") UUID projectId);
+    
+    @Select("SELECT COUNT(*) FROM chat_messages WHERE conversation_id = #{conversationId} AND is_deleted = false")
+    long countByConversationId(@Param("conversationId") UUID conversationId);
+    
+    @Update("UPDATE chat_messages SET status = #{status}::message_status WHERE id = #{id}")
+    void updateStatus(@Param("id") UUID id, @Param("status") ChatMessage.MessageStatus status);
+    
+    @Select("SELECT cm.*, u.name as sender_name, u.email as sender_email " +
+            "FROM chat_messages cm " +
+            "JOIN users u ON cm.sender_id = u.id " +
+            "WHERE cm.conversation_id = #{conversationId} " +
+            "AND cm.sender_id != #{userId} " +
+            "AND cm.status != 'DELIVERED' AND cm.status != 'READ' " +
+            "AND cm.is_deleted = false " +
+            "ORDER BY cm.created_at ASC")
+    @Results({
+        @Result(property = "id", column = "id"),
+        @Result(property = "conversationId", column = "conversation_id"),
+        @Result(property = "senderId", column = "sender_id"),
+        @Result(property = "senderName", column = "sender_name"),
+        @Result(property = "senderEmail", column = "sender_email"),
+        @Result(property = "content", column = "content"),
+        @Result(property = "type", column = "type"),
+        @Result(property = "status", column = "status"),
+        @Result(property = "createdAt", column = "created_at"),
+        @Result(property = "updatedAt", column = "updated_at")
+    })
+    List<ChatMessageResponse> findUndeliveredForUser(@Param("userId") UUID userId);
 }

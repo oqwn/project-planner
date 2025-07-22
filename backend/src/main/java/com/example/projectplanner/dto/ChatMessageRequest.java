@@ -12,6 +12,7 @@ public class ChatMessageRequest {
     private UUID replyToMessageId;
     private List<String> mentions;
     private List<UUID> attachmentIds;
+    private String clientMessageId; // For client-side tracking
 
     // Getters and Setters
     public UUID getConversationId() {
@@ -68,5 +69,13 @@ public class ChatMessageRequest {
 
     public void setAttachmentIds(List<UUID> attachmentIds) {
         this.attachmentIds = attachmentIds;
+    }
+    
+    public String getClientMessageId() {
+        return clientMessageId;
+    }
+    
+    public void setClientMessageId(String clientMessageId) {
+        this.clientMessageId = clientMessageId;
     }
 }

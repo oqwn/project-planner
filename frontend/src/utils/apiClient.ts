@@ -11,7 +11,7 @@ class ApiClient {
     const token = useAuthStore.getState().user?.token;
     if (token) {
       return {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       };
     }
@@ -38,7 +38,7 @@ class ApiClient {
 
   async fetch(url: string, options: RequestOptions = {}) {
     const { skipAuth, headers, ...restOptions } = options;
-    
+
     const requestHeaders = skipAuth
       ? { 'Content-Type': 'application/json', ...headers }
       : { ...this.getAuthHeaders(), ...headers };
@@ -62,7 +62,7 @@ class ApiClient {
     return this.fetch(url, { ...options, method: 'GET' });
   }
 
-  async post(url: string, data?: any, options?: RequestOptions) {
+  async post(url: string, data?: unknown, options?: RequestOptions) {
     return this.fetch(url, {
       ...options,
       method: 'POST',
@@ -70,7 +70,7 @@ class ApiClient {
     });
   }
 
-  async put(url: string, data?: any, options?: RequestOptions) {
+  async put(url: string, data?: unknown, options?: RequestOptions) {
     return this.fetch(url, {
       ...options,
       method: 'PUT',

@@ -160,4 +160,9 @@ public class ChatMessageResponse {
     public void setOwnMessage(boolean ownMessage) {
         isOwnMessage = ownMessage;
     }
+    
+    // Convenience method for timestamp
+    public OffsetDateTime getTimestamp() {
+        return createdAt;
+    }
 }

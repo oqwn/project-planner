@@ -35,12 +35,15 @@ class ChatWebSocketService {
   private isConnected = false;
   private isConnecting = false;
   private currentUser: { email: string; token: string } | null = null;
-  
+
   // Handler registries
-  private messageHandlers: Map<string, (message: ChatMessage) => void> = new Map();
-  private presenceHandlers: Map<string, (presence: PresenceUpdate) => void> = new Map();
-  private connectionHandlers: Map<string, (connected: boolean) => void> = new Map();
-  
+  private messageHandlers: Map<string, (message: ChatMessage) => void> =
+    new Map();
+  private presenceHandlers: Map<string, (presence: PresenceUpdate) => void> =
+    new Map();
+  private connectionHandlers: Map<string, (connected: boolean) => void> =
+    new Map();
+
   private reconnectTimer: number | null = null;
 
   /**
@@ -55,7 +58,7 @@ class ChatWebSocketService {
 
     this.currentUser = user;
     this.isConnecting = true;
-    
+
     console.log('[ChatWS] Connecting to WebSocket...');
 
     // Clear any pending reconnect
@@ -76,7 +79,7 @@ class ChatWebSocketService {
       reconnectDelay: 0, // We handle reconnection manually
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
-      
+
       onConnect: () => {
         console.log('[ChatWS] Connected successfully');
         this.isConnected = true;
@@ -96,7 +99,10 @@ class ChatWebSocketService {
       },
 
       onStompError: (frame) => {
-        console.error('[ChatWS] STOMP error:', frame.headers?.message || 'Unknown error');
+        console.error(
+          '[ChatWS] STOMP error:',
+          frame.headers?.message || 'Unknown error'
+        );
         this.isConnecting = false;
         this.scheduleReconnect();
       },
@@ -121,7 +127,7 @@ class ChatWebSocketService {
    */
   disconnect(): void {
     console.log('[ChatWS] Disconnecting...');
-    
+
     // Clear reconnect timer
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
@@ -144,14 +150,18 @@ class ChatWebSocketService {
     this.isConnecting = false;
     this.currentUser = null;
     this.reconnectAttempts = 0;
-    
+
     this.notifyConnectionChange(false);
   }
 
   /**
    * Send a chat message
    */
-  sendMessage(conversationId: string, content: string, mentions: string[] = []): boolean {
+  sendMessage(
+    conversationId: string,
+    content: string,
+    mentions: string[] = []
+  ): boolean {
     if (!this.client || !this.client.connected) {
       console.warn('[ChatWS] Cannot send message: not connected');
       return false;
@@ -193,7 +203,10 @@ class ChatWebSocketService {
     this.messageHandlers.delete(id);
   }
 
-  addPresenceHandler(id: string, handler: (presence: PresenceUpdate) => void): void {
+  addPresenceHandler(
+    id: string,
+    handler: (presence: PresenceUpdate) => void
+  ): void {
     this.presenceHandlers.set(id, handler);
   }
 
@@ -201,7 +214,10 @@ class ChatWebSocketService {
     this.presenceHandlers.delete(id);
   }
 
-  addConnectionHandler(id: string, handler: (connected: boolean) => void): void {
+  addConnectionHandler(
+    id: string,
+    handler: (connected: boolean) => void
+  ): void {
     this.connectionHandlers.set(id, handler);
     // Immediately notify current state
     handler(this.isConnected);

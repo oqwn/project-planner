@@ -41,16 +41,19 @@ function App() {
               <ChatWebSocketManager>
                 <ProjectProvider>
                   <Layout>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/users" element={<UserList />} />
-                    <Route path="/tasks" element={<Tasks />} />
-                    <Route path="/timesheets" element={<TimeTracking />} />
-                    <Route path="/collaboration" element={<EnhancedChat />} />
-                    <Route path="/reports" element={<ReportsPlaceholder />} />
-                    <Route path="/settings" element={<SettingsPlaceholder />} />
-                  </Routes>
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/users" element={<UserList />} />
+                      <Route path="/tasks" element={<Tasks />} />
+                      <Route path="/timesheets" element={<TimeTracking />} />
+                      <Route path="/collaboration" element={<EnhancedChat />} />
+                      <Route path="/reports" element={<ReportsPlaceholder />} />
+                      <Route
+                        path="/settings"
+                        element={<SettingsPlaceholder />}
+                      />
+                    </Routes>
                   </Layout>
                 </ProjectProvider>
               </ChatWebSocketManager>

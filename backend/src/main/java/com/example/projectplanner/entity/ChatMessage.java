@@ -17,13 +17,25 @@ public class ChatMessage {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private boolean isDeleted;
+    private String clientMessageId;
+    private MessageStatus status;
 
     public enum MessageType {
         TEXT, FILE, SYSTEM
     }
+    
+    public enum MessageStatus {
+        PENDING, SENT, DELIVERED, READ, FAILED
+    }
 
     // Constructors
-    public ChatMessage() {}
+    public ChatMessage() {
+        this.id = UUID.randomUUID();
+        this.createdAt = OffsetDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
+        this.isDeleted = false;
+        this.status = MessageStatus.SENT;
+    }
 
     public ChatMessage(UUID conversationId, UUID senderId, String content, MessageType type) {
         this.id = UUID.randomUUID();
@@ -34,6 +46,7 @@ public class ChatMessage {
         this.createdAt = OffsetDateTime.now();
         this.updatedAt = OffsetDateTime.now();
         this.isDeleted = false;
+        this.status = MessageStatus.SENT;
     }
 
     // Getters and Setters
@@ -131,5 +144,21 @@ public class ChatMessage {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+    
+    public String getClientMessageId() {
+        return clientMessageId;
+    }
+    
+    public void setClientMessageId(String clientMessageId) {
+        this.clientMessageId = clientMessageId;
+    }
+    
+    public MessageStatus getStatus() {
+        return status;
+    }
+    
+    public void setStatus(MessageStatus status) {
+        this.status = status;
     }
 }

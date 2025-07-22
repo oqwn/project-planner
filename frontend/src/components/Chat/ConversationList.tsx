@@ -65,7 +65,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
   const fetchConversations = async () => {
     try {
-      const response = await apiClient.get('/api/chat/conversations');
+      const response = await apiClient.get('/api/conversations');
       const data = await response.json();
       setConversations(data);
     } catch (error) {

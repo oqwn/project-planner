@@ -239,3 +239,39 @@
 - [ ] Perform security audit
 - [ ] Launch beta testing
 - [ ] Deploy to production
+
+## WebSocket Architecture Analysis (2025-07-22)
+
+### Current WebSocket Implementation:
+- ✅ Frontend WebSocket Service: `chatWebSocketService.ts` using @stomp/stompjs and SockJS
+- ✅ Backend WebSocket Config: Spring Boot with STOMP message broker
+- ✅ WebSocket Endpoints: `/ws-chat` for connection, `/app/chat.send` for messages
+- ✅ Message Routing: Conversation-based messaging with `/topic/conversation/{id}/messages`
+- ✅ User Presence: Real-time online/offline status updates via `/topic/presence`
+- ✅ Authentication: JWT token-based auth with Bearer tokens in WebSocket headers
+
+### WebSocket Message Flow:
+1. **Frontend sends message via WebSocket**: 
+   - Destination: `/app/chat.send`
+   - Payload: `{ conversationId, content, type, mentions }`
+   
+2. **Backend WebSocketChatController receives message**:
+   - Extracts user from Principal
+   - Creates ChatMessage entity
+   - Saves to database via ChatService
+   
+3. **Backend broadcasts message**:
+   - To conversation topic: `/topic/conversation/{conversationId}/messages`
+   - To user's personal topic: `/topic/user/{userEmail}/messages`
+   
+4. **Frontend receives and displays message**:
+   - ChatWebSocketManager handles connection lifecycle
+   - EnhancedChat component subscribes to message handlers
+   - Messages appear in real-time in the UI
+
+### Key Findings:
+- WebSocket messages are processed entirely through WebSocket (no HTTP fallback needed)
+- Messages are persisted to database before broadcasting
+- Dual broadcasting ensures users receive messages even when not in specific conversation
+- Connection management includes automatic reconnection with exponential backoff
+- Frontend has proper handler registration/cleanup to prevent memory leaks

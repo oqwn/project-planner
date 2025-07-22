@@ -1,134 +1,218 @@
 package com.example.projectplanner.controller;
 
-import com.example.projectplanner.dto.ChatMessageRequest;
-import com.example.projectplanner.dto.ChatMessageResponse;
-import com.example.projectplanner.dto.ConversationResponse;
-import com.example.projectplanner.dto.CreateConversationRequest;
-import com.example.projectplanner.entity.User;
-import com.example.projectplanner.mapper.UserMapper;
+import com.example.projectplanner.dto.*;
 import com.example.projectplanner.service.ChatService;
-import com.example.projectplanner.service.ConversationService;
+import com.example.projectplanner.entity.ChatMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/chat")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:5175"})
 public class ChatController {
 
     @Autowired
     private ChatService chatService;
-
+    
     @Autowired
-    private ConversationService conversationService;
+    private SimpMessagingTemplate messagingTemplate;
 
-    @Autowired
-    private UserMapper userMapper;
-
-    @GetMapping("/project/{projectId}/messages")
-    public ResponseEntity<List<ChatMessageResponse>> getProjectMessages(
-            @PathVariable UUID projectId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size,
-            @AuthenticationPrincipal String userEmail) {
-        
-        List<ChatMessageResponse> messages = chatService.getProjectMessages(projectId, page, size, userEmail);
-        return ResponseEntity.ok(messages);
-    }
-
-    @GetMapping("/conversations/{conversationId}/messages")
-    public ResponseEntity<List<ChatMessageResponse>> getConversationMessages(
+    // Send message via HTTP with delivery confirmation
+    @PostMapping("/conversations/{conversationId}/messages")
+    public ResponseEntity<MessageDeliveryResponse> sendMessage(
             @PathVariable UUID conversationId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size,
-            @AuthenticationPrincipal String userEmail) {
-        
-        List<ChatMessageResponse> messages = chatService.getConversationMessages(conversationId, page, size, userEmail);
-        return ResponseEntity.ok(messages);
-    }
-
-    @PostMapping("/messages")
-    public ResponseEntity<ChatMessageResponse> sendMessage(
             @RequestBody ChatMessageRequest request,
             @AuthenticationPrincipal String userEmail) {
         
-        ChatMessageResponse response = chatService.sendMessage(request, userEmail);
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping("/messages/{messageId}")
-    public ResponseEntity<Void> deleteMessage(
-            @PathVariable UUID messageId,
-            @AuthenticationPrincipal String userEmail) {
-        
-        chatService.deleteMessage(messageId, userEmail);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/project/{projectId}/messages/count")
-    public ResponseEntity<Long> getMessageCount(@PathVariable UUID projectId) {
-        long count = chatService.getMessageCount(projectId);
-        return ResponseEntity.ok(count);
-    }
-
-    // Conversation endpoints
-    @GetMapping("/conversations")
-    public ResponseEntity<List<ConversationResponse>> getUserConversations(
-            @AuthenticationPrincipal String userEmail) {
-        
-        List<ConversationResponse> conversations = conversationService.getUserConversations(userEmail);
-        return ResponseEntity.ok(conversations);
-    }
-
-    @PostMapping("/conversations")
-    public ResponseEntity<ConversationResponse> createConversation(
-            @RequestBody CreateConversationRequest request,
-            @AuthenticationPrincipal String userEmail) {
-        
-        ConversationResponse response = conversationService.createConversation(request, userEmail);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/conversations/dm/{userId}")
-    public ResponseEntity<ConversationResponse> getOrCreateDirectMessage(
-            @PathVariable UUID userId,
-            @AuthenticationPrincipal String userEmail) {
-        
-        System.out.println("=== Direct Message Endpoint ===");
-        System.out.println("Target userId: " + userId);
-        System.out.println("Current userEmail from @AuthenticationPrincipal: " + userEmail);
-        
-        // Get current user ID
-        User currentUser = userMapper.findByEmail(userEmail);
-        if (currentUser == null) {
-            System.out.println("ERROR: Current user not found for email: " + userEmail);
-            return ResponseEntity.badRequest().build();
+        try {
+            // Set conversation ID from path
+            request.setConversationId(conversationId);
+            
+            // Generate client message ID if not provided
+            String clientMessageId = request.getClientMessageId();
+            if (clientMessageId == null) {
+                clientMessageId = UUID.randomUUID().toString();
+                request.setClientMessageId(clientMessageId);
+            }
+            
+            // Send message and get response
+            ChatMessageResponse message = chatService.sendConversationMessage(request, userEmail);
+            
+            // Broadcast via WebSocket for real-time delivery
+            CompletableFuture.runAsync(() -> {
+                messagingTemplate.convertAndSend(
+                    "/topic/conversation/" + conversationId + "/messages", 
+                    message
+                );
+                
+                // Also send to user's personal topic
+                messagingTemplate.convertAndSend(
+                    "/topic/user/" + userEmail + "/messages",
+                    message
+                );
+            });
+            
+            // Return delivery confirmation
+            MessageDeliveryResponse deliveryResponse = new MessageDeliveryResponse();
+            deliveryResponse.setMessageId(message.getId().toString());
+            deliveryResponse.setClientMessageId(clientMessageId);
+            deliveryResponse.setStatus("sent");
+            deliveryResponse.setTimestamp(message.getTimestamp().toLocalDateTime());
+            
+            return ResponseEntity.ok(deliveryResponse);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new MessageDeliveryResponse(null, request.getClientMessageId(), "failed", e.getMessage()));
         }
+    }
+    
+    // Get message history with pagination
+    @GetMapping("/conversations/{conversationId}/messages")
+    public ResponseEntity<Page<ChatMessageResponse>> getMessages(
+            @PathVariable UUID conversationId,
+            @RequestParam(required = false) String before,
+            @RequestParam(required = false) String after,
+            Pageable pageable,
+            @AuthenticationPrincipal String userEmail) {
         
-        System.out.println("Current user found: " + currentUser.getName() + " (ID: " + currentUser.getId() + ")");
+        Page<ChatMessageResponse> messages = chatService.getConversationMessages(
+            conversationId, before, after, pageable, userEmail
+        );
+        
+        return ResponseEntity.ok(messages);
+    }
+    
+    // Mark messages as delivered
+    @PostMapping("/messages/delivered")
+    public ResponseEntity<Void> markMessagesDelivered(
+            @RequestBody MessageStatusUpdateRequest request,
+            @AuthenticationPrincipal String userEmail) {
+        
+        chatService.markMessagesDelivered(request.getMessageIds(), userEmail);
+        
+        // Notify sender via WebSocket
+        CompletableFuture.runAsync(() -> {
+            for (String messageId : request.getMessageIds()) {
+                messagingTemplate.convertAndSend(
+                    "/topic/message-status/" + messageId,
+                    Map.of("messageId", messageId, "status", "delivered", "userId", userEmail)
+                );
+            }
+        });
+        
+        return ResponseEntity.ok().build();
+    }
+    
+    // Mark messages as read
+    @PostMapping("/messages/read")
+    public ResponseEntity<Void> markMessagesRead(
+            @RequestBody MessageStatusUpdateRequest request,
+            @AuthenticationPrincipal String userEmail) {
+        
+        chatService.markMessagesRead(request.getMessageIds(), userEmail);
+        
+        // Notify sender via WebSocket
+        CompletableFuture.runAsync(() -> {
+            for (String messageId : request.getMessageIds()) {
+                messagingTemplate.convertAndSend(
+                    "/topic/message-status/" + messageId,
+                    Map.of("messageId", messageId, "status", "read", "userId", userEmail)
+                );
+            }
+        });
+        
+        return ResponseEntity.ok().build();
+    }
+    
+    // Upload media/files
+    @PostMapping("/conversations/{conversationId}/media")
+    public ResponseEntity<MediaUploadResponse> uploadMedia(
+            @PathVariable UUID conversationId,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(required = false) String caption,
+            @AuthenticationPrincipal String userEmail) {
         
         try {
-            ConversationResponse response = conversationService.getOrCreateDirectMessage(currentUser.getId(), userId);
-            System.out.println("Successfully created/fetched conversation: " + response.getId());
+            MediaUploadResponse response = chatService.uploadMedia(
+                conversationId, file, caption, userEmail
+            );
+            
             return ResponseEntity.ok(response);
+            
         } catch (Exception e) {
-            System.out.println("ERROR creating DM: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new MediaUploadResponse(null, null, "failed", e.getMessage()));
         }
     }
-
-    @PostMapping("/conversations/{conversationId}/read")
-    public ResponseEntity<Void> markConversationAsRead(
+    
+    // Typing indicator
+    @PostMapping("/conversations/{conversationId}/typing")
+    public ResponseEntity<Void> sendTypingIndicator(
             @PathVariable UUID conversationId,
+            @RequestBody TypingIndicatorRequest request,
             @AuthenticationPrincipal String userEmail) {
         
-        conversationService.markAsRead(conversationId, userEmail);
+        // Broadcast typing status via WebSocket only
+        messagingTemplate.convertAndSend(
+            "/topic/conversation/" + conversationId + "/typing",
+            Map.of(
+                "userId", userEmail,
+                "isTyping", request.isTyping(),
+                "timestamp", System.currentTimeMillis()
+            )
+        );
+        
         return ResponseEntity.ok().build();
+    }
+    
+    // Get undelivered messages (for offline sync)
+    @GetMapping("/messages/undelivered")
+    public ResponseEntity<List<ChatMessageResponse>> getUndeliveredMessages(
+            @AuthenticationPrincipal String userEmail) {
+        
+        List<ChatMessageResponse> messages = chatService.getUndeliveredMessages(userEmail);
+        return ResponseEntity.ok(messages);
+    }
+    
+    // Retry failed message
+    @PostMapping("/messages/{messageId}/retry")
+    public ResponseEntity<MessageDeliveryResponse> retryMessage(
+            @PathVariable String messageId,
+            @AuthenticationPrincipal String userEmail) {
+        
+        try {
+            ChatMessageResponse message = chatService.retryMessage(messageId, userEmail);
+            
+            // Broadcast via WebSocket
+            CompletableFuture.runAsync(() -> {
+                messagingTemplate.convertAndSend(
+                    "/topic/conversation/" + message.getConversationId() + "/messages", 
+                    message
+                );
+            });
+            
+            MessageDeliveryResponse response = new MessageDeliveryResponse();
+            response.setMessageId(message.getId().toString());
+            response.setStatus("sent");
+            response.setTimestamp(message.getTimestamp().toLocalDateTime());
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new MessageDeliveryResponse(messageId, null, "failed", e.getMessage()));
+        }
     }
 }

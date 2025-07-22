@@ -7,7 +7,12 @@ import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { FileUpload } from './FileUpload';
 import { apiClient } from '../../utils/apiClient';
-import { chatWebSocketService, type ChatMessage as WSChatMessage, type PresenceUpdate } from '../../services/chatWebSocketService';
+import {
+  chatWebSocketService,
+  type ChatMessage as WSChatMessage,
+  type PresenceUpdate,
+} from '../../services/chatWebSocketService';
+import chatApiService from '../../services/chatApiService';
 import './EnhancedChat.css';
 
 interface FileAttachment {
@@ -30,6 +35,8 @@ interface Message {
   mentions?: string[];
   attachments?: FileAttachment[];
   isOwnMessage?: boolean;
+  status?: 'PENDING' | 'SENT' | 'DELIVERED' | 'READ' | 'FAILED';
+  clientMessageId?: string;
 }
 
 interface ConversationParticipant {
@@ -81,7 +88,30 @@ export const EnhancedChat: React.FC = () => {
     const messageHandler = (message: WSChatMessage) => {
       // Only add message if it's for the currently selected conversation
       if (message.conversationId === selectedConversationId) {
-        setMessages((prev) => [...prev, message]);
+        setMessages((prev) => {
+          // Check if message already exists (avoid duplicates)
+          const exists = prev.some(
+            (m) => m.id === message.id || m.clientMessageId === message.id
+          );
+          if (exists) {
+            // Update existing message
+            return prev.map((m) =>
+              m.id === message.id || m.clientMessageId === message.id
+                ? { ...message, isOwnMessage: message.senderId === user?.email }
+                : m
+            );
+          }
+          // Add new message
+          return [
+            ...prev,
+            { ...message, isOwnMessage: message.senderId === user?.email },
+          ];
+        });
+
+        // Mark message as delivered if not own message
+        if (message.senderId !== user?.email) {
+          chatApiService.markMessagesDelivered([message.id]);
+        }
       }
       // TODO: Update conversation list with new message preview
     };
@@ -122,7 +152,7 @@ export const EnhancedChat: React.FC = () => {
   const fetchConversationDetails = async (conversationId: string) => {
     try {
       const response = await apiClient.get(
-        `/api/chat/conversations/${conversationId}`
+        `/api/conversations/${conversationId}`
       );
       const data = await response.json();
       setSelectedConversation(data);
@@ -135,11 +165,23 @@ export const EnhancedChat: React.FC = () => {
   const fetchMessages = async (conversationId: string) => {
     setLoadingMessages(true);
     try {
-      const response = await apiClient.get(
-        `/api/chat/conversations/${conversationId}/messages`
-      );
-      const data = await response.json();
-      setMessages(data.reverse()); // Reverse to show oldest first
+      const result = await chatApiService.getMessages(conversationId);
+      const messagesWithStatus = result.content.map((msg) => ({
+        ...msg,
+        isOwnMessage: msg.senderId === user?.email,
+      }));
+      setMessages(messagesWithStatus.reverse()); // Reverse to show oldest first
+
+      // Mark unread messages as read
+      const unreadMessageIds = messagesWithStatus
+        .filter((msg) => msg.senderId !== user?.email && msg.status !== 'READ')
+        .map((msg) => msg.id);
+
+      if (unreadMessageIds.length > 0) {
+        setTimeout(() => {
+          chatApiService.markMessagesRead(unreadMessageIds);
+        }, 1000); // Delay to ensure user has seen messages
+      }
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
@@ -160,43 +202,113 @@ export const EnhancedChat: React.FC = () => {
     );
   };
 
-  const sendMessage = (content: string, mentions: string[] = []) => {
+  const sendMessage = async (content: string, mentions: string[] = []) => {
     if (!selectedConversationId) {
       console.warn('Cannot send message: No conversation selected');
       return;
     }
 
-    const success = chatWebSocketService.sendMessage(selectedConversationId, content, mentions);
-    if (!success) {
-      console.warn('Failed to send message - WebSocket not connected');
-      // TODO: Could implement message queueing here
+    // Generate a client message ID for tracking
+    const clientMessageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Optimistically add message to UI
+    const optimisticMessage: Message = {
+      id: clientMessageId,
+      conversationId: selectedConversationId,
+      content,
+      senderId: user?.email || '',
+      senderName: user?.name || '',
+      senderEmail: user?.email || '',
+      createdAt: new Date().toISOString(),
+      type: 'TEXT',
+      mentions,
+      isOwnMessage: true,
+    };
+
+    setMessages((prev) => [...prev, optimisticMessage]);
+
+    try {
+      // Send via HTTP for reliability
+      const response = await chatApiService.sendMessage(
+        selectedConversationId,
+        {
+          content,
+          type: 'TEXT',
+          mentions,
+          clientMessageId,
+          projectId: projectId || undefined,
+        }
+      );
+
+      // Update message with server ID
+      if (response.status === 'sent') {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === clientMessageId
+              ? { ...msg, id: response.messageId }
+              : msg
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      // Mark message as failed
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === clientMessageId
+            ? { ...msg, status: 'FAILED' as const }
+            : msg
+        )
+      );
     }
   };
 
   const handleFileUpload = async (file: File) => {
     if (!selectedConversationId) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('conversationId', selectedConversationId);
-
     try {
-      // For file uploads, we need to handle FormData differently
-      const token = user?.token;
-      const response = await fetch('http://localhost:20005/api/files/upload', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await chatApiService.uploadMedia(
+        selectedConversationId,
+        file,
+        `Shared a file: ${file.name}`
+      );
 
-      if (response.ok) {
-        const fileData = await response.json();
-        sendMessage(`Shared a file: ${fileData.fileName}`, []);
+      if (response.status === 'success') {
+        // Message is automatically created by the backend
+        console.log('File uploaded successfully');
       }
     } catch (error) {
       console.error('Error uploading file:', error);
+    }
+  };
+
+  const retryMessage = async (message: Message) => {
+    try {
+      // Update message status to pending
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === message.id ? { ...msg, status: 'PENDING' as const } : msg
+        )
+      );
+
+      const response = await chatApiService.retryMessage(message.id);
+
+      if (response.status === 'sent') {
+        // Update message with successful send
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === message.id ? { ...msg, status: 'SENT' as const } : msg
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Failed to retry message:', error);
+      // Revert to failed status
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === message.id ? { ...msg, status: 'FAILED' as const } : msg
+        )
+      );
     }
   };
 
@@ -206,7 +318,7 @@ export const EnhancedChat: React.FC = () => {
     name?: string
   ) => {
     try {
-      const response = await apiClient.post('/api/chat/conversations', {
+      const response = await apiClient.post('/api/conversations', {
         type,
         participantIds,
         name,
@@ -246,7 +358,7 @@ export const EnhancedChat: React.FC = () => {
 
     try {
       const response = await apiClient.post(
-        `/api/chat/conversations/dm/${userId}`
+        `/api/conversations/direct-message/${userId}`
       );
 
       const conversation = await response.json();
@@ -256,7 +368,9 @@ export const EnhancedChat: React.FC = () => {
       setConversationListKey((prev) => prev + 1);
     } catch (error) {
       console.error('Error creating DM:', error);
-      alert(`Failed to start chat: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(
+        `Failed to start chat: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   };
 
@@ -303,9 +417,15 @@ export const EnhancedChat: React.FC = () => {
                       timestamp: message.createdAt,
                       projectId: '', // Not used in enhanced chat
                       mentions: message.mentions,
+                      status: message.status,
                     }}
                     isOwnMessage={
                       message.isOwnMessage || message.senderId === user?.email
+                    }
+                    onRetry={
+                      message.status === 'FAILED'
+                        ? () => retryMessage(message)
+                        : undefined
                     }
                   />
                 ))

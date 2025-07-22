@@ -11,7 +11,9 @@ interface ChatWebSocketManagerProps {
  * Handles WebSocket lifecycle based on authentication status
  * This runs at the application level, not component level
  */
-export const ChatWebSocketManager: React.FC<ChatWebSocketManagerProps> = ({ children }) => {
+export const ChatWebSocketManager: React.FC<ChatWebSocketManagerProps> = ({
+  children,
+}) => {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
@@ -21,13 +23,18 @@ export const ChatWebSocketManager: React.FC<ChatWebSocketManagerProps> = ({ chil
     if (user?.token && mounted) {
       // Only connect if not already connected
       if (!chatWebSocketService.isWebSocketConnected()) {
-        console.log('[ChatWSManager] Connecting WebSocket for user:', user.email);
-        chatWebSocketService.connect({
-          email: user.email,
-          token: user.token,
-        }).catch((error) => {
-          console.error('[ChatWSManager] Failed to connect:', error);
-        });
+        console.log(
+          '[ChatWSManager] Connecting WebSocket for user:',
+          user.email
+        );
+        chatWebSocketService
+          .connect({
+            email: user.email,
+            token: user.token,
+          })
+          .catch((error) => {
+            console.error('[ChatWSManager] Failed to connect:', error);
+          });
       }
     }
 

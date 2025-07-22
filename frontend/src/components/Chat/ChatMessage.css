@@ -67,3 +67,57 @@
 .file-attachment a:hover {
   text-decoration: underline;
 }
+
+.message-status {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.status-icon {
+  opacity: 0.7;
+}
+
+.status-icon.pending {
+  color: #999;
+}
+
+.status-icon.sent {
+  color: #666;
+}
+
+.status-icon.delivered {
+  color: #1976d2;
+}
+
+.status-icon.read {
+  color: #4caf50;
+}
+
+.status-icon.failed {
+  color: #f44336;
+}
+
+.chat-message.failed {
+  background-color: #ffebee;
+}
+
+.chat-message.failed .message-content {
+  color: #c62828;
+}
+
+.retry-button {
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retry-button:hover {
+  background-color: #d32f2f;
+}

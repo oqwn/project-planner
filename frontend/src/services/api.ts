@@ -164,12 +164,19 @@ export const taskApi = {
   // Get team members for assignment
   getTeamMembers: async (projectId: string): Promise<TeamMember[]> => {
     const { data } = await api.get(`/projects/${projectId}/members`);
-    return data.map((member: any) => ({
-      id: member.userId,
-      name: member.userName,
-      email: member.userEmail,
-      role: member.role,
-    }));
+    return data.map(
+      (member: {
+        userId: string;
+        userName: string;
+        userEmail: string;
+        role: string;
+      }) => ({
+        id: member.userId,
+        name: member.userName,
+        email: member.userEmail,
+        role: member.role,
+      })
+    );
   },
 
   // Add a comment to a task
