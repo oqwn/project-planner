@@ -98,14 +98,14 @@ export const EnhancedChat: React.FC = () => {
             // Update existing message
             return prev.map((m) =>
               m.id === message.id || m.clientMessageId === message.id
-                ? { ...message, isOwnMessage: message.senderId === user?.email }
+                ? { ...message, isOwnMessage: message.senderEmail === user?.email }
                 : m
             );
           }
           // Add new message
           return [
             ...prev,
-            { ...message, isOwnMessage: message.senderId === user?.email },
+            { ...message, isOwnMessage: message.senderEmail === user?.email },
           ];
         });
 
@@ -167,7 +167,7 @@ export const EnhancedChat: React.FC = () => {
       const result = await chatApiService.getMessages(conversationId);
       const messagesWithStatus = result.content.map((msg) => ({
         ...msg,
-        isOwnMessage: msg.senderId === user?.email,
+        isOwnMessage: msg.senderEmail === user?.email,
       }));
       setMessages(messagesWithStatus.reverse()); // Reverse to show oldest first
 
@@ -417,7 +417,7 @@ export const EnhancedChat: React.FC = () => {
                       status: message.status,
                     }}
                     isOwnMessage={
-                      message.isOwnMessage || message.senderId === user?.email
+                      message.isOwnMessage || message.senderEmail === user?.email
                     }
                     onRetry={
                       message.status === 'FAILED'
