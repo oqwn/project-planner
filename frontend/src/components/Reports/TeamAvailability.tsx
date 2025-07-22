@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   format,
-  startOfMonth,
-  endOfMonth,
+  startOfWeek,
+  endOfWeek,
   eachDayOfInterval,
-  getDay,
-  addMonths,
-  subMonths,
+  addWeeks,
+  subWeeks,
 } from 'date-fns';
 import reportService from '../../services/reportService';
 import type { TeamAvailability as TeamAvailabilityData } from '../../types/report.types';
@@ -20,30 +19,57 @@ interface TeamAvailabilityProps {
 export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
   projectId,
 }) => {
-  const user = useAuthStore((state) => state.user);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const currentUser = useAuthStore((state) => state.user);
+  const [currentWeek, setCurrentWeek] = useState(new Date());
   const [availabilityData, setAvailabilityData] = useState<
     TeamAvailabilityData[]
   >([]);
+  const [teamMembers, setTeamMembers] = useState<
+    {id: string, name: string, email: string}[]
+  >([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [editingCell, setEditingCell] = useState<string | null>(null);
 
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(currentMonth);
-  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const weekStart = startOfWeek(currentWeek);
+  const weekEnd = endOfWeek(currentWeek);
+  const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
   useEffect(() => {
     fetchAvailabilityData();
-  }, [projectId, currentMonth]);
+    fetchTeamMembers();
+  }, [projectId, currentWeek]);
+
+  useEffect(() => {
+    if (!editingCell) return;
+
+    const handleClickOutsideEvent = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (
+        !target?.closest('.inline-status-selector') &&
+        !target?.closest('.availability-cell.clickable')
+      ) {
+        setEditingCell(null);
+      }
+    };
+
+    // Add a small delay to prevent immediate cancellation of newly set editing state
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('click', handleClickOutsideEvent);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('click', handleClickOutsideEvent);
+    };
+  }, [editingCell]);
 
   const fetchAvailabilityData = async () => {
     try {
       setLoading(true);
       const data = await reportService.getTeamAvailability(
         projectId,
-        format(monthStart, 'yyyy-MM-dd'),
-        format(monthEnd, 'yyyy-MM-dd')
+        format(weekStart, 'yyyy-MM-dd'),
+        format(weekEnd, 'yyyy-MM-dd')
       );
       setAvailabilityData(data);
     } catch (error) {
@@ -53,36 +79,56 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
     }
   };
 
-  const handlePreviousMonth = () => {
-    setCurrentMonth(subMonths(currentMonth, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, 1));
-  };
-
-  const handleDateClick = (date: Date) => {
-    setSelectedDate(date);
-    setShowModal(true);
-  };
-
-  const handleSaveAvailability = async (
-    status: TeamAvailabilityData['status'],
-    notes?: string
-  ) => {
-    if (!selectedDate || !user) return;
-
+  const fetchTeamMembers = async () => {
     try {
+      const members = await reportService.getProjectMembers(projectId);
+      setTeamMembers(members);
+    } catch (error) {
+      console.error('Error fetching team members:', error);
+    }
+  };
+
+  const handlePreviousWeek = () => {
+    setCurrentWeek(subWeeks(currentWeek, 1));
+  };
+
+  const handleNextWeek = () => {
+    setCurrentWeek(addWeeks(currentWeek, 1));
+  };
+
+  const handleDateClick = (date: Date, memberEmail: string) => {
+    console.log('Cell clicked:', format(date, 'yyyy-MM-dd'), memberEmail);
+    console.log(
+      'Setting editing cell to:',
+      `${format(date, 'yyyy-MM-dd')}-${memberEmail}`
+    );
+    const cellKey = `${format(date, 'yyyy-MM-dd')}-${memberEmail}`;
+    setEditingCell(cellKey);
+  };
+
+  const handleCellStatusChange = async (
+    date: Date,
+    memberEmail: string,
+    status: TeamAvailabilityData['status']
+  ) => {
+    try {
+      // Find the member's UUID by email
+      const member = teamMembers.find(m => m.email === memberEmail);
+      if (!member) {
+        console.error('Member not found:', memberEmail);
+        return;
+      }
+
       const availability = {
-        userId: user.email, // This will be converted to UUID on backend
-        date: format(selectedDate, 'yyyy-MM-dd'),
+        userId: member.id, // Use the actual UUID
+        date: format(date, 'yyyy-MM-dd'),
         status,
-        notes,
+        notes: '',
       };
 
       await reportService.updateAvailability(projectId, availability);
       await fetchAvailabilityData();
-      setShowModal(false);
+      setEditingCell(null);
     } catch (error) {
       console.error('Error updating availability:', error);
     }
@@ -112,16 +158,16 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
     }
   };
 
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  // Get unique team members
-  const teamMembers = Array.from(
-    new Set(
-      availabilityData.map((a) =>
-        JSON.stringify({ id: a.userId, name: a.userName, email: a.userEmail })
-      )
-    )
-  ).map((member) => JSON.parse(member));
+  console.log('TeamAvailability Debug:', {
+    availabilityDataLength: availabilityData.length,
+    teamMembersLength: teamMembers.length,
+    loading,
+    projectId,
+    weekStart: format(weekStart, 'yyyy-MM-dd'),
+    weekEnd: format(weekEnd, 'yyyy-MM-dd')
+  });
 
   if (loading) {
     return (
@@ -134,7 +180,7 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
       <div className="availability-header">
         <h2>Team Availability Calendar</h2>
         <div className="calendar-navigation">
-          <button className="nav-btn" onClick={handlePreviousMonth}>
+          <button className="nav-btn" onClick={handlePreviousWeek}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
                 d="M12.5 15L7.5 10L12.5 5"
@@ -145,8 +191,10 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
               />
             </svg>
           </button>
-          <h3>{format(currentMonth, 'MMMM yyyy')}</h3>
-          <button className="nav-btn" onClick={handleNextMonth}>
+          <h3>
+            {format(weekStart, 'MMM d')} - {format(weekEnd, 'MMM d, yyyy')}
+          </h3>
+          <button className="nav-btn" onClick={handleNextWeek}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
                 d="M7.5 15L12.5 10L7.5 5"
@@ -157,6 +205,15 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
               />
             </svg>
           </button>
+        </div>
+      </div>
+
+      <div className="availability-info">
+        <div className="availability-hint">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" className="info-icon">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          <span>You can only edit your own availability. Other team members' schedules are view-only.</span>
         </div>
       </div>
 
@@ -184,95 +241,168 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
       </div>
 
       <div className="calendar-container">
-        <div className="calendar-grid">
-          <div className="calendar-row header-row">
-            <div className="calendar-cell member-header">Team Member</div>
-            {weekDays.map((day) => (
-              <div key={day} className="calendar-cell day-header">
+        {/* Calendar Header with Days of Week */}
+        <div className="calendar-header">
+          <div className="member-column-header">Team Members</div>
+          <div className="calendar-days-header">
+            {dayLabels.map((day) => (
+              <div key={day} className="day-header">
                 {day}
               </div>
             ))}
           </div>
+        </div>
 
-          {teamMembers.map((member) => (
-            <div key={member.id} className="calendar-row">
-              <div className="calendar-cell member-name">
-                <div className="member-info">
-                  <span className="name">{member.name}</span>
-                  <span className="email">{member.email}</span>
+        {/* Calendar Grid */}
+        <div className="calendar-grid">
+          {/* Date Numbers Row */}
+          <div className="dates-row">
+            <div className="member-column-spacer"></div>
+            <div className="calendar-dates">
+              {weekDays.map((date, index) => (
+                <div key={`date-${index}`} className="date-number-cell">
+                  {format(date, 'd')}
                 </div>
-              </div>
-              {Array(getDay(monthStart))
-                .fill(null)
-                .map((_, index) => (
-                  <div
-                    key={`empty-${index}`}
-                    className="calendar-cell empty"
-                  ></div>
-                ))}
-              {monthDays.map((date) => {
-                const availability = getAvailabilityForDate(date, member.id);
-                const isCurrentUser = member.email === user?.email;
-                return (
-                  <div
-                    key={format(date, 'yyyy-MM-dd')}
-                    className={`calendar-cell date-cell ${availability ? getStatusColor(availability.status) : ''} ${isCurrentUser ? 'clickable' : ''}`}
-                    onClick={() => isCurrentUser && handleDateClick(date)}
-                    title={availability?.notes || ''}
-                  >
-                    <span className="date-number">{format(date, 'd')}</span>
-                  </div>
-                );
-              })}
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Team Member Rows */}
+          {teamMembers.map((member) => {
+            const isCurrentUser = currentUser?.email === member.email;
+            return (
+              <div key={member.id} className={`member-row ${isCurrentUser ? 'current-user' : ''}`}>
+                <div className="member-info-cell">
+                  <div className="member-info">
+                    <span className="name">
+                      {member.name}
+                      {isCurrentUser && <span className="current-user-badge">(You)</span>}
+                    </span>
+                    <span className="email">{member.email}</span>
+                  </div>
+                </div>
+
+              <div className="member-availability-cells">
+                {weekDays.map((date, index) => {
+                  const availability = getAvailabilityForDate(date, member.id);
+                  const cellKey = `${format(date, 'yyyy-MM-dd')}-${member.email}`;
+                  const isEditing = editingCell === cellKey;
+                  const isToday =
+                    format(date, 'yyyy-MM-dd') ===
+                    format(new Date(), 'yyyy-MM-dd');
+                  const isCurrentUser = currentUser?.email === member.email;
+
+                  return (
+                    <div
+                      key={`${format(date, 'yyyy-MM-dd')}-${member.id}`}
+                      className={`availability-cell ${
+                        isCurrentUser ? 'clickable' : 'readonly'
+                      } ${isEditing ? 'editing' : ''} ${isToday ? 'today' : ''}`}
+                      onClick={(e) => {
+                        if (isCurrentUser) {
+                          e.stopPropagation();
+                          handleDateClick(date, member.email);
+                        }
+                      }}
+                      title={
+                        isCurrentUser
+                          ? `${member.name} - ${format(date, 'MMM d, yyyy')}: ${availability?.status || 'Click to set availability'}`
+                          : `${member.name} - ${format(date, 'MMM d, yyyy')}: ${availability?.status || 'Not set'} (View only)`
+                      }
+                    >
+                      {isEditing ? (
+                        <div
+                          className="inline-status-selector"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="status-options-inline">
+                            <button
+                              className="status-btn-inline status-available"
+                              onClick={() =>
+                                handleCellStatusChange(
+                                  date,
+                                  member.email,
+                                  'AVAILABLE'
+                                )
+                              }
+                              title="Available"
+                            >
+                              <div className="status-dot-inline status-available"></div>
+                            </button>
+                            <button
+                              className="status-btn-inline status-busy"
+                              onClick={() =>
+                                handleCellStatusChange(
+                                  date,
+                                  member.email,
+                                  'BUSY'
+                                )
+                              }
+                              title="Busy"
+                            >
+                              <div className="status-dot-inline status-busy"></div>
+                            </button>
+                            <button
+                              className="status-btn-inline status-out"
+                              onClick={() =>
+                                handleCellStatusChange(
+                                  date,
+                                  member.email,
+                                  'OUT_OF_OFFICE'
+                                )
+                              }
+                              title="Out of Office"
+                            >
+                              <div className="status-dot-inline status-out"></div>
+                            </button>
+                            <button
+                              className="status-btn-inline status-holiday"
+                              onClick={() =>
+                                handleCellStatusChange(
+                                  date,
+                                  member.email,
+                                  'HOLIDAY'
+                                )
+                              }
+                              title="Holiday"
+                            >
+                              <div className="status-dot-inline status-holiday"></div>
+                            </button>
+                            <button
+                              className="status-btn-inline status-sick"
+                              onClick={() =>
+                                handleCellStatusChange(
+                                  date,
+                                  member.email,
+                                  'SICK_LEAVE'
+                                )
+                              }
+                              title="Sick Leave"
+                            >
+                              <div className="status-dot-inline status-sick"></div>
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="availability-indicator">
+                          {availability ? (
+                            <div
+                              className={`availability-dot ${getStatusColor(availability.status)}`}
+                            ></div>
+                          ) : (
+                            <div className="availability-dot status-unset"></div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+          })}
         </div>
       </div>
-
-      {showModal && selectedDate && (
-        <div className="availability-modal" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>
-              Update Availability for {format(selectedDate, 'MMMM d, yyyy')}
-            </h3>
-            <div className="status-options">
-              <button
-                className="status-btn status-available"
-                onClick={() => handleSaveAvailability('AVAILABLE')}
-              >
-                Available
-              </button>
-              <button
-                className="status-btn status-busy"
-                onClick={() => handleSaveAvailability('BUSY')}
-              >
-                Busy
-              </button>
-              <button
-                className="status-btn status-out"
-                onClick={() => handleSaveAvailability('OUT_OF_OFFICE')}
-              >
-                Out of Office
-              </button>
-              <button
-                className="status-btn status-holiday"
-                onClick={() => handleSaveAvailability('HOLIDAY')}
-              >
-                Holiday
-              </button>
-              <button
-                className="status-btn status-sick"
-                onClick={() => handleSaveAvailability('SICK_LEAVE')}
-              >
-                Sick Leave
-              </button>
-            </div>
-            <button className="cancel-btn" onClick={() => setShowModal(false)}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

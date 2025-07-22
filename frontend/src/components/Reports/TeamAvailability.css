@@ -50,6 +50,27 @@
   color: #6b7280;
 }
 
+.availability-info {
+  margin-bottom: 1rem;
+}
+
+.availability-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  color: #1e40af;
+  font-size: 0.875rem;
+}
+
+.availability-hint .info-icon {
+  flex-shrink: 0;
+  color: #3b82f6;
+}
+
 .availability-legend {
   display: flex;
   gap: 2rem;
@@ -97,115 +118,443 @@
 .calendar-container {
   overflow-x: auto;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 12px;
   background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.calendar-grid {
-  display: table;
-  width: 100%;
-  min-width: 800px;
+.calendar-container * {
+  box-sizing: border-box;
 }
 
-.calendar-row {
-  display: table-row;
+/* Calendar Header */
+.calendar-header {
+  display: flex;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-bottom: 2px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.calendar-row:not(:last-child) {
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.header-row {
-  background: #f9fafb;
-}
-
-.calendar-cell {
-  display: table-cell;
-  padding: 0.75rem;
+.member-column-header {
+  min-width: 220px;
+  width: 220px;
+  flex-shrink: 0;
+  padding: 1rem;
+  font-weight: 700;
+  color: #1e293b;
   text-align: center;
-  vertical-align: middle;
-  border-right: 1px solid #f3f4f6;
+  border-right: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.calendar-cell:last-child {
+.calendar-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  flex: 1;
+  min-width: 100%;
+  margin-left: 1rem;
+}
+
+.day-header {
+  padding: 1rem 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border-right: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  box-sizing: border-box;
+}
+
+.day-header:last-child {
   border-right: none;
 }
 
-.member-header,
-.day-header {
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
+/* Calendar Grid */
+.calendar-grid {
+  min-width: fit-content;
+  width: 100%;
 }
 
-.member-name {
-  text-align: left;
+/* Date Numbers Row */
+.dates-row {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 60px;
+  z-index: 9;
+}
+
+.member-column-spacer {
+  min-width: 220px;
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid #e5e7eb;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  flex: 1;
+  min-width: 100%;
+  margin-left: 1rem;
+}
+
+.date-number-cell {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-weight: 700;
+  color: #334155;
+  font-size: 1rem;
+  border-right: 1px solid #e5e7eb;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  box-sizing: border-box;
+}
+
+.date-number-cell:last-child {
+  border-right: none;
+}
+
+/* Member Rows */
+.member-row {
+  display: flex;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
+}
+
+.member-row:hover {
+  background: #f8fafc;
+}
+
+.member-row.current-user {
+  background: #f0f9ff;
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+  border-left: 4px solid #3b82f6;
+  margin-left: -2px;
+  padding-right: 2px;
+}
+
+.member-row.current-user .member-info-cell {
+  background: #f0f9ff;
+}
+
+.member-row.current-user .member-availability-cells {
+  background: #f0f9ff;
+  position: relative;
+  padding-right: 2px;
+}
+
+.member-row.current-user .member-availability-cells::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  background: #3b82f6;
+}
+
+.member-row:last-child {
+  border-bottom: none;
+}
+
+.member-info-cell {
+  min-width: 220px;
+  width: 220px;
+  flex-shrink: 0;
+  padding: 1rem;
   background: #fafbfc;
-  min-width: 200px;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+}
+
+.member-availability-cells {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  flex: 1;
+  min-width: 100%;
+  margin-left: 1rem;
 }
 
 .member-info {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  width: 100%;
 }
 
 .member-info .name {
-  font-weight: 500;
-  color: #111827;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.875rem;
+  line-height: 1.2;
 }
 
 .member-info .email {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #64748b;
+  line-height: 1.2;
 }
 
-.date-cell {
+.current-user-badge {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+/* Availability Cells */
+.availability-cell {
   position: relative;
-  height: 40px;
+  min-height: 60px;
+  height: 60px;
   cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #e5e7eb;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
 }
 
-.date-cell.clickable {
+.availability-cell:last-child {
+  border-right: none;
+}
+
+.availability-cell.clickable {
   cursor: pointer;
+  background: #ffffff;
+  border: 2px solid transparent;
 }
 
-.date-cell.clickable:hover {
-  background: #f3f4f6;
+.availability-cell.clickable:hover {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  transform: scale(1.05) !important;
+  z-index: 15 !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25) !important;
+  border: 3px solid #3b82f6 !important;
+}
+
+.availability-cell.readonly {
+  cursor: not-allowed;
+  background: #f9fafb;
+  opacity: 0.8;
+}
+
+.availability-cell.clickable:active {
+  transform: scale(0.95) !important;
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%) !important;
+}
+
+.availability-cell.today {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #f59e0b;
+}
+
+.availability-cell.today:hover {
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+}
+
+.availability-cell.empty {
+  background: #f9fafb;
+  cursor: not-allowed;
 }
 
 .date-number {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.date-cell.status-available .date-number {
-  color: #065f46;
-  font-weight: 500;
-}
-
-.date-cell.status-busy .date-number {
-  color: #92400e;
-  font-weight: 500;
-}
-
-.date-cell.status-out .date-number {
+  font-size: 0.75rem;
   color: #374151;
   font-weight: 500;
+  line-height: 1;
 }
 
-.date-cell.status-holiday .date-number {
-  color: #1e40af;
+/* Date header styles */
+.dates-row {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.dates-label {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.date-header {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 0.5rem 0.25rem;
+}
+
+.date-info {
+  text-align: center;
+}
+
+.day-info {
+  text-align: center;
+}
+
+.date-number-header {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.day-name {
+  font-size: 0.75rem;
+  color: #6b7280;
   font-weight: 500;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 0.25rem;
 }
 
-.date-cell.status-sick .date-number {
-  color: #991b1b;
-  font-weight: 500;
+.date-number-empty {
+  display: block;
+  height: 1rem;
 }
 
-.calendar-cell.empty {
-  background: #fafbfc;
+/* Availability indicators */
+.availability-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+
+.availability-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  transition: all 0.15s ease;
+}
+
+.availability-cell:hover .availability-dot {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.availability-dot.status-available {
+  background-color: #10b981;
+}
+
+.availability-dot.status-busy {
+  background-color: #f59e0b;
+}
+
+.availability-dot.status-out {
+  background-color: #6b7280;
+}
+
+.availability-dot.status-holiday {
+  background-color: #3b82f6;
+}
+
+.availability-dot.status-sick {
+  background-color: #ef4444;
+}
+
+.availability-dot.status-unset {
+  background-color: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+/* Inline status selector */
+.availability-cell.editing {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 2px solid #3b82f6;
+  z-index: 20;
+  position: relative;
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
+}
+
+.inline-status-selector {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border: 3px solid #3b82f6;
+}
+
+.status-options-inline {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.status-btn-inline {
+  background: none;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-btn-inline:hover {
+  transform: scale(1.3);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.status-dot-inline {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.status-dot-inline.status-available {
+  background-color: #10b981;
+}
+
+.status-dot-inline.status-busy {
+  background-color: #f59e0b;
+}
+
+.status-dot-inline.status-out {
+  background-color: #6b7280;
+}
+
+.status-dot-inline.status-holiday {
+  background-color: #3b82f6;
+}
+
+.status-dot-inline.status-sick {
+  background-color: #ef4444;
 }
 
 .availability-modal {
@@ -310,11 +659,32 @@
     font-size: 0.75rem;
   }
 
-  .member-name {
-    min-width: 150px;
+  .member-column-header,
+  .member-column-spacer,
+  .member-info-cell {
+    min-width: 180px;
+    width: 180px;
   }
 
-  .calendar-cell {
-    padding: 0.5rem;
+  .calendar-days-header,
+  .calendar-dates,
+  .member-availability-cells {
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .availability-cell {
+    min-height: 50px;
+    height: 50px;
+  }
+
+  .availability-dot {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+
+  .status-dot-inline {
+    width: 12px;
+    height: 12px;
   }
 }

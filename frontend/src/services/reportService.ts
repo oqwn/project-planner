@@ -110,6 +110,21 @@ class ReportService {
     );
     return response.data;
   }
+
+  async getProjectMembers(projectId: string): Promise<{id: string, name: string, email: string}[]> {
+    const response = await axios.get(
+      `${API_BASE_URL}/projects/${projectId}/members`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+    // Map API response structure to component expected structure
+    return response.data.map((member: any) => ({
+      id: member.userId,
+      name: member.userName,
+      email: member.userEmail
+    }));
+  }
 }
 
 const reportService = new ReportService();
