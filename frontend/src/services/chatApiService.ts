@@ -110,37 +110,7 @@ class ChatApiService {
   }
 
   /**
-   * Mark messages as delivered
-   */
-  async markMessagesDelivered(messageIds: string[]): Promise<void> {
-    try {
-      await axios.post(
-        `${API_BASE_URL}/chat/messages/delivered`,
-        { messageIds },
-        { headers: this.getAuthHeaders() }
-      );
-    } catch (error) {
-      console.error('Failed to mark messages as delivered:', error);
-    }
-  }
-
-  /**
-   * Mark messages as read
-   */
-  async markMessagesRead(messageIds: string[]): Promise<void> {
-    try {
-      await axios.post(
-        `${API_BASE_URL}/chat/messages/read`,
-        { messageIds },
-        { headers: this.getAuthHeaders() }
-      );
-    } catch (error) {
-      console.error('Failed to mark messages as read:', error);
-    }
-  }
-
-  /**
-   * Mark conversation as read (updates conversation-level read timestamp)
+   * Mark conversation as read (simple approach like WhatsApp/WeChat)
    */
   async markConversationAsRead(conversationId: string): Promise<void> {
     try {

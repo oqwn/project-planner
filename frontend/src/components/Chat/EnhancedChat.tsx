@@ -108,10 +108,8 @@ export const EnhancedChat: React.FC = () => {
           ];
         });
 
-        // Mark message as delivered if not own message
-        if (message.senderId !== user?.email) {
-          chatApiService.markMessagesDelivered([message.id]);
-        }
+        // Note: Using simple conversation-level read tracking like WhatsApp/WeChat
+        // No need for individual message delivery tracking
       }
       // TODO: Update conversation list with new message preview
     };
@@ -172,21 +170,10 @@ export const EnhancedChat: React.FC = () => {
       }));
       setMessages(messagesWithStatus.reverse()); // Reverse to show oldest first
 
-      // Mark unread messages as read
-      const unreadMessageIds = messagesWithStatus
-        .filter((msg) => msg.senderId !== user?.email && msg.status !== 'READ')
-        .map((msg) => msg.id);
-
-      if (unreadMessageIds.length > 0) {
-        setTimeout(() => {
-          chatApiService.markMessagesRead(unreadMessageIds);
-        }, 1000); // Delay to ensure user has seen messages
-      }
-
-      // Also mark the conversation as read to update unread counts in conversation list
+      // Mark conversation as read (simple approach like WhatsApp/WeChat)
       setTimeout(() => {
         chatApiService.markConversationAsRead(conversationId);
-      }, 1500); // Slightly longer delay to ensure message processing completes
+      }, 1000); // Delay to ensure user has seen messages
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
