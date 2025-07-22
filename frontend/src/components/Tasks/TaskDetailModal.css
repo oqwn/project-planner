@@ -5,7 +5,9 @@
   max-width: 900px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .task-detail-header {
@@ -395,33 +397,32 @@
   border: 1px solid #dbeafe;
 }
 
-
 @media (max-width: 768px) {
   .task-detail-modal {
     max-width: none;
     margin: 1rem;
   }
-  
+
   .task-detail-header {
     flex-direction: column;
     padding: 1.5rem 1.5rem 1rem 1.5rem;
   }
-  
+
   .task-detail-title {
     font-size: 1.5rem;
   }
-  
+
   .task-detail-actions {
     width: 100%;
     justify-content: flex-end;
   }
-  
+
   .task-detail-content {
     grid-template-columns: 1fr;
     padding: 1.5rem;
     gap: 1.5rem;
   }
-  
+
   .task-meta-section {
     order: -1;
   }

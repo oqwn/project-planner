@@ -120,11 +120,11 @@
   .table-container {
     overflow-x: scroll;
   }
-  
+
   .time-entries-table table {
     min-width: 600px;
   }
-  
+
   .description-cell {
     max-width: 150px;
   }

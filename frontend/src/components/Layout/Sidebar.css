@@ -149,38 +149,38 @@
     position: static;
     background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
   }
-  
+
   .sidebar.collapsed {
     width: 100%;
   }
-  
+
   .sidebar-nav {
     padding: 1rem 0;
   }
-  
+
   .nav-list {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
   }
-  
+
   .nav-item {
     margin-bottom: 0;
     flex: 1;
     min-width: 60px;
   }
-  
+
   .nav-link {
     flex-direction: column;
     padding: 0.5rem;
     text-align: center;
     gap: 0.25rem;
   }
-  
+
   .nav-icon {
     font-size: 1.5rem;
   }
-  
+
   .nav-label {
     font-size: 0.75rem;
   }

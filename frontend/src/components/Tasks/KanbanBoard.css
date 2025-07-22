@@ -168,7 +168,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-  
+
   .kanban-column {
     min-height: 400px;
   }
@@ -180,21 +180,21 @@
     gap: 1rem;
     align-items: stretch;
   }
-  
+
   .kanban-header h1 {
     font-size: 1.5rem;
     text-align: center;
   }
-  
+
   .kanban-columns {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .kanban-column {
     min-height: 300px;
   }
-  
+
   .column-content {
     padding: 0.75rem;
   }
@@ -204,16 +204,16 @@
   .kanban-header h1 {
     font-size: 1.25rem;
   }
-  
+
   .create-task-btn {
     padding: 0.625rem 1.25rem;
     font-size: 0.8rem;
   }
-  
+
   .column-header {
     padding: 0.75rem;
   }
-  
+
   .column-title h3 {
     font-size: 0.875rem;
   }

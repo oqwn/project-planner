@@ -28,15 +28,15 @@
   .layout {
     flex-direction: column;
   }
-  
+
   .main-content {
     margin-left: 0;
   }
-  
+
   .main-content.sidebar-collapsed {
     margin-left: 0;
   }
-  
+
   .content-area {
     padding: 1rem;
   }

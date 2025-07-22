@@ -200,24 +200,24 @@
   .tasks-filters {
     flex-direction: column;
   }
-  
+
   .table-header,
   .table-row {
     grid-template-columns: 1fr;
     gap: 0.5rem;
   }
-  
+
   .table-header {
     display: none;
   }
-  
+
   .table-row {
     padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .col-title,
   .col-assignee,
   .col-due,
@@ -225,10 +225,25 @@
   .col-status {
     justify-content: space-between;
   }
-  
-  .col-title::before { content: "Task: "; font-weight: 600; }
-  .col-assignee::before { content: "Assignee: "; font-weight: 600; }
-  .col-due::before { content: "Due: "; font-weight: 600; }
-  .col-priority::before { content: "Priority: "; font-weight: 600; }
-  .col-status::before { content: "Status: "; font-weight: 600; }
+
+  .col-title::before {
+    content: 'Task: ';
+    font-weight: 600;
+  }
+  .col-assignee::before {
+    content: 'Assignee: ';
+    font-weight: 600;
+  }
+  .col-due::before {
+    content: 'Due: ';
+    font-weight: 600;
+  }
+  .col-priority::before {
+    content: 'Priority: ';
+    font-weight: 600;
+  }
+  .col-status::before {
+    content: 'Status: ';
+    font-weight: 600;
+  }
 }

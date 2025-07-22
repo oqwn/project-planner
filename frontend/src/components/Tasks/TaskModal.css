@@ -19,7 +19,9 @@
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .modal-header {
@@ -120,9 +122,9 @@
 }
 
 /* Ensure consistent border color for all input types */
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group input[type="number"] {
+.form-group input[type='text'],
+.form-group input[type='date'],
+.form-group input[type='number'] {
   border: 1px solid #374151 !important;
 }
 
@@ -270,34 +272,33 @@
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
-
 @media (max-width: 768px) {
   .modal-overlay {
     padding: 0.5rem;
   }
-  
+
   .task-modal {
     max-width: none;
     margin: 0.5rem;
   }
-  
+
   .modal-header {
     padding: 1rem 1rem 0.75rem 1rem;
   }
-  
+
   .task-form {
     padding: 1rem;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 0;
   }
-  
+
   .modal-actions {
     flex-direction: column-reverse;
   }
-  
+
   .cancel-btn,
   .save-btn {
     width: 100%;

@@ -164,13 +164,13 @@
   .activity-item {
     gap: 0.5rem;
   }
-  
+
   .activity-icon {
     width: 28px;
     height: 28px;
     font-size: 0.75rem;
   }
-  
+
   .activity-text {
     font-size: 0.8rem;
   }

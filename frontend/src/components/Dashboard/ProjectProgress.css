@@ -176,17 +176,17 @@
   .project-item {
     padding: 0.75rem;
   }
-  
+
   .project-header {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .project-meta {
     flex-direction: row;
     gap: 1rem;
   }
-  
+
   .progress-summary {
     grid-template-columns: 1fr;
     gap: 0.5rem;
