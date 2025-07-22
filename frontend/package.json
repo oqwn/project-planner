@@ -13,9 +13,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@nivo/bar": "^0.99.0",
+    "@nivo/core": "^0.99.0",
+    "@nivo/line": "^0.99.0",
     "@stomp/stompjs": "^7.0.0",
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "gantt-task-react": "^0.3.9",
     "react": "19.2.0-canary-fa3feba6-20250623",
     "react-dom": "19.2.0-canary-fa3feba6-20250623",
     "react-router-dom": "^7.7.0",

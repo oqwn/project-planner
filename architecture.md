@@ -492,3 +492,105 @@ stages:
 - Documentation updates
 
 This architecture provides a scalable, maintainable foundation for the project management application while allowing for future growth and feature additions.
+
+## Reports Module Architecture ✅ IMPLEMENTED
+
+### Overview
+The Reports module provides comprehensive project analytics and visualization capabilities including Gantt charts, milestone tracking, workload analysis, and team availability management.
+
+### Technology Stack
+- **Frontend**: 
+  - gantt-task-react for Gantt chart visualization
+  - @nivo/bar for workload comparison charts
+  - date-fns-tz for timezone-aware date handling
+  - Custom calendar grid for team availability
+- **Backend**: 
+  - Spring Boot REST API with specialized report endpoints
+  - MyBatis mappers for complex report queries
+  - Flyway migrations for milestones and team_availability tables
+
+### Database Schema Updates
+
+#### Milestones Table
+```sql
+CREATE TABLE milestones (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    target_date DATE NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'PLANNED',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT milestone_status_check CHECK (status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'DELAYED'))
+);
+```
+
+#### Team Availability Table
+```sql
+CREATE TABLE team_availability (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE',
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT availability_status_check CHECK (status IN ('AVAILABLE', 'BUSY', 'OUT_OF_OFFICE', 'HOLIDAY', 'SICK_LEAVE')),
+    CONSTRAINT unique_user_date UNIQUE (user_id, date)
+);
+```
+
+### API Endpoints
+```
+Reports:
+GET    /api/projects/:projectId/reports/gantt           # Get Gantt chart data
+GET    /api/projects/:projectId/reports/milestones      # List milestones
+POST   /api/projects/:projectId/reports/milestones      # Create milestone
+PUT    /api/projects/:projectId/reports/milestones/:id  # Update milestone
+DELETE /api/projects/:projectId/reports/milestones/:id  # Delete milestone
+GET    /api/projects/:projectId/reports/workload        # Get workload comparison
+GET    /api/projects/:projectId/reports/team-availability  # Get team availability
+POST   /api/projects/:projectId/reports/team-availability  # Update availability
+```
+
+### Key Features Implemented
+
+#### 1. Gantt Chart
+- Interactive timeline visualization of tasks and milestones
+- Multiple view modes (Hour, Day, Week, Month, Quarter, Year)
+- Drag-and-drop support for date adjustments (frontend only)
+- Color-coded status indicators
+- Progress tracking for each task
+
+#### 2. Milestone Management
+- CRUD operations for project milestones
+- Status tracking (Planned, In Progress, Completed, Delayed)
+- Automatic progress calculation based on associated tasks
+- Visual milestone cards with target dates
+
+#### 3. Workload Comparison
+- Estimated vs actual hours analysis per team member
+- Variance calculation with color coding
+- Table and chart view options
+- Project-level summary statistics
+- Task-level breakdown for each team member
+
+#### 4. Team Availability Calendar
+- Monthly calendar grid showing team availability
+- Status options: Available, Busy, Out of Office, Holiday, Sick Leave
+- Click-to-update for own availability
+- Color-coded status indicators
+- Notes support for additional context
+
+### Performance Optimizations
+- Indexed database queries for fast report generation
+- Efficient aggregation queries using MyBatis
+- Frontend data caching to reduce API calls
+- Lazy loading of report components
+
+### Security Considerations
+- Project membership verification for all report endpoints
+- User can only update their own availability
+- Role-based access for milestone management
+- JWT authentication for all API endpoints
