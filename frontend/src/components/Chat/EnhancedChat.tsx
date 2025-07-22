@@ -77,6 +77,7 @@ export const EnhancedChat: React.FC = () => {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [conversationListKey, setConversationListKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const conversationListRef = useRef<{ refreshConversations: () => void }>(null);
 
   // Register WebSocket handlers for this component
   useEffect(() => {
@@ -170,10 +171,13 @@ export const EnhancedChat: React.FC = () => {
       }));
       setMessages(messagesWithStatus.reverse()); // Reverse to show oldest first
 
-      // Mark conversation as read (simple approach like WhatsApp/WeChat)
-      setTimeout(() => {
-        chatApiService.markConversationAsRead(conversationId);
-      }, 1000); // Delay to ensure user has seen messages
+      // Mark conversation as read immediately
+      chatApiService.markConversationAsRead(conversationId).then(() => {
+        // Refresh conversation list to update unread count
+        if (conversationListRef.current) {
+          conversationListRef.current.refreshConversations();
+        }
+      });
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
@@ -369,6 +373,7 @@ export const EnhancedChat: React.FC = () => {
   return (
     <div className="enhanced-chat-container">
       <ConversationList
+        ref={conversationListRef}
         key={conversationListKey}
         currentUserId={user?.email || ''}
         selectedConversationId={selectedConversationId}

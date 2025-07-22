@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import './Layout.css';
@@ -8,21 +8,12 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
   return (
     <div className="layout">
-      <Sidebar collapsed={sidebarCollapsed} />
-      <div
-        className={`main-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}
-      >
+      <Sidebar collapsed={false} />
+      <div className="main-content">
         <Header
-          onToggleSidebar={toggleSidebar}
-          sidebarCollapsed={sidebarCollapsed}
+          sidebarCollapsed={false}
         />
         <main className="content-area">{children}</main>
       </div>

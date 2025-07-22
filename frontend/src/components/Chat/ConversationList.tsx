@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuthStore } from '../../store/authStore';
 import { apiClient } from '../../utils/apiClient';
@@ -41,14 +41,17 @@ interface ConversationListProps {
   onStartDirectMessage?: (userId: string) => void;
 }
 
-const ConversationList: React.FC<ConversationListProps> = ({
+const ConversationList = forwardRef<
+  { refreshConversations: () => void },
+  ConversationListProps
+>(({
   currentUserId,
   selectedConversationId,
   projectId,
   onConversationSelect,
   onNewConversation,
   onStartDirectMessage,
-}) => {
+}, ref) => {
   const user = useAuthStore((state) => state.user);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
@@ -62,6 +65,11 @@ const ConversationList: React.FC<ConversationListProps> = ({
     fetchConversations();
     fetchAvailableUsers();
   }, []);
+
+  // Expose refreshConversations method to parent
+  useImperativeHandle(ref, () => ({
+    refreshConversations: fetchConversations,
+  }));
 
   const fetchConversations = async () => {
     try {
@@ -308,6 +316,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
       </div>
     </div>
   );
-};
+});
+
+ConversationList.displayName = 'ConversationList';
 
 export default ConversationList;

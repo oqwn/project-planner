@@ -6,15 +6,11 @@
 
 .main-content {
   flex: 1;
-  margin-left: 280px;
+  margin-left: 70px;
   display: flex;
   flex-direction: column;
   transition: margin-left 0.3s ease;
   min-height: 100vh;
-}
-
-.main-content.sidebar-collapsed {
-  margin-left: 70px;
 }
 
 .content-area {
@@ -30,10 +26,6 @@
   }
 
   .main-content {
-    margin-left: 0;
-  }
-
-  .main-content.sidebar-collapsed {
     margin-left: 0;
   }
 
