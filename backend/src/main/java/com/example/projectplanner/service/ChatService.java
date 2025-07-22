@@ -139,4 +139,59 @@ public class ChatService {
     public long getMessageCount(UUID projectId) {
         return chatMessageMapper.countByProjectId(projectId);
     }
+    
+    public ChatMessageResponse sendConversationMessage(ChatMessageRequest request, String userEmail) {
+        System.out.println("=== ChatService.sendConversationMessage ===");
+        System.out.println("User: " + userEmail);
+        System.out.println("ConversationId: " + request.getConversationId());
+        System.out.println("Content: " + request.getContent());
+        
+        // Get the current user
+        User currentUser = userMapper.findByEmail(userEmail);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found: " + userEmail);
+        }
+
+        // Create chat message entity
+        ChatMessage message = new ChatMessage(
+            request.getConversationId(),
+            currentUser.getId(),
+            request.getContent(),
+            request.getType()
+        );
+        
+        message.setReplyToMessageId(request.getReplyToMessageId());
+        message.setMentions(request.getMentions());
+        message.setAttachmentIds(request.getAttachmentIds());
+
+        // Save the message
+        chatMessageMapper.insert(message);
+        System.out.println("Message inserted with ID: " + message.getId());
+
+        // Retrieve the saved message with user details
+        ChatMessageResponse response = chatMessageMapper.findById(message.getId());
+        
+        if (response == null) {
+            throw new RuntimeException("Failed to retrieve saved message");
+        }
+        
+        // Set flag for own message
+        response.setOwnMessage(true);
+
+        // Load attachments if any
+        if (request.getAttachmentIds() != null && !request.getAttachmentIds().isEmpty()) {
+            UUID[] attachmentArray = request.getAttachmentIds().toArray(new UUID[0]);
+            List<SharedFileResponse> attachments = sharedFileMapper.findByIds(attachmentArray);
+            
+            // Set file icons
+            attachments.forEach(file -> 
+                file.setFileIcon(fileIconService.getIconForFileType(file.getFileType()))
+            );
+            
+            response.setAttachments(attachments);
+        }
+
+        System.out.println("Message response created: " + response.getId());
+        return response;
+    }
 }
