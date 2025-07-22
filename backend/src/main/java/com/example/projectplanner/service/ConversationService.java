@@ -122,6 +122,30 @@ public class ConversationService {
         return convertToResponse(conversation, currentUserId);
     }
 
+    public ConversationResponse getConversationById(UUID conversationId, String userEmail) {
+        User user = userMapper.findByEmail(userEmail);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        
+        // First check if the user is a participant in this conversation
+        List<ConversationParticipant> participants = participantMapper.findByConversationId(conversationId);
+        boolean isParticipant = participants.stream()
+            .anyMatch(p -> p.getUserId().equals(user.getId()) && p.isActive());
+        
+        if (!isParticipant) {
+            throw new RuntimeException("Access denied: You are not a participant in this conversation");
+        }
+        
+        // Get the conversation
+        Conversation conversation = conversationMapper.findById(conversationId);
+        if (conversation == null) {
+            throw new RuntimeException("Conversation not found");
+        }
+        
+        return convertToResponse(conversation, user.getId());
+    }
+
     public void markAsRead(UUID conversationId, String userEmail) {
         User user = userMapper.findByEmail(userEmail);
         if (user == null) {
