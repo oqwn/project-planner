@@ -13,6 +13,7 @@ import authService from './services/auth';
 import { useAuthStore } from './store/authStore';
 import { ProjectProvider } from './contexts/ProjectContext';
 import { ChatWebSocketManager } from './components/Chat/ChatWebSocketManager';
+import { Reports } from './components/Reports/Reports';
 import './App.css';
 
 function App() {
@@ -48,7 +49,7 @@ function App() {
                       <Route path="/tasks" element={<Tasks />} />
                       <Route path="/timesheets" element={<TimeTracking />} />
                       <Route path="/collaboration" element={<EnhancedChat />} />
-                      <Route path="/reports" element={<ReportsPlaceholder />} />
+                      <Route path="/reports" element={<Reports />} />
                       <Route
                         path="/settings"
                         element={<SettingsPlaceholder />}
@@ -66,14 +67,6 @@ function App() {
 }
 
 // Placeholder components for future implementation
-
-const ReportsPlaceholder: React.FC = () => (
-  <div className="placeholder-page">
-    <h1>Reports</h1>
-    <p>Project reporting and analytics coming soon...</p>
-  </div>
-);
-
 const SettingsPlaceholder: React.FC = () => (
   <div className="placeholder-page">
     <h1>Settings</h1>

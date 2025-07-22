@@ -77,7 +77,9 @@ export const EnhancedChat: React.FC = () => {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [conversationListKey, setConversationListKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const conversationListRef = useRef<{ refreshConversations: () => void }>(null);
+  const conversationListRef = useRef<{ refreshConversations: () => void }>(
+    null
+  );
 
   // Register WebSocket handlers for this component
   useEffect(() => {
@@ -98,7 +100,10 @@ export const EnhancedChat: React.FC = () => {
             // Update existing message
             return prev.map((m) =>
               m.id === message.id || m.clientMessageId === message.id
-                ? { ...message, isOwnMessage: message.senderEmail === user?.email }
+                ? {
+                    ...message,
+                    isOwnMessage: message.senderEmail === user?.email,
+                  }
                 : m
             );
           }
@@ -417,7 +422,8 @@ export const EnhancedChat: React.FC = () => {
                       status: message.status,
                     }}
                     isOwnMessage={
-                      message.isOwnMessage || message.senderEmail === user?.email
+                      message.isOwnMessage ||
+                      message.senderEmail === user?.email
                     }
                     onRetry={
                       message.status === 'FAILED'
