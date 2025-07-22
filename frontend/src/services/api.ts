@@ -90,6 +90,25 @@ export const api = axios.create({
   },
 });
 
+// Add request interceptor to include auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('auth-storage');
+    if (token) {
+      try {
+        const authData = JSON.parse(token);
+        if (authData?.state?.user?.token) {
+          config.headers.Authorization = `Bearer ${authData.state.user.token}`;
+        }
+      } catch (e) {
+        console.error('Error parsing auth token:', e);
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 // User API functions
 export const userApi = {
   getAll: () => api.get<User[]>('/users'),

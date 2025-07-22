@@ -6,6 +6,7 @@ import NewConversationModal from './NewConversationModal';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { FileUpload } from './FileUpload';
+import { apiClient } from '../../utils/apiClient';
 import './EnhancedChat.css';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -156,19 +157,12 @@ export const EnhancedChat: React.FC = () => {
 
   const fetchConversationDetails = async (conversationId: string) => {
     try {
-      const response = await fetch(
-        `/api/chat/conversations/${conversationId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        }
+      const response = await apiClient.get(
+        `/api/chat/conversations/${conversationId}`
       );
-      if (response.ok) {
-        const data = await response.json();
-        setSelectedConversation(data);
-        setOnlineUsers(data.participants || []);
-      }
+      const data = await response.json();
+      setSelectedConversation(data);
+      setOnlineUsers(data.participants || []);
     } catch (error) {
       console.error('Error fetching conversation details:', error);
     }
@@ -177,18 +171,11 @@ export const EnhancedChat: React.FC = () => {
   const fetchMessages = async (conversationId: string) => {
     setLoadingMessages(true);
     try {
-      const response = await fetch(
-        `/api/chat/conversations/${conversationId}/messages`,
-        {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        }
+      const response = await apiClient.get(
+        `/api/chat/conversations/${conversationId}/messages`
       );
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data.reverse()); // Reverse to show oldest first
-      }
+      const data = await response.json();
+      setMessages(data.reverse()); // Reverse to show oldest first
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
@@ -238,10 +225,12 @@ export const EnhancedChat: React.FC = () => {
     formData.append('conversationId', selectedConversationId);
 
     try {
-      const response = await fetch('/api/files/upload', {
+      // For file uploads, we need to handle FormData differently
+      const token = user?.token;
+      const response = await fetch('http://localhost:20005/api/files/upload', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${user?.token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -261,26 +250,17 @@ export const EnhancedChat: React.FC = () => {
     name?: string
   ) => {
     try {
-      const response = await fetch('/api/chat/conversations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user?.token}`,
-        },
-        body: JSON.stringify({
-          type,
-          participantIds,
-          name,
-        }),
+      const response = await apiClient.post('/api/chat/conversations', {
+        type,
+        participantIds,
+        name,
       });
 
-      if (response.ok) {
-        const newConversation = await response.json();
-        setSelectedConversationId(newConversation.id);
-        setShowNewConversationModal(false);
-        // Refresh conversation list
-        setConversationListKey((prev) => prev + 1);
-      }
+      const newConversation = await response.json();
+      setSelectedConversationId(newConversation.id);
+      setShowNewConversationModal(false);
+      // Refresh conversation list
+      setConversationListKey((prev) => prev + 1);
     } catch (error) {
       console.error('Error creating conversation:', error);
     }
@@ -306,37 +286,21 @@ export const EnhancedChat: React.FC = () => {
   const handleStartDirectMessage = async (userId: string) => {
     console.log('Starting direct message with userId:', userId);
     console.log('Auth token:', user?.token);
+    console.log('Current user:', user);
 
     try {
-      const response = await fetch(`/api/chat/conversations/dm/${userId}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await apiClient.post(
+        `/api/chat/conversations/dm/${userId}`
+      );
 
-      console.log('Response status:', response.status);
-
-      if (response.ok) {
-        const conversation = await response.json();
-        console.log('Created/fetched conversation:', conversation);
-        setSelectedConversationId(conversation.id);
-        // Refresh conversation list to show the new conversation
-        setConversationListKey((prev) => prev + 1);
-      } else {
-        const errorText = await response.text();
-        console.error(
-          'Failed to create DM. Status:',
-          response.status,
-          'Error:',
-          errorText
-        );
-        alert(`Failed to start chat: ${errorText || 'Unknown error'}`);
-      }
+      const conversation = await response.json();
+      console.log('Created/fetched conversation:', conversation);
+      setSelectedConversationId(conversation.id);
+      // Refresh conversation list to show the new conversation
+      setConversationListKey((prev) => prev + 1);
     } catch (error) {
       console.error('Error creating DM:', error);
-      alert('Failed to start chat. Please try again.');
+      alert(`Failed to start chat: ${error.message}`);
     }
   };
 

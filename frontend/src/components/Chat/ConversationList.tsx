@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuthStore } from '../../store/authStore';
+import { apiClient } from '../../utils/apiClient';
 import './ConversationList.css';
 
 interface ConversationParticipant {
@@ -64,16 +65,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch('/api/chat/conversations', {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch conversations');
-      }
-
+      const response = await apiClient.get('/api/chat/conversations');
       const data = await response.json();
       setConversations(data);
     } catch (error) {
@@ -90,21 +82,12 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
       // If we have a projectId, fetch project members; otherwise fetch all users
       const endpoint = projectId
-        ? `/api/projects/${projectId}/members`
-        : '/api/users';
+        ? `http://localhost:20005/api/projects/${projectId}/members`
+        : 'http://localhost:20005/api/users';
 
       console.log('Fetching from endpoint:', endpoint);
 
-      const response = await fetch(endpoint, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch users');
-      }
-
+      const response = await apiClient.get(endpoint);
       const data = await response.json();
       console.log('Fetched users:', data);
       console.log('Current user ID (email):', currentUserId);
@@ -113,11 +96,17 @@ const ConversationList: React.FC<ConversationListProps> = ({
       let users: User[] = [];
       if (projectId && data.length > 0 && data[0].userId) {
         // Project members endpoint returns different structure
-        users = data.map((member: { userId: string; userName: string; userEmail: string }) => ({
-          id: member.userId,
-          name: member.userName,
-          email: member.userEmail,
-        }));
+        users = data.map(
+          (member: {
+            userId: string;
+            userName: string;
+            userEmail: string;
+          }) => ({
+            id: member.userId,
+            name: member.userName,
+            email: member.userEmail,
+          })
+        );
       } else {
         users = data;
       }
