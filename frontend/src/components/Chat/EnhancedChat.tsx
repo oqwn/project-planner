@@ -68,6 +68,7 @@ export const EnhancedChat: React.FC = () => {
   const [showNewConversationModal, setShowNewConversationModal] =
     useState(false);
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const [conversationListKey, setConversationListKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const clientRef = useRef<Client | null>(null);
 
@@ -278,7 +279,7 @@ export const EnhancedChat: React.FC = () => {
         setSelectedConversationId(newConversation.id);
         setShowNewConversationModal(false);
         // Refresh conversation list
-        window.location.reload(); // TODO: Implement proper refresh
+        setConversationListKey((prev) => prev + 1);
       }
     } catch (error) {
       console.error('Error creating conversation:', error);
@@ -303,28 +304,46 @@ export const EnhancedChat: React.FC = () => {
   };
 
   const handleStartDirectMessage = async (userId: string) => {
+    console.log('Starting direct message with userId:', userId);
+    console.log('Auth token:', user?.token);
+
     try {
       const response = await fetch(`/api/chat/conversations/dm/${userId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${user?.token}`,
+          'Content-Type': 'application/json',
         },
       });
 
+      console.log('Response status:', response.status);
+
       if (response.ok) {
         const conversation = await response.json();
+        console.log('Created/fetched conversation:', conversation);
         setSelectedConversationId(conversation.id);
-        // Refresh conversation list
-        window.location.reload(); // TODO: Implement proper refresh
+        // Refresh conversation list to show the new conversation
+        setConversationListKey((prev) => prev + 1);
+      } else {
+        const errorText = await response.text();
+        console.error(
+          'Failed to create DM. Status:',
+          response.status,
+          'Error:',
+          errorText
+        );
+        alert(`Failed to start chat: ${errorText || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error creating DM:', error);
+      alert('Failed to start chat. Please try again.');
     }
   };
 
   return (
     <div className="enhanced-chat-container">
       <ConversationList
+        key={conversationListKey}
         currentUserId={user?.email || ''}
         selectedConversationId={selectedConversationId}
         projectId={projectId}

@@ -53,7 +53,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState<'conversations' | 'users'>('conversations');
+  const [activeTab, setActiveTab] = useState<'conversations' | 'users'>(
+    'conversations'
+  );
 
   useEffect(() => {
     fetchConversations();
@@ -85,14 +87,14 @@ const ConversationList: React.FC<ConversationListProps> = ({
     try {
       console.log('Auth token from user store:', user?.token);
       console.log('ProjectId:', projectId);
-      
+
       // If we have a projectId, fetch project members; otherwise fetch all users
-      const endpoint = projectId 
+      const endpoint = projectId
         ? `/api/projects/${projectId}/members`
         : '/api/users';
-      
+
       console.log('Fetching from endpoint:', endpoint);
-      
+
       const response = await fetch(endpoint, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
@@ -106,12 +108,12 @@ const ConversationList: React.FC<ConversationListProps> = ({
       const data = await response.json();
       console.log('Fetched users:', data);
       console.log('Current user ID (email):', currentUserId);
-      
+
       // Transform data based on endpoint
       let users: User[] = [];
       if (projectId && data.length > 0 && data[0].userId) {
         // Project members endpoint returns different structure
-        users = data.map((member: any) => ({
+        users = data.map((member: { userId: string; userName: string; userEmail: string }) => ({
           id: member.userId,
           name: member.userName,
           email: member.userEmail,
@@ -119,7 +121,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
       } else {
         users = data;
       }
-      
+
       // Filter out current user
       const filteredUsers = users.filter(
         (user: User) => user.email !== currentUserId
@@ -228,48 +230,50 @@ const ConversationList: React.FC<ConversationListProps> = ({
         {activeTab === 'conversations' ? (
           filteredConversations.length === 0 ? (
             <div className="no-conversations">
-              {searchTerm ? 'No conversations found' : 'No conversations yet. Click the Team Members tab to start chatting!'}
+              {searchTerm
+                ? 'No conversations found'
+                : 'No conversations yet. Click the Team Members tab to start chatting!'}
             </div>
           ) : (
             filteredConversations.map((conversation) => (
-            <div
-              key={conversation.id}
-              className={`conversation-item ${selectedConversationId === conversation.id ? 'selected' : ''}`}
-              onClick={() => onConversationSelect(conversation.id)}
-            >
-              <div className="conversation-avatar">
-                <img src={getConversationAvatar(conversation)} alt="" />
-                {conversation.type === 'DIRECT_MESSAGE' &&
-                  conversation.participants.find(
-                    (p) => p.userId !== currentUserId
-                  )?.isOnline && <div className="online-indicator"></div>}
-              </div>
-
-              <div className="conversation-content">
-                <div className="conversation-header">
-                  <h3>{getConversationDisplayName(conversation)}</h3>
-                  {conversation.lastMessageAt && (
-                    <span className="last-message-time">
-                      {formatDistanceToNow(
-                        new Date(conversation.lastMessageAt),
-                        { addSuffix: true }
-                      )}
-                    </span>
-                  )}
+              <div
+                key={conversation.id}
+                className={`conversation-item ${selectedConversationId === conversation.id ? 'selected' : ''}`}
+                onClick={() => onConversationSelect(conversation.id)}
+              >
+                <div className="conversation-avatar">
+                  <img src={getConversationAvatar(conversation)} alt="" />
+                  {conversation.type === 'DIRECT_MESSAGE' &&
+                    conversation.participants.find(
+                      (p) => p.userId !== currentUserId
+                    )?.isOnline && <div className="online-indicator"></div>}
                 </div>
 
-                <div className="conversation-preview">
-                  <p className="last-message">
-                    {conversation.lastMessage || 'No messages yet'}
-                  </p>
-                  {conversation.unreadCount > 0 && (
-                    <span className="unread-badge">
-                      {conversation.unreadCount}
-                    </span>
-                  )}
+                <div className="conversation-content">
+                  <div className="conversation-header">
+                    <h3>{getConversationDisplayName(conversation)}</h3>
+                    {conversation.lastMessageAt && (
+                      <span className="last-message-time">
+                        {formatDistanceToNow(
+                          new Date(conversation.lastMessageAt),
+                          { addSuffix: true }
+                        )}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="conversation-preview">
+                    <p className="last-message">
+                      {conversation.lastMessage || 'No messages yet'}
+                    </p>
+                    {conversation.unreadCount > 0 && (
+                      <span className="unread-badge">
+                        {conversation.unreadCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
             ))
           )
         ) : (
@@ -281,15 +285,20 @@ const ConversationList: React.FC<ConversationListProps> = ({
               <div className="no-users">No team members found</div>
             ) : (
               availableUsers
-                .filter(user => 
-                  user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                .filter(
+                  (user) =>
+                    user.name
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()) ||
+                    user.email.toLowerCase().includes(searchTerm.toLowerCase())
                 )
-                .map(user => (
+                .map((user) => (
                   <div
                     key={user.id}
                     className="user-item"
                     onClick={() => {
+                      console.log('User clicked:', user);
+                      console.log('User ID:', user.id);
                       if (onStartDirectMessage) {
                         onStartDirectMessage(user.id);
                       }
