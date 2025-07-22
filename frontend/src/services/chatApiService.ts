@@ -140,6 +140,21 @@ class ChatApiService {
   }
 
   /**
+   * Mark conversation as read (updates conversation-level read timestamp)
+   */
+  async markConversationAsRead(conversationId: string): Promise<void> {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/conversations/${conversationId}/mark-read`,
+        {},
+        { headers: this.getAuthHeaders() }
+      );
+    } catch (error) {
+      console.error('Failed to mark conversation as read:', error);
+    }
+  }
+
+  /**
    * Send typing indicator
    */
   async sendTypingIndicator(

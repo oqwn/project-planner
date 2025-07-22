@@ -182,6 +182,11 @@ export const EnhancedChat: React.FC = () => {
           chatApiService.markMessagesRead(unreadMessageIds);
         }, 1000); // Delay to ensure user has seen messages
       }
+
+      // Also mark the conversation as read to update unread counts in conversation list
+      setTimeout(() => {
+        chatApiService.markConversationAsRead(conversationId);
+      }, 1500); // Slightly longer delay to ensure message processing completes
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
