@@ -3,7 +3,7 @@ export interface GanttTask {
   title: string;
   description?: string;
   startDate: string; // ISO 8601 string from OffsetDateTime
-  endDate: string;   // ISO 8601 string from OffsetDateTime
+  endDate: string; // ISO 8601 string from OffsetDateTime
   progress: number;
   status: string;
   assigneeId?: string;

@@ -1,5 +1,6 @@
 package com.example.projectplanner.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -79,6 +80,11 @@ public class Milestone {
 
     public void setStatus(MilestoneStatus status) {
         this.status = status;
+    }
+    
+    @JsonProperty("status")
+    public void setStatusFromString(String status) {
+        this.status = MilestoneStatus.valueOf(status);
     }
 
     public OffsetDateTime getCreatedAt() {

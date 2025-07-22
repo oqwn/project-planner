@@ -23,10 +23,15 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({
 
   useEffect(() => {
     if (milestone) {
+      // Convert ISO date string to yyyy-MM-dd format for date input
+      const targetDate = milestone.targetDate
+        ? format(new Date(milestone.targetDate), 'yyyy-MM-dd')
+        : format(new Date(), 'yyyy-MM-dd');
+
       setFormData({
         name: milestone.name,
         description: milestone.description || '',
-        targetDate: milestone.targetDate,
+        targetDate,
         status: milestone.status,
       });
     }
@@ -34,7 +39,16 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+
+    // Convert date string to ISO format for backend
+    const targetDate = new Date(
+      formData.targetDate + 'T12:00:00.000Z'
+    ).toISOString();
+
+    onSave({
+      ...formData,
+      targetDate,
+    });
   };
 
   const handleChange = (

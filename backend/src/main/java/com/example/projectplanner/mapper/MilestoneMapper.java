@@ -9,19 +9,19 @@ import java.util.UUID;
 @Mapper
 public interface MilestoneMapper {
 
-    @Insert("INSERT INTO milestones (id, project_id, name, description, target_date, status) " +
-            "VALUES (#{id}, #{projectId}, #{name}, #{description}, #{targetDate}::date, #{status})")
+    @Insert("INSERT INTO milestones (id, project_id, name, description, target_date, status, created_at, updated_at) " +
+            "VALUES (#{id}, #{projectId}, #{name}, #{description}, #{targetDate}, #{status}, #{createdAt}, #{updatedAt})")
     void insert(Milestone milestone);
 
     @Update("UPDATE milestones SET name = #{name}, description = #{description}, " +
-            "target_date = #{targetDate}::date, status = #{status} WHERE id = #{id}")
+            "target_date = #{targetDate}, status = #{status}, updated_at = #{updatedAt} WHERE id = #{id}")
     void update(Milestone milestone);
 
     @Delete("DELETE FROM milestones WHERE id = #{id}")
     void delete(@Param("id") UUID id);
 
     @Select("SELECT m.id, m.project_id, m.name, m.description, m.status, " +
-            "(m.target_date + INTERVAL '12 hours') AT TIME ZONE 'UTC' as target_date, " +
+            "m.target_date, m.created_at, m.updated_at, " +
             "p.name as project_name, " +
             "(SELECT COUNT(*) FROM tasks t WHERE t.project_id = m.project_id AND t.status = 'COMPLETED') as tasks_completed, " +
             "(SELECT COUNT(*) FROM tasks t WHERE t.project_id = m.project_id) as total_tasks " +
@@ -42,7 +42,7 @@ public interface MilestoneMapper {
     MilestoneDTO findById(@Param("id") UUID id);
 
     @Select("SELECT m.id, m.project_id, m.name, m.description, m.status, " +
-            "(m.target_date + INTERVAL '12 hours') AT TIME ZONE 'UTC' as target_date, " +
+            "m.target_date, m.created_at, m.updated_at, " +
             "p.name as project_name, " +
             "(SELECT COUNT(*) FROM tasks t WHERE t.project_id = m.project_id AND t.status = 'COMPLETED') as tasks_completed, " +
             "(SELECT COUNT(*) FROM tasks t WHERE t.project_id = m.project_id) as total_tasks " +

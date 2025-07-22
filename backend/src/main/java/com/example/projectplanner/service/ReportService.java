@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -90,6 +91,9 @@ public class ReportService {
     public MilestoneDTO updateMilestone(Milestone milestone, String userEmail) {
         // Verify user has access to project
         verifyUserProjectAccess(userEmail, milestone.getProjectId());
+        
+        // Set updated timestamp
+        milestone.setUpdatedAt(OffsetDateTime.now());
         
         milestoneMapper.update(milestone);
         return milestoneMapper.findById(milestone.getId());

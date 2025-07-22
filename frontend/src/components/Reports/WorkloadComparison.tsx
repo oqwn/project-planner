@@ -191,8 +191,6 @@ export const WorkloadComparison: React.FC<WorkloadComparisonProps> = ({
               },
             ]}
             animate={true}
-            motionStiffness={90}
-            motionDamping={15}
           />
         </div>
       )}

@@ -25,20 +25,18 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
       console.log('Received Gantt data:', data);
 
       // Convert API data to Gantt Task format
-      const ganttTasks: Task[] = data
+      const ganttTasks = data
         .filter((task) => {
           // More thorough validation
-          return task && 
-                 task.startDate && 
-                 task.endDate && 
-                 task.id && 
-                 task.title;
+          return (
+            task && task.startDate && task.endDate && task.id && task.title
+          );
         })
         .map((task) => {
           try {
             const startDate = new Date(task.startDate);
             const endDate = new Date(task.endDate);
-            
+
             // Validate that dates are valid
             if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
               console.warn('Invalid date found in task:', task);
@@ -47,7 +45,10 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
 
             // Ensure end date is after start date
             if (endDate <= startDate) {
-              console.warn('End date before/equal start date, adjusting:', task);
+              console.warn(
+                'End date before/equal start date, adjusting:',
+                task
+              );
               endDate.setTime(startDate.getTime() + 24 * 60 * 60 * 1000); // Add 1 day
             }
 
@@ -58,12 +59,13 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
               id: task.id,
               type: task.type === 'milestone' ? 'milestone' : 'task',
               progress: Math.max(0, Math.min(100, task.progress || 0)),
-              dependencies: task.dependencies || [],
+              dependencies: task.dependencies || ([] as string[]),
               styles: {
                 backgroundColor: getTaskColor(task.status),
-                backgroundSelectedColor: getTaskColor(task.status),
-                progressColor: '#1e40af',
-                progressSelectedColor: '#1e3a8a',
+                backgroundSelectedColor: getTaskColorHover(task.status),
+                progressColor: getProgressColor(task.status),
+                progressSelectedColor: getProgressColorHover(task.status),
+                borderRadius: '6px',
               },
               isDisabled: false,
               project: task.assigneeName || 'Unassigned',
@@ -73,7 +75,9 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
             return null;
           }
         })
-        .filter((task): task is Task => task !== null); // Remove null tasks
+        .filter(
+          (task): task is NonNullable<typeof task> => task !== null
+        ) as Task[]; // Remove null tasks
 
       console.log('Converted Gantt tasks:', ganttTasks);
       setTasks(ganttTasks);
@@ -87,14 +91,56 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
   const getTaskColor = (status: string): string => {
     switch (status) {
       case 'COMPLETED':
-        return '#10b981';
+        return 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
       case 'IN_PROGRESS':
-        return '#3b82f6';
+        return 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
       case 'DELAYED':
-        return '#ef4444';
+        return 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
       case 'PLANNED':
       default:
-        return '#6b7280';
+        return 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+    }
+  };
+
+  const getTaskColorHover = (status: string): string => {
+    switch (status) {
+      case 'COMPLETED':
+        return 'linear-gradient(135deg, #059669 0%, #047857 100%)';
+      case 'IN_PROGRESS':
+        return 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)';
+      case 'DELAYED':
+        return 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+      case 'PLANNED':
+      default:
+        return 'linear-gradient(135deg, #4b5563 0%, #374151 100%)';
+    }
+  };
+
+  const getProgressColor = (status: string): string => {
+    switch (status) {
+      case 'COMPLETED':
+        return 'rgba(255, 255, 255, 0.4)';
+      case 'IN_PROGRESS':
+        return 'rgba(255, 255, 255, 0.3)';
+      case 'DELAYED':
+        return 'rgba(255, 255, 255, 0.3)';
+      case 'PLANNED':
+      default:
+        return 'rgba(255, 255, 255, 0.2)';
+    }
+  };
+
+  const getProgressColorHover = (status: string): string => {
+    switch (status) {
+      case 'COMPLETED':
+        return 'rgba(255, 255, 255, 0.5)';
+      case 'IN_PROGRESS':
+        return 'rgba(255, 255, 255, 0.4)';
+      case 'DELAYED':
+        return 'rgba(255, 255, 255, 0.4)';
+      case 'PLANNED':
+      default:
+        return 'rgba(255, 255, 255, 0.3)';
     }
   };
 
@@ -143,7 +189,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
             <option value={ViewMode.Day}>Day</option>
             <option value={ViewMode.Week}>Week</option>
             <option value={ViewMode.Month}>Month</option>
-            <option value={ViewMode.QuarterYear}>Quarter Year</option>
+            <option value={ViewMode.Year}>Quarter Year</option>
             <option value={ViewMode.Year}>Year</option>
           </select>
         </div>
@@ -187,10 +233,71 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
           onDateChange={handleTaskChange}
           onDelete={handleTaskDelete}
           onExpanderClick={handleExpanderClick}
-          listCellWidth="155px"
-          columnWidth={viewMode === ViewMode.Month ? 300 : 65}
-          barCornerRadius={3}
-          barFill={60}
+          listCellWidth="180px"
+          columnWidth={viewMode === ViewMode.Month ? 350 : 85}
+          barCornerRadius={6}
+          barFill={65}
+          barProgressColor="rgba(255, 255, 255, 0.3)"
+          barProgressSelectedColor="rgba(255, 255, 255, 0.4)"
+          arrowColor="#6366f1"
+          arrowIndent={20}
+          todayColor="rgba(239, 68, 68, 0.3)"
+          TooltipContent={({ task, fontSize, fontFamily }) => (
+            <div
+              style={{
+                fontSize,
+                fontFamily,
+                background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
+                color: 'white',
+                padding: '12px',
+                borderRadius: '8px',
+                boxShadow:
+                  '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                minWidth: '200px',
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: 600,
+                  marginBottom: '8px',
+                  color: '#f9fafb',
+                }}
+              >
+                {task.name}
+              </div>
+              <div
+                style={{
+                  fontSize: '0.875rem',
+                  color: '#d1d5db',
+                  marginBottom: '4px',
+                }}
+              >
+                <strong>Start:</strong> {task.start.toLocaleDateString()}
+              </div>
+              <div
+                style={{
+                  fontSize: '0.875rem',
+                  color: '#d1d5db',
+                  marginBottom: '4px',
+                }}
+              >
+                <strong>End:</strong> {task.end.toLocaleDateString()}
+              </div>
+              <div
+                style={{
+                  fontSize: '0.875rem',
+                  color: '#d1d5db',
+                  marginBottom: '4px',
+                }}
+              >
+                <strong>Progress:</strong> {task.progress}%
+              </div>
+              <div style={{ fontSize: '0.875rem', color: '#d1d5db' }}>
+                <strong>Assignee:</strong> {task.project}
+              </div>
+            </div>
+          )}
         />
       </div>
     </div>
