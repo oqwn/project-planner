@@ -18,6 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/chat")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:5175"})
 public class ChatController {
 
     @Autowired
@@ -98,14 +99,28 @@ public class ChatController {
             @PathVariable UUID userId,
             @AuthenticationPrincipal String userEmail) {
         
+        System.out.println("=== Direct Message Endpoint ===");
+        System.out.println("Target userId: " + userId);
+        System.out.println("Current userEmail from @AuthenticationPrincipal: " + userEmail);
+        
         // Get current user ID
         User currentUser = userMapper.findByEmail(userEmail);
         if (currentUser == null) {
+            System.out.println("ERROR: Current user not found for email: " + userEmail);
             return ResponseEntity.badRequest().build();
         }
         
-        ConversationResponse response = conversationService.getOrCreateDirectMessage(currentUser.getId(), userId);
-        return ResponseEntity.ok(response);
+        System.out.println("Current user found: " + currentUser.getName() + " (ID: " + currentUser.getId() + ")");
+        
+        try {
+            ConversationResponse response = conversationService.getOrCreateDirectMessage(currentUser.getId(), userId);
+            System.out.println("Successfully created/fetched conversation: " + response.getId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.out.println("ERROR creating DM: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PostMapping("/conversations/{conversationId}/read")
