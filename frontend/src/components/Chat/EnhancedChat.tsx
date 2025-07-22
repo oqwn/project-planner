@@ -7,7 +7,7 @@ import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { FileUpload } from './FileUpload';
 import { apiClient } from '../../utils/apiClient';
-import { webSocketService, type WebSocketMessage, type PresenceUpdate } from '../../services/websocketService';
+import { chatWebSocketService, type ChatMessage as WSChatMessage, type PresenceUpdate } from '../../services/chatWebSocketService';
 import './EnhancedChat.css';
 
 interface FileAttachment {
@@ -71,35 +71,42 @@ export const EnhancedChat: React.FC = () => {
   const [conversationListKey, setConversationListKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Register WebSocket handlers for this component
   useEffect(() => {
-    if (!user?.token) return;
+    if (!user) return;
 
-    console.log('Setting up WebSocket connection...');
+    const componentId = `enhanced-chat-${user.email}`;
 
-    webSocketService.connect(
-      { email: user.email, token: user.token },
-      {
-        onMessage: (message: WebSocketMessage) => {
-          // Only add message if it's for the currently selected conversation
-          if (message.conversationId === selectedConversationId) {
-            setMessages((prev) => [...prev, message]);
-          }
-          // TODO: Update conversation list with new message preview
-        },
-        onPresenceUpdate: (presence: PresenceUpdate) => {
-          updateUserPresence(presence);
-        },
-        onConnectionChange: (connected: boolean) => {
-          setIsConnected(connected);
-        },
+    // Register message handler
+    const messageHandler = (message: WSChatMessage) => {
+      // Only add message if it's for the currently selected conversation
+      if (message.conversationId === selectedConversationId) {
+        setMessages((prev) => [...prev, message]);
       }
-    );
+      // TODO: Update conversation list with new message preview
+    };
+
+    // Register presence handler
+    const presenceHandler = (presence: PresenceUpdate) => {
+      updateUserPresence(presence);
+    };
+
+    // Register connection handler
+    const connectionHandler = (connected: boolean) => {
+      setIsConnected(connected);
+    };
+
+    chatWebSocketService.addMessageHandler(componentId, messageHandler);
+    chatWebSocketService.addPresenceHandler(componentId, presenceHandler);
+    chatWebSocketService.addConnectionHandler(componentId, connectionHandler);
 
     return () => {
-      console.log('Cleaning up WebSocket connection...');
-      webSocketService.disconnect();
+      // Cleanup handlers when component unmounts
+      chatWebSocketService.removeMessageHandler(componentId);
+      chatWebSocketService.removePresenceHandler(componentId);
+      chatWebSocketService.removeConnectionHandler(componentId);
     };
-  }, [user?.token, user?.email]);
+  }, [user?.email, selectedConversationId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -159,9 +166,10 @@ export const EnhancedChat: React.FC = () => {
       return;
     }
 
-    const success = webSocketService.sendMessage(selectedConversationId, content, mentions);
+    const success = chatWebSocketService.sendMessage(selectedConversationId, content, mentions);
     if (!success) {
-      console.warn('Failed to send message - WebSocket not connected or other error');
+      console.warn('Failed to send message - WebSocket not connected');
+      // TODO: Could implement message queueing here
     }
   };
 

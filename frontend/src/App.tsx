@@ -12,6 +12,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import authService from './services/auth';
 import { useAuthStore } from './store/authStore';
 import { ProjectProvider } from './contexts/ProjectContext';
+import { ChatWebSocketManager } from './components/Chat/ChatWebSocketManager';
 import './App.css';
 
 function App() {
@@ -37,8 +38,9 @@ function App() {
           path="/*"
           element={
             <ProtectedRoute>
-              <ProjectProvider>
-                <Layout>
+              <ChatWebSocketManager>
+                <ProjectProvider>
+                  <Layout>
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/dashboard" element={<Dashboard />} />
@@ -49,8 +51,9 @@ function App() {
                     <Route path="/reports" element={<ReportsPlaceholder />} />
                     <Route path="/settings" element={<SettingsPlaceholder />} />
                   </Routes>
-                </Layout>
-              </ProjectProvider>
+                  </Layout>
+                </ProjectProvider>
+              </ChatWebSocketManager>
             </ProtectedRoute>
           }
         />
