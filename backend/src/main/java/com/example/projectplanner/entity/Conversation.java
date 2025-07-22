@@ -1,6 +1,6 @@
 package com.example.projectplanner.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class Conversation {
@@ -8,10 +8,10 @@ public class Conversation {
     private String name;
     private ConversationType type;
     private UUID projectId; // null for direct messages
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
     private String lastMessage;
-    private LocalDateTime lastMessageAt;
+    private OffsetDateTime lastMessageAt;
     private UUID createdBy;
 
     public enum ConversationType {
@@ -23,8 +23,8 @@ public class Conversation {
     public Conversation() {}
 
     public Conversation(UUID id, String name, ConversationType type, UUID projectId, 
-                       LocalDateTime createdAt, LocalDateTime updatedAt, 
-                       String lastMessage, LocalDateTime lastMessageAt, UUID createdBy) {
+                       OffsetDateTime createdAt, OffsetDateTime updatedAt, 
+                       String lastMessage, OffsetDateTime lastMessageAt, UUID createdBy) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -49,17 +49,17 @@ public class Conversation {
     public UUID getProjectId() { return projectId; }
     public void setProjectId(UUID projectId) { this.projectId = projectId; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public String getLastMessage() { return lastMessage; }
     public void setLastMessage(String lastMessage) { this.lastMessage = lastMessage; }
 
-    public LocalDateTime getLastMessageAt() { return lastMessageAt; }
-    public void setLastMessageAt(LocalDateTime lastMessageAt) { this.lastMessageAt = lastMessageAt; }
+    public OffsetDateTime getLastMessageAt() { return lastMessageAt; }
+    public void setLastMessageAt(OffsetDateTime lastMessageAt) { this.lastMessageAt = lastMessageAt; }
 
     public UUID getCreatedBy() { return createdBy; }
     public void setCreatedBy(UUID createdBy) { this.createdBy = createdBy; }

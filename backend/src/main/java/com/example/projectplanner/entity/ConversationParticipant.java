@@ -1,21 +1,21 @@
 package com.example.projectplanner.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class ConversationParticipant {
     private UUID id;
     private UUID conversationId;
     private UUID userId;
-    private LocalDateTime joinedAt;
-    private LocalDateTime lastReadAt;
+    private OffsetDateTime joinedAt;
+    private OffsetDateTime lastReadAt;
     private boolean isActive;
 
     // Constructors
     public ConversationParticipant() {}
 
     public ConversationParticipant(UUID id, UUID conversationId, UUID userId, 
-                                 LocalDateTime joinedAt, LocalDateTime lastReadAt, boolean isActive) {
+                                 OffsetDateTime joinedAt, OffsetDateTime lastReadAt, boolean isActive) {
         this.id = id;
         this.conversationId = conversationId;
         this.userId = userId;
@@ -34,11 +34,11 @@ public class ConversationParticipant {
     public UUID getUserId() { return userId; }
     public void setUserId(UUID userId) { this.userId = userId; }
 
-    public LocalDateTime getJoinedAt() { return joinedAt; }
-    public void setJoinedAt(LocalDateTime joinedAt) { this.joinedAt = joinedAt; }
+    public OffsetDateTime getJoinedAt() { return joinedAt; }
+    public void setJoinedAt(OffsetDateTime joinedAt) { this.joinedAt = joinedAt; }
 
-    public LocalDateTime getLastReadAt() { return lastReadAt; }
-    public void setLastReadAt(LocalDateTime lastReadAt) { this.lastReadAt = lastReadAt; }
+    public OffsetDateTime getLastReadAt() { return lastReadAt; }
+    public void setLastReadAt(OffsetDateTime lastReadAt) { this.lastReadAt = lastReadAt; }
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }

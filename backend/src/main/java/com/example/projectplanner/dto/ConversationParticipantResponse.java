@@ -1,6 +1,6 @@
 package com.example.projectplanner.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class ConversationParticipantResponse {
@@ -8,14 +8,14 @@ public class ConversationParticipantResponse {
     private UUID userId;
     private String userName;
     private String userEmail;
-    private LocalDateTime joinedAt;
-    private LocalDateTime lastReadAt;
+    private OffsetDateTime joinedAt;
+    private OffsetDateTime lastReadAt;
     private boolean isOnline;
 
     public ConversationParticipantResponse() {}
 
     public ConversationParticipantResponse(UUID id, UUID userId, String userName, String userEmail,
-                                         LocalDateTime joinedAt, LocalDateTime lastReadAt, boolean isOnline) {
+                                         OffsetDateTime joinedAt, OffsetDateTime lastReadAt, boolean isOnline) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
@@ -38,11 +38,11 @@ public class ConversationParticipantResponse {
     public String getUserEmail() { return userEmail; }
     public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
 
-    public LocalDateTime getJoinedAt() { return joinedAt; }
-    public void setJoinedAt(LocalDateTime joinedAt) { this.joinedAt = joinedAt; }
+    public OffsetDateTime getJoinedAt() { return joinedAt; }
+    public void setJoinedAt(OffsetDateTime joinedAt) { this.joinedAt = joinedAt; }
 
-    public LocalDateTime getLastReadAt() { return lastReadAt; }
-    public void setLastReadAt(LocalDateTime lastReadAt) { this.lastReadAt = lastReadAt; }
+    public OffsetDateTime getLastReadAt() { return lastReadAt; }
+    public void setLastReadAt(OffsetDateTime lastReadAt) { this.lastReadAt = lastReadAt; }
 
     public boolean isOnline() { return isOnline; }
     public void setOnline(boolean online) { isOnline = online; }

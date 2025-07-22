@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -72,8 +74,8 @@ public class ConversationService {
         conversation.setType(request.getType());
         conversation.setProjectId(request.getProjectId());
         conversation.setCreatedBy(creator.getId());
-        conversation.setCreatedAt(LocalDateTime.now());
-        conversation.setUpdatedAt(LocalDateTime.now());
+        conversation.setCreatedAt(OffsetDateTime.now());
+        conversation.setUpdatedAt(OffsetDateTime.now());
 
         conversationMapper.insert(conversation);
 
@@ -108,8 +110,8 @@ public class ConversationService {
         conversation.setName("Direct Message"); // Will be shown as other user's name in UI
         conversation.setType(Conversation.ConversationType.DIRECT_MESSAGE);
         conversation.setCreatedBy(currentUserId);
-        conversation.setCreatedAt(LocalDateTime.now());
-        conversation.setUpdatedAt(LocalDateTime.now());
+        conversation.setCreatedAt(OffsetDateTime.now());
+        conversation.setUpdatedAt(OffsetDateTime.now());
 
         conversationMapper.insert(conversation);
 
@@ -134,7 +136,7 @@ public class ConversationService {
         participant.setId(UUID.randomUUID());
         participant.setConversationId(conversationId);
         participant.setUserId(userId);
-        participant.setJoinedAt(LocalDateTime.now());
+        participant.setJoinedAt(OffsetDateTime.now());
         participant.setActive(true);
 
         participantMapper.insert(participant);

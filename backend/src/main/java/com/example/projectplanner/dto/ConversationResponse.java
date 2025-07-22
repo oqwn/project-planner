@@ -1,7 +1,7 @@
 package com.example.projectplanner.dto;
 
 import com.example.projectplanner.entity.Conversation;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ public class ConversationResponse {
     private Conversation.ConversationType type;
     private UUID projectId;
     private String lastMessage;
-    private LocalDateTime lastMessageAt;
+    private OffsetDateTime lastMessageAt;
     private int unreadCount;
     private List<ConversationParticipantResponse> participants;
     private String avatarUrl;
@@ -19,7 +19,7 @@ public class ConversationResponse {
     public ConversationResponse() {}
 
     public ConversationResponse(UUID id, String name, Conversation.ConversationType type, 
-                              UUID projectId, String lastMessage, LocalDateTime lastMessageAt,
+                              UUID projectId, String lastMessage, OffsetDateTime lastMessageAt,
                               int unreadCount, List<ConversationParticipantResponse> participants,
                               String avatarUrl) {
         this.id = id;
@@ -49,8 +49,8 @@ public class ConversationResponse {
     public String getLastMessage() { return lastMessage; }
     public void setLastMessage(String lastMessage) { this.lastMessage = lastMessage; }
 
-    public LocalDateTime getLastMessageAt() { return lastMessageAt; }
-    public void setLastMessageAt(LocalDateTime lastMessageAt) { this.lastMessageAt = lastMessageAt; }
+    public OffsetDateTime getLastMessageAt() { return lastMessageAt; }
+    public void setLastMessageAt(OffsetDateTime lastMessageAt) { this.lastMessageAt = lastMessageAt; }
 
     public int getUnreadCount() { return unreadCount; }
     public void setUnreadCount(int unreadCount) { this.unreadCount = unreadCount; }
