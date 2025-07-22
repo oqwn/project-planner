@@ -15,15 +15,19 @@ public interface MessageStatusMapper {
             "#{isDelivered}, #{isRead}, #{deliveredAt}, #{readAt}, #{createdAt})")
     void insert(MessageStatusTracker tracker);
     
-    @Update("UPDATE message_status_tracker SET is_delivered = true, delivered_at = #{deliveredAt} " +
-            "WHERE message_id = #{messageId} AND user_id = #{userId} AND is_delivered = false")
+    @Update("INSERT INTO message_status_tracker (id, message_id, user_id, is_delivered, is_read, delivered_at, created_at) " +
+            "VALUES (gen_random_uuid(), #{messageId}, #{userId}, true, false, #{deliveredAt}, #{deliveredAt}) " +
+            "ON CONFLICT (message_id, user_id) DO UPDATE SET " +
+            "is_delivered = true, delivered_at = COALESCE(message_status_tracker.delivered_at, #{deliveredAt})")
     void markDelivered(@Param("messageId") UUID messageId, 
                       @Param("userId") UUID userId,
                       @Param("deliveredAt") OffsetDateTime deliveredAt);
     
-    @Update("UPDATE message_status_tracker SET is_read = true, read_at = #{readAt}, " +
-            "is_delivered = true, delivered_at = COALESCE(delivered_at, #{readAt}) " +
-            "WHERE message_id = #{messageId} AND user_id = #{userId} AND is_read = false")
+    @Update("INSERT INTO message_status_tracker (id, message_id, user_id, is_delivered, is_read, read_at, delivered_at, created_at) " +
+            "VALUES (gen_random_uuid(), #{messageId}, #{userId}, true, true, #{readAt}, #{readAt}, #{readAt}) " +
+            "ON CONFLICT (message_id, user_id) DO UPDATE SET " +
+            "is_delivered = true, is_read = true, read_at = #{readAt}, " +
+            "delivered_at = COALESCE(message_status_tracker.delivered_at, #{readAt})")
     void markRead(@Param("messageId") UUID messageId, 
                   @Param("userId") UUID userId,
                   @Param("readAt") OffsetDateTime readAt);
