@@ -76,6 +76,14 @@ export const EnhancedChat: React.FC = () => {
   useEffect(() => {
     if (!user) return;
 
+    // Prevent multiple connections
+    if (clientRef.current && clientRef.current.connected) {
+      console.log('WebSocket already connected, skipping...');
+      return;
+    }
+
+    console.log('Setting up WebSocket connection...');
+
     // Set up WebSocket connection
     const client = new Client({
       webSocketFactory: () => new SockJS('http://localhost:20005/ws-chat'),
@@ -125,24 +133,26 @@ export const EnhancedChat: React.FC = () => {
     clientRef.current = client;
 
     return () => {
-      if (clientRef.current && isConnected) {
-        try {
-          clientRef.current.publish({
-            destination: '/app/presence',
-            body: JSON.stringify({
-              userId: user.email,
-              isOnline: false,
-            }),
-          });
-        } catch (error) {
-          console.warn('Failed to send offline presence:', error);
-        }
-      }
+      console.log('Cleaning up WebSocket connection...');
       if (clientRef.current) {
-        clientRef.current.deactivate();
+        try {
+          if (clientRef.current.connected) {
+            clientRef.current.publish({
+              destination: '/app/presence',
+              body: JSON.stringify({
+                userId: user.email,
+                isOnline: false,
+              }),
+            });
+          }
+          clientRef.current.deactivate();
+        } catch (error) {
+          console.warn('Failed to cleanup WebSocket:', error);
+        }
+        clientRef.current = null;
       }
     };
-  }, [user, selectedConversationId, isConnected]);
+  }, [user]);
 
   useEffect(() => {
     scrollToBottom();
@@ -197,12 +207,19 @@ export const EnhancedChat: React.FC = () => {
   };
 
   const sendMessage = (content: string, mentions: string[] = []) => {
-    if (!clientRef.current || !isConnected || !user || !selectedConversationId)
+    if (!clientRef.current || !clientRef.current.connected || !user || !selectedConversationId) {
+      console.warn('Cannot send message: WebSocket not connected or missing data');
       return;
+    }
+
+    if (!content.trim()) {
+      console.warn('Cannot send empty message');
+      return;
+    }
 
     const message = {
       conversationId: selectedConversationId,
-      content,
+      content: content.trim(),
       type: 'TEXT',
       mentions,
     };
@@ -212,6 +229,7 @@ export const EnhancedChat: React.FC = () => {
         destination: '/app/chat.send',
         body: JSON.stringify(message),
       });
+      console.log('Message sent successfully');
     } catch (error) {
       console.error('Failed to send message:', error);
     }
@@ -300,7 +318,7 @@ export const EnhancedChat: React.FC = () => {
       setConversationListKey((prev) => prev + 1);
     } catch (error) {
       console.error('Error creating DM:', error);
-      alert(`Failed to start chat: ${error.message}`);
+      alert(`Failed to start chat: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
