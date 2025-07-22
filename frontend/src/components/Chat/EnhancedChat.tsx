@@ -7,9 +7,8 @@ import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { FileUpload } from './FileUpload';
 import { apiClient } from '../../utils/apiClient';
+import { webSocketService, type WebSocketMessage, type PresenceUpdate } from '../../services/websocketService';
 import './EnhancedChat.css';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
 interface FileAttachment {
   id: string;
@@ -71,88 +70,36 @@ export const EnhancedChat: React.FC = () => {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [conversationListKey, setConversationListKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
-    if (!user) return;
-
-    // Prevent multiple connections
-    if (clientRef.current && clientRef.current.connected) {
-      console.log('WebSocket already connected, skipping...');
-      return;
-    }
+    if (!user?.token) return;
 
     console.log('Setting up WebSocket connection...');
 
-    // Set up WebSocket connection
-    const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:20005/ws-chat'),
-      onConnect: () => {
-        console.log('Connected to WebSocket');
-        setIsConnected(true);
-
-        // Subscribe to user's conversations
-        client.subscribe(`/topic/user/${user.email}/messages`, (message) => {
-          const newMessage = JSON.parse(message.body);
+    webSocketService.connect(
+      { email: user.email, token: user.token },
+      {
+        onMessage: (message: WebSocketMessage) => {
           // Only add message if it's for the currently selected conversation
-          if (newMessage.conversationId === selectedConversationId) {
-            setMessages((prev) => [...prev, newMessage]);
+          if (message.conversationId === selectedConversationId) {
+            setMessages((prev) => [...prev, message]);
           }
           // TODO: Update conversation list with new message preview
-        });
-
-        // Subscribe to presence updates
-        client.subscribe('/topic/presence', (message) => {
-          const presence = JSON.parse(message.body);
+        },
+        onPresenceUpdate: (presence: PresenceUpdate) => {
           updateUserPresence(presence);
-        });
-
-        // Send online presence
-        try {
-          client.publish({
-            destination: '/app/presence',
-            body: JSON.stringify({
-              userId: user.email,
-              isOnline: true,
-            }),
-          });
-        } catch (error) {
-          console.warn('Failed to send presence:', error);
-        }
-      },
-      onDisconnect: () => {
-        console.log('Disconnected from WebSocket');
-        setIsConnected(false);
-      },
-      onStompError: (frame) => {
-        console.error('STOMP error:', frame);
-      },
-    });
-
-    client.activate();
-    clientRef.current = client;
+        },
+        onConnectionChange: (connected: boolean) => {
+          setIsConnected(connected);
+        },
+      }
+    );
 
     return () => {
       console.log('Cleaning up WebSocket connection...');
-      if (clientRef.current) {
-        try {
-          if (clientRef.current.connected) {
-            clientRef.current.publish({
-              destination: '/app/presence',
-              body: JSON.stringify({
-                userId: user.email,
-                isOnline: false,
-              }),
-            });
-          }
-          clientRef.current.deactivate();
-        } catch (error) {
-          console.warn('Failed to cleanup WebSocket:', error);
-        }
-        clientRef.current = null;
-      }
+      webSocketService.disconnect();
     };
-  }, [user]);
+  }, [user?.token, user?.email]);
 
   useEffect(() => {
     scrollToBottom();
@@ -207,31 +154,14 @@ export const EnhancedChat: React.FC = () => {
   };
 
   const sendMessage = (content: string, mentions: string[] = []) => {
-    if (!clientRef.current || !clientRef.current.connected || !user || !selectedConversationId) {
-      console.warn('Cannot send message: WebSocket not connected or missing data');
+    if (!selectedConversationId) {
+      console.warn('Cannot send message: No conversation selected');
       return;
     }
 
-    if (!content.trim()) {
-      console.warn('Cannot send empty message');
-      return;
-    }
-
-    const message = {
-      conversationId: selectedConversationId,
-      content: content.trim(),
-      type: 'TEXT',
-      mentions,
-    };
-
-    try {
-      clientRef.current.publish({
-        destination: '/app/chat.send',
-        body: JSON.stringify(message),
-      });
-      console.log('Message sent successfully');
-    } catch (error) {
-      console.error('Failed to send message:', error);
+    const success = webSocketService.sendMessage(selectedConversationId, content, mentions);
+    if (!success) {
+      console.warn('Failed to send message - WebSocket not connected or other error');
     }
   };
 
