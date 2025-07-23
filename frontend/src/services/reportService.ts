@@ -111,7 +111,9 @@ class ReportService {
     return response.data;
   }
 
-  async getProjectMembers(projectId: string): Promise<{id: string, name: string, email: string}[]> {
+  async getProjectMembers(
+    projectId: string
+  ): Promise<{ id: string; name: string; email: string }[]> {
     const response = await axios.get(
       `${API_BASE_URL}/projects/${projectId}/members`,
       {
@@ -119,10 +121,10 @@ class ReportService {
       }
     );
     // Map API response structure to component expected structure
-    return response.data.map((member: any) => ({
+    return response.data.map((member: { userId: string; userName: string; userEmail: string }) => ({
       id: member.userId,
       name: member.userName,
-      email: member.userEmail
+      email: member.userEmail,
     }));
   }
 }

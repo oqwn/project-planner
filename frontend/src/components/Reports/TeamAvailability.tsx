@@ -25,7 +25,7 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
     TeamAvailabilityData[]
   >([]);
   const [teamMembers, setTeamMembers] = useState<
-    {id: string, name: string, email: string}[]
+    { id: string; name: string; email: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
   const [editingCell, setEditingCell] = useState<string | null>(null);
@@ -113,7 +113,7 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
   ) => {
     try {
       // Find the member's UUID by email
-      const member = teamMembers.find(m => m.email === memberEmail);
+      const member = teamMembers.find((m) => m.email === memberEmail);
       if (!member) {
         console.error('Member not found:', memberEmail);
         return;
@@ -166,7 +166,7 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
     loading,
     projectId,
     weekStart: format(weekStart, 'yyyy-MM-dd'),
-    weekEnd: format(weekEnd, 'yyyy-MM-dd')
+    weekEnd: format(weekEnd, 'yyyy-MM-dd'),
   });
 
   if (loading) {
@@ -210,10 +210,23 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
 
       <div className="availability-info">
         <div className="availability-hint">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" className="info-icon">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="info-icon"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clipRule="evenodd"
+            />
           </svg>
-          <span>You can only edit your own availability. Other team members' schedules are view-only.</span>
+          <span>
+            You can only edit your own availability. Other team members'
+            schedules are view-only.
+          </span>
         </div>
       </div>
 
@@ -271,135 +284,143 @@ export const TeamAvailability: React.FC<TeamAvailabilityProps> = ({
           {teamMembers.map((member) => {
             const isCurrentUser = currentUser?.email === member.email;
             return (
-              <div key={member.id} className={`member-row ${isCurrentUser ? 'current-user' : ''}`}>
+              <div
+                key={member.id}
+                className={`member-row ${isCurrentUser ? 'current-user' : ''}`}
+              >
                 <div className="member-info-cell">
                   <div className="member-info">
                     <span className="name">
                       {member.name}
-                      {isCurrentUser && <span className="current-user-badge">(You)</span>}
+                      {isCurrentUser && (
+                        <span className="current-user-badge">(You)</span>
+                      )}
                     </span>
                     <span className="email">{member.email}</span>
                   </div>
                 </div>
 
-              <div className="member-availability-cells">
-                {weekDays.map((date, index) => {
-                  const availability = getAvailabilityForDate(date, member.id);
-                  const cellKey = `${format(date, 'yyyy-MM-dd')}-${member.email}`;
-                  const isEditing = editingCell === cellKey;
-                  const isToday =
-                    format(date, 'yyyy-MM-dd') ===
-                    format(new Date(), 'yyyy-MM-dd');
-                  const isCurrentUser = currentUser?.email === member.email;
+                <div className="member-availability-cells">
+                  {weekDays.map((date) => {
+                    const availability = getAvailabilityForDate(
+                      date,
+                      member.id
+                    );
+                    const cellKey = `${format(date, 'yyyy-MM-dd')}-${member.email}`;
+                    const isEditing = editingCell === cellKey;
+                    const isToday =
+                      format(date, 'yyyy-MM-dd') ===
+                      format(new Date(), 'yyyy-MM-dd');
+                    const isCurrentUser = currentUser?.email === member.email;
 
-                  return (
-                    <div
-                      key={`${format(date, 'yyyy-MM-dd')}-${member.id}`}
-                      className={`availability-cell ${
-                        isCurrentUser ? 'clickable' : 'readonly'
-                      } ${isEditing ? 'editing' : ''} ${isToday ? 'today' : ''}`}
-                      onClick={(e) => {
-                        if (isCurrentUser) {
-                          e.stopPropagation();
-                          handleDateClick(date, member.email);
+                    return (
+                      <div
+                        key={`${format(date, 'yyyy-MM-dd')}-${member.id}`}
+                        className={`availability-cell ${
+                          isCurrentUser ? 'clickable' : 'readonly'
+                        } ${isEditing ? 'editing' : ''} ${isToday ? 'today' : ''}`}
+                        onClick={(e) => {
+                          if (isCurrentUser) {
+                            e.stopPropagation();
+                            handleDateClick(date, member.email);
+                          }
+                        }}
+                        title={
+                          isCurrentUser
+                            ? `${member.name} - ${format(date, 'MMM d, yyyy')}: ${availability?.status || 'Click to set availability'}`
+                            : `${member.name} - ${format(date, 'MMM d, yyyy')}: ${availability?.status || 'Not set'} (View only)`
                         }
-                      }}
-                      title={
-                        isCurrentUser
-                          ? `${member.name} - ${format(date, 'MMM d, yyyy')}: ${availability?.status || 'Click to set availability'}`
-                          : `${member.name} - ${format(date, 'MMM d, yyyy')}: ${availability?.status || 'Not set'} (View only)`
-                      }
-                    >
-                      {isEditing ? (
-                        <div
-                          className="inline-status-selector"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="status-options-inline">
-                            <button
-                              className="status-btn-inline status-available"
-                              onClick={() =>
-                                handleCellStatusChange(
-                                  date,
-                                  member.email,
-                                  'AVAILABLE'
-                                )
-                              }
-                              title="Available"
-                            >
-                              <div className="status-dot-inline status-available"></div>
-                            </button>
-                            <button
-                              className="status-btn-inline status-busy"
-                              onClick={() =>
-                                handleCellStatusChange(
-                                  date,
-                                  member.email,
-                                  'BUSY'
-                                )
-                              }
-                              title="Busy"
-                            >
-                              <div className="status-dot-inline status-busy"></div>
-                            </button>
-                            <button
-                              className="status-btn-inline status-out"
-                              onClick={() =>
-                                handleCellStatusChange(
-                                  date,
-                                  member.email,
-                                  'OUT_OF_OFFICE'
-                                )
-                              }
-                              title="Out of Office"
-                            >
-                              <div className="status-dot-inline status-out"></div>
-                            </button>
-                            <button
-                              className="status-btn-inline status-holiday"
-                              onClick={() =>
-                                handleCellStatusChange(
-                                  date,
-                                  member.email,
-                                  'HOLIDAY'
-                                )
-                              }
-                              title="Holiday"
-                            >
-                              <div className="status-dot-inline status-holiday"></div>
-                            </button>
-                            <button
-                              className="status-btn-inline status-sick"
-                              onClick={() =>
-                                handleCellStatusChange(
-                                  date,
-                                  member.email,
-                                  'SICK_LEAVE'
-                                )
-                              }
-                              title="Sick Leave"
-                            >
-                              <div className="status-dot-inline status-sick"></div>
-                            </button>
+                      >
+                        {isEditing ? (
+                          <div
+                            className="inline-status-selector"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="status-options-inline">
+                              <button
+                                className="status-btn-inline status-available"
+                                onClick={() =>
+                                  handleCellStatusChange(
+                                    date,
+                                    member.email,
+                                    'AVAILABLE'
+                                  )
+                                }
+                                title="Available"
+                              >
+                                <div className="status-dot-inline status-available"></div>
+                              </button>
+                              <button
+                                className="status-btn-inline status-busy"
+                                onClick={() =>
+                                  handleCellStatusChange(
+                                    date,
+                                    member.email,
+                                    'BUSY'
+                                  )
+                                }
+                                title="Busy"
+                              >
+                                <div className="status-dot-inline status-busy"></div>
+                              </button>
+                              <button
+                                className="status-btn-inline status-out"
+                                onClick={() =>
+                                  handleCellStatusChange(
+                                    date,
+                                    member.email,
+                                    'OUT_OF_OFFICE'
+                                  )
+                                }
+                                title="Out of Office"
+                              >
+                                <div className="status-dot-inline status-out"></div>
+                              </button>
+                              <button
+                                className="status-btn-inline status-holiday"
+                                onClick={() =>
+                                  handleCellStatusChange(
+                                    date,
+                                    member.email,
+                                    'HOLIDAY'
+                                  )
+                                }
+                                title="Holiday"
+                              >
+                                <div className="status-dot-inline status-holiday"></div>
+                              </button>
+                              <button
+                                className="status-btn-inline status-sick"
+                                onClick={() =>
+                                  handleCellStatusChange(
+                                    date,
+                                    member.email,
+                                    'SICK_LEAVE'
+                                  )
+                                }
+                                title="Sick Leave"
+                              >
+                                <div className="status-dot-inline status-sick"></div>
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="availability-indicator">
-                          {availability ? (
-                            <div
-                              className={`availability-dot ${getStatusColor(availability.status)}`}
-                            ></div>
-                          ) : (
-                            <div className="availability-dot status-unset"></div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                        ) : (
+                          <div className="availability-indicator">
+                            {availability ? (
+                              <div
+                                className={`availability-dot ${getStatusColor(availability.status)}`}
+                              ></div>
+                            ) : (
+                              <div className="availability-dot status-unset"></div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          );
+            );
           })}
         </div>
       </div>

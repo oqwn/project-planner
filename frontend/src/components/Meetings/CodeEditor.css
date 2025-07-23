@@ -1,0 +1,190 @@
+.code-editor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.language-selector label {
+  color: #374151;
+  font-weight: 500;
+}
+
+.language-selector select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.language-selector select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.run-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.run-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.editor-content {
+  flex: 1;
+  display: grid;
+  grid-template-rows: 200px 1fr 150px;
+  gap: 1px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+/* Problem Section */
+.problem-section {
+  background: white;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.problem-section h3 {
+  font-size: 1rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.problem-description {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.problem-description pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Code Section */
+.code-section {
+  background: white;
+  overflow: hidden;
+}
+
+.editor-area {
+  display: flex;
+  height: 100%;
+  background: #1f2937;
+}
+
+.line-numbers {
+  padding: 1rem 0.5rem;
+  background: #111827;
+  color: #6b7280;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  user-select: none;
+  min-width: 40px;
+  text-align: right;
+}
+
+.line-number {
+  height: 1.5em;
+}
+
+.code-textarea {
+  flex: 1;
+  padding: 1rem;
+  background: #1f2937;
+  color: #f3f4f6;
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  tab-size: 2;
+}
+
+.code-textarea::selection {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Output Section */
+.output-section {
+  background: white;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.output-section h3 {
+  font-size: 1rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.output-area {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: #374151;
+  min-height: 80px;
+}
+
+.output-area pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .editor-content {
+    grid-template-rows: 150px 1fr 120px;
+  }
+  
+  .problem-description,
+  .code-textarea,
+  .output-area {
+    font-size: 0.75rem;
+  }
+  
+  .line-numbers {
+    font-size: 0.75rem;
+    min-width: 30px;
+  }
+}

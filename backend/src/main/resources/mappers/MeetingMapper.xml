@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.projectplanner.mapper.MeetingMapper">
+    
+    <resultMap id="MeetingResultMap" type="com.example.projectplanner.entity.Meeting">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="hostId" column="host_id"/>
+        <result property="hostName" column="host_name"/>
+        <result property="startTime" column="start_time"/>
+        <result property="duration" column="duration"/>
+        <result property="code" column="code"/>
+        <result property="status" column="status" javaType="com.example.projectplanner.entity.Meeting$MeetingStatus"
+                typeHandler="com.example.projectplanner.mapper.typehandler.MeetingStatusTypeHandler"/>
+        <result property="projectId" column="project_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    
+    <insert id="insert" parameterType="com.example.projectplanner.entity.Meeting">
+        INSERT INTO meetings (id, title, host_id, host_name, start_time, duration, code, status, project_id, created_at, updated_at)
+        VALUES (#{id}, #{title}, #{hostId}::uuid, #{hostName}, #{startTime}, #{duration}, #{code}, #{status.value}, 
+                <if test="projectId != null">#{projectId}::uuid</if>
+                <if test="projectId == null">NULL</if>, 
+                #{createdAt}, #{updatedAt})
+    </insert>
+    
+    <select id="findById" parameterType="String" resultMap="MeetingResultMap">
+        SELECT * FROM meetings WHERE id = #{id}
+    </select>
+    
+    <select id="findByCode" parameterType="String" resultMap="MeetingResultMap">
+        SELECT * FROM meetings WHERE code = #{code} AND status != 'ended'
+    </select>
+    
+    <select id="findByProjectId" parameterType="String" resultMap="MeetingResultMap">
+        SELECT * FROM meetings WHERE project_id = #{projectId}::uuid ORDER BY start_time DESC
+    </select>
+    
+    <select id="findByHostId" parameterType="String" resultMap="MeetingResultMap">
+        SELECT * FROM meetings WHERE host_id = #{hostId}::uuid ORDER BY start_time DESC
+    </select>
+    
+    <update id="updateStatus">
+        UPDATE meetings SET status = #{status}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{meetingId}
+    </update>
+    
+    <delete id="delete" parameterType="String">
+        DELETE FROM meetings WHERE id = #{id}
+    </delete>
+    
+</mapper>

@@ -14,6 +14,7 @@ import { useAuthStore } from './store/authStore';
 import { ProjectProvider } from './contexts/ProjectContext';
 import { ChatWebSocketManager } from './components/Chat/ChatWebSocketManager';
 import { Reports } from './components/Reports/Reports';
+import { Meetings } from './components/Meetings/Meetings';
 import './App.css';
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
                       <Route path="/timesheets" element={<TimeTracking />} />
                       <Route path="/collaboration" element={<EnhancedChat />} />
                       <Route path="/reports" element={<Reports />} />
+                      <Route path="/meetings" element={<Meetings />} />
                       <Route
                         path="/settings"
                         element={<SettingsPlaceholder />}
