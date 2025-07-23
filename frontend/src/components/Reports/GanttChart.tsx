@@ -91,28 +91,30 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
   const getTaskColor = (status: string): string => {
     switch (status) {
       case 'COMPLETED':
-        return 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        return '#10b981'; // Green
       case 'IN_PROGRESS':
-        return 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
-      case 'DELAYED':
-        return 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-      case 'PLANNED':
+        return '#3b82f6'; // Blue
+      case 'TODO':
+        return '#8b5cf6'; // Purple
+      case 'PARKED':
+        return '#f59e0b'; // Amber
       default:
-        return 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+        return '#6b7280'; // Gray
     }
   };
 
   const getTaskColorHover = (status: string): string => {
     switch (status) {
       case 'COMPLETED':
-        return 'linear-gradient(135deg, #059669 0%, #047857 100%)';
+        return '#059669'; // Darker green
       case 'IN_PROGRESS':
-        return 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)';
-      case 'DELAYED':
-        return 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
-      case 'PLANNED':
+        return '#2563eb'; // Darker blue
+      case 'TODO':
+        return '#7c3aed'; // Darker purple
+      case 'PARKED':
+        return '#d97706'; // Darker amber
       default:
-        return 'linear-gradient(135deg, #4b5563 0%, #374151 100%)';
+        return '#4b5563'; // Darker gray
     }
   };
 
@@ -212,16 +214,16 @@ export const GanttChart: React.FC<GanttChartProps> = ({ projectId }) => {
           <div className="legend-item">
             <span
               className="legend-color"
-              style={{ backgroundColor: '#6b7280' }}
+              style={{ backgroundColor: '#8b5cf6' }}
             ></span>
-            <span>Planned</span>
+            <span>To Do</span>
           </div>
           <div className="legend-item">
             <span
               className="legend-color"
-              style={{ backgroundColor: '#ef4444' }}
+              style={{ backgroundColor: '#f59e0b' }}
             ></span>
-            <span>Delayed</span>
+            <span>Parked</span>
           </div>
         </div>
       </div>
